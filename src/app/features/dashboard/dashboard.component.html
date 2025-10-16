@@ -1,0 +1,21 @@
+<h2>Bienvenido al Gestor de Depósitos</h2>
+<p>Rol actual: <strong>{{ role }}</strong></p>
+
+<!-- Panel Operativo -->
+<div *ngIf="isOperativo() || isAdmin()" class="panel operativo">
+  <h3>Operaciones</h3>
+  <button (click)="navigate('/ordenes-recepcion')">Registrar orden de recepción</button>
+  <button (click)="navigate('/almacenamiento')">Almacenar productos</button>
+  <button (click)="navigate('/inventario')">Consultar inventario</button>
+  <button (click)="navigate('/movimiento-producto')">Registrar movimiento de producto</button>
+  <button (click)="navigate('/ordenes-despacho')">Confirmar orden de despacho</button>
+</div>
+
+<!-- Panel Administrador -->
+<div *ngIf="isAdmin()" class="panel admin">
+  <h3>Administración</h3>
+  <button (click)="navigate('/usuarios')">Gestionar usuarios</button>
+  <button (click)="navigate('/zonas-ubicaciones')">Configurar zonas y ubicaciones</button>
+</div>
+
+<button class="logout" (click)="logout()">Cerrar sesión</button>
