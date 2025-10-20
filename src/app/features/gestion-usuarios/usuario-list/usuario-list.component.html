@@ -1,0 +1,64 @@
+<div class="user-management-container">
+  <h2>Gestión de Usuarios</h2>
+
+  <button class="btn new-btn" [routerLink]="['/dashboard/usuarios/nuevo']">+ Nuevo Usuario</button>
+
+  <div class="search-row">
+    <div class="search-group">
+      <input
+        type="number"
+        placeholder="ID de usuario"
+        [(ngModel)]="idBuscar"
+        (keyup.enter)="buscarPorId()"
+      />
+      <button (click)="buscarPorId()">Buscar ID</button>
+    </div>
+
+    <div class="search-group">
+      <input
+        type="number"
+        placeholder="ID de rol"
+        [(ngModel)]="rolBuscar"
+        (keyup.enter)="buscarPorRol()"
+      />
+      <button (click)="buscarPorRol()">Buscar Rol</button>
+    </div>
+
+    <div class="search-group" *ngIf="filtrado">
+      <button class="btn secondary-btn" (click)="refresh()">Limpiar</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <table *ngIf="usuarios.length" class="user-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let u of usuarios">
+        <td>{{ u.idUsuario }}</td>
+        <td>{{ u.nombre }}</td>
+        <td>{{ u.apellido }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.idRol }}</td>
+        <td class="actions">
+          <button [routerLink]="['/dashboard/usuarios/editar', u.idUsuario]" class="btn edit-btn">Editar</button>
+          <button (click)="eliminar(u.idUsuario!)" class="btn delete-btn">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!usuarios.length && !loading">Sin usuarios para mostrar.</p>
+
+  <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
+</div>

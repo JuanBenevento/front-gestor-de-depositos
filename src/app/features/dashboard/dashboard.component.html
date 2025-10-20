@@ -1,21 +1,47 @@
-<h2>Bienvenido al Gestor de Depósitos</h2>
-<p>Rol actual: <strong>{{ role }}</strong></p>
+<nav class="navbar">
+  <div class="navbar-container">
+    <div class="brand">Gestor de Depósitos</div>
+    <button class="menu-toggle" (click)="toggleMenu()">☰</button>
 
-<!-- Panel Operativo -->
-<div *ngIf="isOperativo() || isAdmin()" class="panel operativo">
-  <h3>Operaciones</h3>
-  <button (click)="navigate('/ordenes-recepcion')">Registrar orden de recepción</button>
-  <button (click)="navigate('/almacenamiento')">Almacenar productos</button>
-  <button (click)="navigate('/inventario')">Consultar inventario</button>
-  <button (click)="navigate('/movimiento-producto')">Registrar movimiento de producto</button>
-  <button (click)="navigate('/ordenes-despacho')">Confirmar orden de despacho</button>
-</div>
+    <ul [class.open]="menuOpen" class="nav-links">
 
-<!-- Panel Administrador -->
-<div *ngIf="isAdmin()" class="panel admin">
-  <h3>Administración</h3>
-  <button (click)="navigate('/usuarios')">Gestionar usuarios</button>
-  <button (click)="navigate('/zonas-ubicaciones')">Configurar zonas y ubicaciones</button>
-</div>
+      <!-- Inicio: siempre visible -->
+      <li><a routerLink="/dashboard">Inicio</a></li>
 
-<button class="logout" (click)="logout()">Cerrar sesión</button>
+      <!-- ADMIN -->
+      <li *ngIf="isAdmin()"><a routerLink="/dashboard/usuarios">Gestión Usuarios</a></li>
+      <li *ngIf="isAdmin()"><a routerLink="/zonas-ubicaciones">Gestión Zonas / Ubicaciones</a></li>
+
+      <!-- Órdenes: ambos roles -->
+      <li class="dropdown" *ngIf="isOperativo() || isAdmin()">
+        <a href="#" (click)="toggleDropdown($event)">Órdenes ▾</a>
+        <ul class="dropdown-menu">
+          <li><a routerLink="/ordenes-recepcion">Recepción</a></li>
+          <li><a routerLink="/ordenes-despacho">Despacho</a></li>
+        </ul>
+      </li>
+
+      <!-- Detalles: ambos roles -->
+      <li class="dropdown" *ngIf="isOperativo() || isAdmin()">
+        <a href="#" (click)="toggleDropdown($event)">Detalles ▾</a>
+        <ul class="dropdown-menu">
+          <li><a routerLink="/detalle-recepcion">Recepción</a></li>
+          <li><a routerLink="/detalles-despacho">Despacho</a></li>
+        </ul>
+      </li>
+
+      <!-- Productos / Movimiento: solo operativo -->
+      <li *ngIf="isOperativo()"><a routerLink="/almacenamiento">Productos</a></li>
+      <li *ngIf="isOperativo()"><a routerLink="/movimiento-producto">Movimiento Inventario</a></li>
+
+      <!-- Logout -->
+      <li class="logout-li">
+        <span class="role-text">Bienvenido, {{ role }}</span>
+        <button class="logout-btn" (click)="logout()">Cerrar Sesión</button>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Área donde se cargan los hijos (usuarios, forms, etc.) -->
+<router-outlet></router-outlet>
