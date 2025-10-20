@@ -1,17 +1,20 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule, RouterOutlet, FormsModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent {
   role = '';
+  menuOpen = false; // para mobile
+  dropdownsOpen: { [key: string]: boolean } = {}; // control dropdowns
 
   constructor(private authService: AuthService, private router: Router) {
     this.role = this.authService.getRole() || '';
@@ -32,5 +35,16 @@ export class DashboardComponent {
 
   navigate(path: string): void {
     this.router.navigate([path]);
+    this.menuOpen = false; // cierra menú mobile al navegar
+  }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  toggleDropdown(event: Event): void {
+    event.preventDefault();
+    const target = (event.target as HTMLElement).innerText;
+    this.dropdownsOpen[target] = !this.dropdownsOpen[target];
   }
 }

@@ -32,3 +32,19 @@ button:hover {
   color: red;
   font-size: 0.9rem;
 }
+
+.register-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #28a745; /* verde */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.register-btn:hover {
+  background-color: #218838;
+}

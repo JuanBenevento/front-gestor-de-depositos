@@ -7,7 +7,7 @@ export const RoleGuard = (requiredRole: string): CanActivateFn => {
     const authService = inject(AuthService);
     const router = inject(Router);
 
-    if (authService.isAuthenticated() && authService.hasRole(requiredRole)) {
+    if (authService.isAuthenticated() && authService.hasRole(requiredRole.toUpperCase())) {
       return true;
     }
 
