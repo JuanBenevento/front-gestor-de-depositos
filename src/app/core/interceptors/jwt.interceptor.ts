@@ -1,23 +1,15 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
-  HttpErrorResponse
-} from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { catchError, throwError } from 'rxjs';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService, private router: Router) {}
+export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
   const token = localStorage.getItem('token');
-  
+
   const authReq = token
     ? req.clone({
         setHeaders: {
@@ -27,20 +19,16 @@ export class AuthInterceptor implements HttpInterceptor {
       })
     : req;
 
-    console.log('➡️ Request final:');
-    console.log('URL:', req.url);
-    console.log('Headers:', authReq.headers);
-    console.log('Body:', req.body);
+  console.log('🛡️ Interceptor activo → URL:', authReq.url);
 
-  return next.handle(authReq).pipe(
-    catchError((error: HttpErrorResponse) => {
+  return next(authReq).pipe(
+    catchError(error => {
       if (error.status === 401 || error.status === 403) {
-        this.authService.logout();
-        this.router.navigate(['/login']);
+        console.warn('⚠️ Token inválido o acceso denegado');
+        authService.logout();
+        router.navigate(['/login']);
       }
       return throwError(() => error);
     })
   );
-}
-
-}
+};
