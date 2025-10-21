@@ -12,6 +12,6 @@ export class App {
   protected title = 'GestorDeDepositos';
 
   constructor() {
-  console.log('✅ AppComponent cargado correctamente');
+  console.log('AppComponent cargado correctamente');
 }
 }

@@ -19,12 +19,12 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
       })
     : req;
 
-  console.log('🛡️ Interceptor activo → URL:', authReq.url);
+  console.log('Interceptor activo -> URL:', authReq.url);
 
   return next(authReq).pipe(
     catchError(error => {
       if (error.status === 401 || error.status === 403) {
-        console.warn('⚠️ Token inválido o acceso denegado');
+        console.warn('Token invalido o acceso denegado');
         authService.logout();
         router.navigate(['/login']);
       }
