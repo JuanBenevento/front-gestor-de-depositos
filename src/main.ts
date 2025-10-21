@@ -3,5 +3,5 @@ import { appConfig } from './app/app.config';
 import { App } from './app/app';
 
 bootstrapApplication(App, appConfig)
-  .then(() => console.log('🚀 Aplicación Angular inicializada'))
+  .then(() => console.log('Aplicación Angular inicializada'))
   .catch((err) => console.error('Error al iniciar la app:', err));
