@@ -12,7 +12,7 @@
       <li *ngIf="isAdmin()"><a routerLink="/dashboard/usuarios">Gestión Usuarios</a></li>
       <li *ngIf="isAdmin()"><a routerLink="/zonas-ubicaciones">Gestión Zonas / Ubicaciones</a></li>
 
-      <!-- Órdenes: ambos roles -->
+      <!-- ordenes: ambos roles -->
       <li class="dropdown" *ngIf="isOperativo() || isAdmin()">
         <a href="#" (click)="toggleDropdown($event)">Órdenes ▾</a>
         <ul class="dropdown-menu">
@@ -43,5 +43,5 @@
   </div>
 </nav>
 
-<!-- Área donde se cargan los hijos (usuarios, forms, etc.) -->
+<!-- area donde se cargan los hijos (usuarios, forms, etc.) -->
 <router-outlet></router-outlet>
