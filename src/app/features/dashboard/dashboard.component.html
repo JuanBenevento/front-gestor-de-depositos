@@ -1,47 +1,39 @@
 <nav class="navbar">
   <div class="navbar-container">
-    <div class="brand">Gestor de Depósitos</div>
+    <div class="brand">Gestor de Depositos</div>
     <button class="menu-toggle" (click)="toggleMenu()">☰</button>
 
     <ul [class.open]="menuOpen" class="nav-links">
 
-      <!-- Inicio: siempre visible -->
       <li><a routerLink="/dashboard">Inicio</a></li>
 
-      <!-- ADMIN -->
-      <li *ngIf="isAdmin()"><a routerLink="/dashboard/usuarios">Gestión Usuarios</a></li>
-      <li *ngIf="isAdmin()"><a routerLink="/zonas-ubicaciones">Gestión Zonas / Ubicaciones</a></li>
+      <li *ngIf="isAdmin()"><a routerLink="/dashboard/usuarios">Gestion Usuarios</a></li>
+      <li *ngIf="isAdmin()"><a routerLink="/zonas-ubicaciones">Gestion Zonas / Ubicaciones</a></li>
 
-      <!-- ordenes: ambos roles -->
       <li class="dropdown" *ngIf="isOperativo() || isAdmin()">
-        <a href="#" (click)="toggleDropdown($event)">Órdenes ▾</a>
+        <a href="#" (click)="toggleDropdown($event)">Ordenes ▾</a>
         <ul class="dropdown-menu">
-          <li><a routerLink="/ordenes-recepcion">Recepción</a></li>
+          <li><a routerLink="/ordenes-recepcion">Recepcion</a></li>
           <li><a routerLink="/ordenes-despacho">Despacho</a></li>
         </ul>
       </li>
 
-      <!-- Detalles: ambos roles -->
       <li class="dropdown" *ngIf="isOperativo() || isAdmin()">
         <a href="#" (click)="toggleDropdown($event)">Detalles ▾</a>
         <ul class="dropdown-menu">
-          <li><a routerLink="/detalle-recepcion">Recepción</a></li>
+          <li><a routerLink="/detalle-recepcion">Recepcion</a></li>
           <li><a routerLink="/detalles-despacho">Despacho</a></li>
         </ul>
       </li>
+      <li><a routerLink="/almacenamiento">Productos</a></li>
+      <li><a routerLink="/movimiento-producto">Movimiento Inventario</a></li>
 
-      <!-- Productos / Movimiento: solo operativo -->
-      <li *ngIf="isOperativo()"><a routerLink="/almacenamiento">Productos</a></li>
-      <li *ngIf="isOperativo()"><a routerLink="/movimiento-producto">Movimiento Inventario</a></li>
-
-      <!-- Logout -->
       <li class="logout-li">
         <span class="role-text">Bienvenido, {{ role }}</span>
-        <button class="logout-btn" (click)="logout()">Cerrar Sesión</button>
+        <button class="logout-btn" (click)="logout()">Cerrar Sesion</button>
       </li>
     </ul>
   </div>
 </nav>
 
-<!-- area donde se cargan los hijos (usuarios, forms, etc.) -->
 <router-outlet></router-outlet>
