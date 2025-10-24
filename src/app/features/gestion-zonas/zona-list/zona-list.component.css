@@ -15,7 +15,7 @@ h2 {
   color: #333;
 }
 
-/* --- Botones --- */
+/* BOTONES */
 .btn {
   padding: 8px 12px;
   border: none;
@@ -29,16 +29,19 @@ h2 {
   transform: translateY(-1px);
 }
 
+/* Botón "Nuevo Zona" */
 .new-btn {
   background-color: #28a745;
   color: white;
   margin-bottom: 20px;
+  display: block; /* ocupa toda la línea disponible */
 }
 
 .new-btn:hover {
   background-color: #218838;
 }
 
+/* Botones secundarios (Volver, Limpiar) */
 .secondary-btn {
   background-color: #6c757d;
   color: white;
@@ -48,17 +51,19 @@ h2 {
   background-color: #5a6268;
 }
 
+/* Botón pequeño (Volver) */
 .small-btn {
   padding: 6px 10px;
   font-size: 13px;
 }
 
-/* --- Buscador --- */
+/* FILA DE BUSQUEDA */
 .search-row {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
+  align-items: center;
 }
 
 .search-group {
@@ -75,20 +80,18 @@ h2 {
 
 .search-group button {
   padding: 6px 10px;
-  border-radius: 5px;
+  background-color: #007bff;
+  border-radius: 3px;
   border: none;
   color: white;
-  background-color: #007bff;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
 }
 
-.search-group button:hover:not(:disabled) {
+.search-group button:hover {
   background-color: #0056b3;
   transform: translateY(-1px);
 }
 
-/* --- Mensajes --- */
+/* ESTADOS */
 .loading {
   text-align: center;
   font-weight: bold;
@@ -101,7 +104,7 @@ h2 {
   margin: 10px 0;
 }
 
-/* --- Tabla --- */
+/* TABLA */
 .user-table {
   width: 100%;
   border-collapse: collapse;
@@ -113,7 +116,6 @@ h2 {
   border: 1px solid #ddd;
   padding: 8px 10px;
   text-align: left;
-  font-size: 14px;
 }
 
 .user-table th {
@@ -129,10 +131,9 @@ h2 {
   background-color: #e6f0ff;
 }
 
-/* --- Acciones --- */
+/* ACCIONES */
 .actions {
   display: flex;
-  flex-wrap: wrap;
   gap: 5px;
 }
 
@@ -154,94 +155,22 @@ h2 {
   background-color: #a71d2a;
 }
 
-/* --- RESPONSIVE DESIGN ---*/
-
-/* --- Tablets (pantallas medianas) --- */
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .user-management-container {
-    margin: 30px 15px;
     padding: 20px;
   }
 
-  h2 {
-    font-size: 1.3rem;
-  }
-
-  .user-table th,
-  .user-table td {
-    font-size: 13px;
-    padding: 6px 8px;
-  }
-
-  .btn,
-  .search-group button {
-    font-size: 13px;
-    padding: 7px 10px;
-  }
-}
-
-/* --- Celulares (pantallas pequeñas) --- */
-@media (max-width: 480px) {
-  .user-management-container {
-    margin: 20px 10px;
-    padding: 15px;
-    border-radius: 8px;
-    overflow-x: hidden; /* evita que se desborde el contenedor */
-  }
-
-  h2 {
-    font-size: 1.1rem;
-  }
-
-  /* El buscador se apila verticalmente */
   .search-row {
     flex-direction: column;
+    align-items: stretch;
   }
 
-  .search-group {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .search-group input,
-  .search-group button {
+  .search-group input {
     width: 100%;
   }
 
-  /* Tabla responsiva dentro de su contenedor */
-  .user-table {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box;
-  }
-
-  .user-table table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .user-table th,
-  .user-table td {
-    font-size: 12px;
-    padding: 6px;
-    white-space: nowrap;
-  }
-
-  /* Botones de acción apilados */
   .actions {
     flex-direction: column;
-  }
-
-  .actions .btn {
-    width: 100%;
-  }
-
-  .new-btn {
-    width: 100%;
-    font-size: 13px;
   }
 }

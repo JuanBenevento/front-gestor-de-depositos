@@ -5,23 +5,26 @@ import { UsuariosListComponent } from './features/gestion-usuarios/usuario-list/
 import { UsuarioFormComponent } from './features/gestion-usuarios/usuario-form/usuario-form.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { RoleGuard } from './core/guards/role.guard';
+import { ZonaListComponent } from './features/gestion-zonas/zona-list/zona-list.component';
+import { ZonaFormComponent } from './features/gestion-zonas/zona-form/zona-form.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
   { path: 'login', component: LoginComponent },
 
-  // Dashboard accesible para ADMIN y OPERATIVO
   { 
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [AuthGuard],
     data: { roles: ['ADMIN', 'OPERATIVO'] },
     children: [
-      // Gestión de usuarios solo para ADMIN
       { path: 'usuarios', component: UsuariosListComponent, canActivate: [RoleGuard('ADMIN')] },
       { path: 'usuarios/nuevo', component: UsuarioFormComponent, canActivate: [RoleGuard('ADMIN')] },
-      { path: 'usuarios/editar/:id', component: UsuarioFormComponent, canActivate: [RoleGuard('ADMIN')] }
+      { path: 'usuarios/editar/:id', component: UsuarioFormComponent, canActivate: [RoleGuard('ADMIN')] },
+      { path: 'zonas', component: ZonaListComponent, canActivate: [RoleGuard('ADMIN')] },
+      { path: 'zonas/nuevo', component: ZonaFormComponent, canActivate: [RoleGuard('ADMIN')] },
+      { path: 'zonas/editar/:id', component: ZonaFormComponent, canActivate: [RoleGuard('ADMIN')] }
     ]
   },
 

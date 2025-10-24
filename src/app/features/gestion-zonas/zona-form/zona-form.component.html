@@ -1,0 +1,25 @@
+<div class="form-container">
+  <h2>{{ editMode ? 'Editar' : 'Nuevo' }} Zona</h2>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+    <div class="form-group">
+      <label>Nombre de zona</label>
+      <input type="text" formControlName="nombre">
+      @if (form.controls['nombre'].invalid && form.controls['nombre'].touched) {
+        <div class="error">Requerido</div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>Descripcion</label>
+      <input type="text" formControlName="descripcion">
+    </div>
+
+    <div class="button-group">
+      <button type="submit" [disabled]="form.invalid">Guardar</button>
+      <button type="button" (click)="cancelar()" class="cancel-btn">Cancelar</button>
+    </div>
+
+  </form>
+</div>

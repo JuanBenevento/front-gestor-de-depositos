@@ -3,36 +3,33 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';  
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { UsuarioService } from '../../../core/services/usuario.service';
-import { Usuario } from '../../../core/models/usuario/usuario.model';
+import { ZonaService } from '../../../core/services/zona.service';
+import { Zona } from '../../../core/models/zona/zona.model';
 
 @Component({
   selector: 'app-usuario-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule],
-  templateUrl: './usuario-form.component.html',
-  styleUrls: ['./usuario-form.component.css']
+  templateUrl: './zona-form.component.html',
+  styleUrls: ['./zona-form.component.css']
 })
-export class UsuarioFormComponent implements OnInit {
+export class ZonaFormComponent implements OnInit {
 
   form!: FormGroup;
   editMode = false;
 
   constructor(
     private fb: FormBuilder,
-    private service: UsuarioService,
+    private service: ZonaService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.form = this.fb.nonNullable.group({
-      idUsuario: [0],
+      idZona: [0],
       nombre: ['', Validators.required],
-      contrasenia: [''],
-      apellido: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      idRol: [1, Validators.required]
+      descripcion: ['', Validators.required]
     });
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -45,11 +42,11 @@ export class UsuarioFormComponent implements OnInit {
   }
 
   guardar(): void {
-    const user: Usuario = this.form.getRawValue();
+    const zona: Zona = this.form.getRawValue();
 
     const obs = this.editMode
-      ? this.service.actualizar(user)
-      : this.service.crear(user);
+      ? this.service.actualizar(zona)
+      : this.service.crear(zona);
 
     obs.subscribe({
       next: () => this.router.navigate(['../'], { relativeTo: this.route }),
@@ -58,7 +55,7 @@ export class UsuarioFormComponent implements OnInit {
   }
 
   cancelar(): void {
-    this.router.navigate(['/../dashboard/usuarios']);  
+    this.router.navigate(['/../dashboard/zonas']);  
   }
 }
 
