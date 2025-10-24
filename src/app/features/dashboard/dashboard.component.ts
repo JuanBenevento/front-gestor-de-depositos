@@ -13,8 +13,8 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class DashboardComponent {
   role = '';
-  menuOpen = false; // para mobile
-  dropdownsOpen: { [key: string]: boolean } = {}; // control dropdowns
+  menuOpen = false;
+  dropdownsOpen: { [key: string]: boolean } = {}; 
 
   constructor(private authService: AuthService, private router: Router) {
     this.role = this.authService.getRole() || '';
@@ -35,7 +35,7 @@ export class DashboardComponent {
 
   navigate(path: string): void {
     this.router.navigate([path]);
-    this.menuOpen = false; // cierra menú mobile al navegar
+    this.menuOpen = false; 
   }
 
   toggleMenu(): void {

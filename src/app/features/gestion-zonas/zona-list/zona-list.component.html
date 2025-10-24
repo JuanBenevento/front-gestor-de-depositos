@@ -1,0 +1,50 @@
+<div class="user-management-container">
+  <h2>Gestion de Zonas</h2>
+
+  <button class="btn new-btn" [routerLink]="['/dashboard/zonas/nuevo']">+ Nuevo Zona</button>
+
+  <div class="search-row">
+    <div class="search-group">
+      <input
+        type="number"
+        placeholder="ID de la zona"
+        [(ngModel)]="idBuscar"
+        (keyup.enter)="buscarPorId()"
+      />
+      <button (click)="buscarPorId()">Buscar ID</button>
+    </div>
+
+    <div class="search-group" *ngIf="filtrado">
+      <button class="btn secondary-btn" (click)="refresh()">Limpiar</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <table *ngIf="zonas.length" class="user-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Descripcion</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let z of zonas">
+        <td>{{ z.idZona }}</td>
+        <td>{{ z.nombre }}</td>
+        <td>{{ z.descripcion }}</td>
+        <td class="actions">
+          <button [routerLink]="['/dashboard/zonas/editar', z.idZona]" class="btn edit-btn">Editar</button>
+          <button (click)="eliminar(z.idZona!)" class="btn delete-btn">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!zonas.length && !loading">Sin zonas para mostrar.</p>
+
+  <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
+</div>

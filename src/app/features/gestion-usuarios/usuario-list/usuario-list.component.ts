@@ -33,11 +33,23 @@ export class UsuariosListComponent implements OnInit {
 
   refresh(): void {
     this.loading = true;
+    this.error = '';
+    this.idBuscar = '';
+    this.rolBuscar = '';
+    this.filtrado = false; 
+
     this.usuarioService.listar().subscribe({
-      next: data => { this.usuarios = data; this.loading = false; },
-      error: () => { this.error = 'Error al cargar usuarios.'; this.loading = false; }
+      next: data => {
+        this.usuarios = data;
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'Error al cargar usuarios.';
+        this.loading = false;
+      }
     });
   }
+
 
   eliminar(id: number): void {
     if (!confirm('¿Eliminar usuario?')) { return; }

@@ -13,32 +13,26 @@ export class UsuarioService {
   constructor(private http: HttpClient) {}
 
   listar(): Observable<Usuario[]> {
-    // Llama a GET /buscarTodosLosUsuarios
     return this.http.get<Usuario[]>(`${this.baseUrl}/buscarTodosLosUsuarios`);
   }
 
   buscarPorId(id: number): Observable<Usuario> {
-    // Llama a GET /buscarUsuario?idUsuario=...
     return this.http.get<Usuario>(`${this.baseUrl}/buscarUsuario?idUsuario=${id}`);
   }
 
   crear(usuario: Usuario): Observable<Usuario> {
-    // POST /crearUsuario
     return this.http.post<Usuario>(`${this.baseUrl}/crearUsuario`, usuario);
   }
 
   actualizar(usuario: Usuario): Observable<Usuario> {
-    // PUT /modificarUsuario
     return this.http.put<Usuario>(`${this.baseUrl}/modificarUsuario`, usuario);
   }
 
   eliminar(id: number): Observable<void> {
-    // DELETE /eliminarUsuario?idUsuario=...
     return this.http.delete<void>(`${this.baseUrl}/eliminarUsuario?idUsuario=${id}`);
   }
 
   buscarPorRol(idRol: number): Observable<Usuario[]> {
-    // GET /buscarPorRol?idRol=...
     return this.http.get<Usuario[]>(`${this.baseUrl}/buscarPorRol?idRol=${idRol}`);
   }
 }
