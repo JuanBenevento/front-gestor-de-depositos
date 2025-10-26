@@ -1,0 +1,37 @@
+<div class="form-container">
+  <h2>{{ editMode ? 'Editar' : 'Nueva' }} Ubicacion</h2>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+    <div class="form-group">
+      <label>Codigo</label>
+      <input type="text" formControlName="codigo">
+      <div *ngIf="form.controls['codigo'].invalid && form.controls['codigo'].touched" class="error">Requerido</div>
+    </div>
+
+    <div class="form-group">
+      <label>Zona</label>
+      <select formControlName="zona" [disabled]="loadingZonas">
+        <option [ngValue]="null">-- Seleccione zona --</option>
+        <option *ngFor="let z of zonas" [ngValue]="z">{{ z.idZona }} - {{ z.nombre }}</option>
+      </select>
+      <div *ngIf="form.controls['zona'].invalid && form.controls['zona'].touched" class="error">Requerido</div>
+    </div>
+
+    <div class="form-group">
+      <label>Capacidad maxima</label>
+      <input type="number" formControlName="capacidadMaxima" min="0">
+      <div *ngIf="form.controls['capacidadMaxima'].invalid && form.controls['capacidadMaxima'].touched" class="error">Valor inválido</div>
+    </div>
+
+    <div class="form-group">
+      <label>Ocupado actual</label>
+      <input type="number" formControlName="ocupadoActual" min="0">
+      <div *ngIf="form.controls['ocupadoActual'].invalid && form.controls['ocupadoActual'].touched" class="error">Valor inválido</div>
+    </div>
+
+    <div class="button-group">
+      <button type="submit" [disabled]="form.invalid">Guardar</button>
+      <button type="button" (click)="cancelar()" class="cancel-btn">Cancelar</button>
+    </div>
+  </form>
+</div>
