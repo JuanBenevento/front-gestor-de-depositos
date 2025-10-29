@@ -1,0 +1,74 @@
+<div class="user-management-container">
+  <h2>Gestion de Clientes</h2>
+
+  <button class="btn new-btn" [routerLink]="['/dashboard/clientes/nuevo']">
+    + Nuevo Cliente
+  </button>
+
+  <div class="search-row">
+    <div class="search-group">
+      <input
+        type="number"
+        placeholder="ID de cliente"
+        [(ngModel)]="idBuscar"
+        (keyup.enter)="buscarPorId()"
+      />
+      <button (click)="buscarPorId()">Buscar ID</button>
+    </div>
+
+    @if (filtrado) {
+      <div class="search-group">
+        <button class="btn secondary-btn" (click)="refresh()">Limpiar</button>
+      </div>
+    }
+  </div>
+
+  @if (loading) {
+    <div class="loading">Cargando...</div>
+  }
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  @if (clientes.length) {
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Telefono</th>
+          <th>Email</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of clientes; track c.idCliente) {
+          <tr>
+            <td>{{ c.idCliente }}</td>
+            <td>{{ c.nombre }}</td>
+            <td>{{ c.telefono }}</td>
+            <td>{{ c.email }}</td>
+            <td class="actions">
+              <button
+                [routerLink]="['/dashboard/clientes/editar', c.idCliente]"
+                class="btn edit-btn"
+              >
+                Editar
+              </button>
+              <button (click)="eliminar(c.idCliente!)" class="btn delete-btn">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  @if (!clientes.length && !loading) {
+    <p>Sin clientes para mostrar.</p>
+  }
+
+  <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
+</div>

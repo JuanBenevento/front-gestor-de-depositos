@@ -11,6 +11,7 @@
         <li><a routerLink="/dashboard/usuarios">Usuarios</a></li>
         <li><a routerLink="/dashboard/zonas">Zonas</a></li>
         <li><a routerLink="/dashboard/ubicaciones">Ubicaciones</a></li>
+        <li><a routerLink="/dashboard/clientes">Clientes</a></li>
       }
 
       @if (isOperativo() || isAdmin()) {
@@ -19,16 +20,6 @@
           <ul class="dropdown-menu">
             <li><a routerLink="/ordenes-recepcion">Recepcion</a></li>
             <li><a routerLink="/ordenes-despacho">Despacho</a></li>
-          </ul>
-        </li>
-      }
-
-      @if (isOperativo() || isAdmin()) {
-        <li class="dropdown">
-          <a href="#" (click)="toggleDropdown($event)">Detalles ▾</a>
-          <ul class="dropdown-menu">
-            <li><a routerLink="/detalle-recepcion">Recepcion</a></li>
-            <li><a routerLink="/detalles-despacho">Despacho</a></li>
           </ul>
         </li>
       }

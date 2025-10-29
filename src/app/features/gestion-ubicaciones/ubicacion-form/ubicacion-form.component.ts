@@ -120,7 +120,7 @@ export class UbicacionFormComponent implements OnInit {
       },
       error: err => {
         console.error('Error al validar duplicados', err);
-        alert('No se pudo validar si la ubicación ya existe. Intente nuevamente.');
+        alert('No se pudo validar si la ubicacion ya existe. Intente nuevamente.');
       }
     });
   }

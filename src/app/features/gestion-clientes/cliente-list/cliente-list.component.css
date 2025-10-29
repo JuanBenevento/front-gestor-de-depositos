@@ -1,0 +1,247 @@
+.user-management-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 25px 30px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fefefe;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* --- Botones --- */
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.new-btn {
+  background-color: #28a745;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.new-btn:hover {
+  background-color: #218838;
+}
+
+.secondary-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.secondary-btn:hover {
+  background-color: #5a6268;
+}
+
+.small-btn {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+/* --- Buscador --- */
+.search-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-group {
+  display: flex;
+  gap: 5px;
+}
+
+.search-group input {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.search-group button {
+  padding: 6px 10px;
+  border-radius: 5px;
+  border: none;
+  color: white;
+  background-color: #007bff;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.search-group button:hover:not(:disabled) {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+/* --- Mensajes --- */
+.loading {
+  text-align: center;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  margin: 10px 0;
+}
+
+/* --- Tabla --- */
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.user-table th,
+.user-table td {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.user-table th {
+  background-color: #333;
+  color: white;
+}
+
+.user-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.user-table tr:hover {
+  background-color: #e6f0ff;
+}
+
+/* --- Acciones --- */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.edit-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #0056b3;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #a71d2a;
+}
+
+/* --- RESPONSIVE DESIGN ---*/
+
+/* --- Tablets (pantallas medianas) --- */
+@media (max-width: 768px) {
+  .user-management-container {
+    margin: 30px 15px;
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  .user-table th,
+  .user-table td {
+    font-size: 13px;
+    padding: 6px 8px;
+  }
+
+  .btn,
+  .search-group button {
+    font-size: 13px;
+    padding: 7px 10px;
+  }
+}
+
+/* --- Celulares (pantallas pequeñas) --- */
+@media (max-width: 480px) {
+  .user-management-container {
+    margin: 20px 10px;
+    padding: 15px;
+    border-radius: 8px;
+    overflow-x: hidden; /* evita que se desborde el contenedor */
+  }
+
+  h2 {
+    font-size: 1.1rem;
+  }
+
+  /* El buscador se apila verticalmente */
+  .search-row {
+    flex-direction: column;
+  }
+
+  .search-group {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .search-group input,
+  .search-group button {
+    width: 100%;
+  }
+
+  /* Tabla responsiva dentro de su contenedor */
+  .user-table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+
+  .user-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .user-table th,
+  .user-table td {
+    font-size: 12px;
+    padding: 6px;
+    white-space: nowrap;
+  }
+
+  /* Botones de acción apilados */
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions .btn {
+    width: 100%;
+  }
+
+  .new-btn {
+    width: 100%;
+    font-size: 13px;
+  }
+}

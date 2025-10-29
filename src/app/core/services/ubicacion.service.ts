@@ -25,7 +25,6 @@ export class UbicacionService {
   }
 
   actualizar(id: number, ubicacion: Ubicacion): Observable<Ubicacion> {
-    // El backend espera PUT /actualizar?id=...
     return this.http.put<Ubicacion>(`${this.baseUrl}/actualizar?id=${id}`, ubicacion);
   }
 
