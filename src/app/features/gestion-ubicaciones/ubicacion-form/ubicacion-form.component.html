@@ -4,29 +4,41 @@
   <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
     <div class="form-group">
       <label>Codigo</label>
-      <input type="text" formControlName="codigo">
-      <div *ngIf="form.controls['codigo'].invalid && form.controls['codigo'].touched" class="error">Requerido</div>
+      <input type="text" formControlName="codigo" />
+      @if (form.controls['codigo'].invalid && form.controls['codigo'].touched) {
+        <div class="error">Requerido</div>
+      }
     </div>
 
     <div class="form-group">
       <label>Zona</label>
       <select formControlName="zona" [disabled]="loadingZonas">
         <option [ngValue]="null">-- Seleccione zona --</option>
-        <option *ngFor="let z of zonas" [ngValue]="z">{{ z.idZona }} - {{ z.nombre }}</option>
+        @for (z of zonas; track z.idZona) {
+          <option [ngValue]="z">{{ z.idZona }} - {{ z.nombre }}</option>
+        }
       </select>
-      <div *ngIf="form.controls['zona'].invalid && form.controls['zona'].touched" class="error">Requerido</div>
+      @if (form.controls['zona'].invalid && form.controls['zona'].touched) {
+        <div class="error">Requerido</div>
+      }
     </div>
 
     <div class="form-group">
       <label>Capacidad maxima</label>
-      <input type="number" formControlName="capacidadMaxima" min="0">
-      <div *ngIf="form.controls['capacidadMaxima'].invalid && form.controls['capacidadMaxima'].touched" class="error">Valor inválido</div>
+      <input type="number" formControlName="capacidadMaxima" min="0" />
+      @if (form.controls['capacidadMaxima'].invalid && form.controls['capacidadMaxima'].touched) {
+        <div class="error">Valor invalido</div>
+      }
     </div>
 
     <div class="form-group">
       <label>Ocupado actual</label>
-      <input type="number" formControlName="ocupadoActual" min="0">
-      <div *ngIf="form.controls['ocupadoActual'].invalid && form.controls['ocupadoActual'].touched" class="error">Valor inválido</div>
+      <input type="number" formControlName="ocupadoActual" min="0" />
+      @if (form.controls['ocupadoActual'].hasError('excedeCapacidad') && form.controls['ocupadoActual'].touched) {
+        <div class="error">No puede superar la capacidad maxima</div>
+      } @else if (form.controls['ocupadoActual'].invalid && form.controls['ocupadoActual'].touched) {
+        <div class="error">Valor invalido</div>
+      }
     </div>
 
     <div class="button-group">

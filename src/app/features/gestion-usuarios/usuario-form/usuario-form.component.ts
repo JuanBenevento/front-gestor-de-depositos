@@ -45,15 +45,29 @@ export class UsuarioFormComponent implements OnInit {
   }
 
   guardar(): void {
-    const user: Usuario = this.form.getRawValue();
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const user: Usuario = this.form.value;
 
     const obs = this.editMode
       ? this.service.actualizar(user)
       : this.service.crear(user);
 
     obs.subscribe({
-      next: () => this.router.navigate(['../'], { relativeTo: this.route }),
-      error: () => alert('Error al guardar')
+      next: () => this.router.navigate(['/dashboard/usuarios']),
+      error: err => {
+        console.error('Error al guardar usuario', err);
+        if (err && err.status === 401) {
+          alert('No autorizado. La sesion puede haber expirado.');
+        } else if (err && err.status === 400) {
+          alert('Datos invalidos. Verifique el formulario.');
+        } else {
+          alert('Error al guardar');
+        }
+      }
     });
   }
 
