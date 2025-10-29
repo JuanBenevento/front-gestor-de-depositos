@@ -1,7 +1,9 @@
 <div class="user-management-container">
   <h2>Gestion de Ubicaciones</h2>
 
-  <button class="btn new-btn" [routerLink]="['/dashboard/ubicaciones/nuevo']">+ Nueva Ubicación</button>
+  <button class="btn new-btn" [routerLink]="['/dashboard/ubicaciones/nuevo']">
+    + Nueva Ubicacion
+  </button>
 
   <div class="search-row">
     <div class="search-group">
@@ -15,68 +17,81 @@
     </div>
 
     <div class="search-group">
-      <button class="btn secondary-btn" (click)="refresh()">Refrescar</button>
       <button class="btn secondary-btn" (click)="verReporte()">Ver reporte espacio</button>
-      <button class="btn secondary-btn" *ngIf="filtrado" (click)="limpiarFiltro()">Limpiar</button>
+      @if (filtrado) {
+        <button class="btn secondary-btn" (click)="limpiarFiltro()">Limpiar</button>
+      }
     </div>
   </div>
 
-  <div *ngIf="loading" class="loading">Cargando...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
+  @if (loading) {
+    <div class="loading">Cargando...</div>
+  }
 
-  <table *ngIf="ubicaciones.length && !mostrandoReporte" class="user-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Código</th>
-        <th>Zona</th>
-        <th>Capacidad</th>
-        <th>Ocupado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let u of ubicaciones">
-        <td>{{ u.idUbicacion }}</td>
-        <td>{{ u.codigo }}</td>
-        <td>{{ u.zona?.nombre || (u.zona?.idZona ? 'Zona ' + u.zona?.idZona : '-') }}</td>
-        <td>{{ u.capacidadMaxima }}</td>
-        <td>{{ u.ocupadoActual }}</td>
-        <td class="actions">
-          <button [routerLink]="['/dashboard/ubicaciones/editar', u.idUbicacion]" class="btn edit-btn">Editar</button>
-          <button (click)="eliminar(u.idUbicacion)" class="btn delete-btn">Eliminar</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
 
-  <!-- Mostrar reporte -->
-  <div *ngIf="mostrandoReporte">
-    <h3>Reporte - Espacio disponible por ubicacion</h3>
+  @if (ubicaciones.length && !mostrandoReporte) {
     <table class="user-table">
       <thead>
         <tr>
-          <th>ID</th><th>Codigo</th><th>Zona</th><th>Capacidad</th><th>Ocupado</th><th>Disponible</th>
+          <th>ID</th>
+          <th>Codigo</th>
+          <th>Zona</th>
+          <th>Capacidad</th>
+          <th>Ocupado</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let r of reporte">
-          <td>{{ r.idUbicacion }}</td>
-          <td>{{ r.codigo }}</td>
-          <td>{{ r.zonaNombre }}</td>
-          <td>{{ r.capacidadMaxima }}</td>
-          <td>{{ r.ocupadoActual }}</td>
-          <td>{{ r.espacioDisponible }}</td>
-        </tr>
+        @for (u of ubicaciones; track u.idUbicacion) {
+          <tr>
+            <td>{{ u.idUbicacion }}</td>
+            <td>{{ u.codigo }}</td>
+            <td>{{ u.zona?.nombre || (u.zona?.idZona ? 'Zona ' + u.zona?.idZona : '-') }}</td>
+            <td>{{ u.capacidadMaxima }}</td>
+            <td>{{ u.ocupadoActual }}</td>
+            <td class="actions">
+              <button [routerLink]="['/dashboard/ubicaciones/editar', u.idUbicacion]" class="btn edit-btn">Editar</button>
+              <button (click)="eliminar(u.idUbicacion)" class="btn delete-btn">Eliminar</button>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
+  }
 
-    <div style="margin-top:10px">
-      <button class="btn secondary-btn" (click)="refresh()">Volver al listado</button>
+  @if (mostrandoReporte) {
+    <div>
+      <h3>Reporte - Espacio disponible por ubicacion</h3>
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Codigo</th><th>Zona</th><th>Disponible</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of reporte; track r.idUbicacion) {
+            <tr>
+              <td>{{ r.idUbicacion }}</td>
+              <td>{{ r.codigo }}</td>
+              <td>{{ r.zonaNombre }}</td>
+              <td>{{ r.espacioDisponible }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div style="margin-top: 10px">
+        <button class="btn secondary-btn" (click)="refresh()">Volver al listado</button>
+      </div>
     </div>
-  </div>
+  }
 
-  <p *ngIf="!ubicaciones.length && !loading && !mostrandoReporte">Sin ubicaciones para mostrar.</p>
+  @if (!ubicaciones.length && !loading && !mostrandoReporte) {
+    <p>Sin ubicaciones para mostrar.</p>
+  }
 
   <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
 </div>

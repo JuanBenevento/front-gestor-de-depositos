@@ -42,15 +42,24 @@ export class ZonaFormComponent implements OnInit {
   }
 
   guardar(): void {
-    const zona: Zona = this.form.getRawValue();
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    // Usar value para evitar incluir controles deshabilitados accidentalmente
+    const zona: Zona = this.form.value;
 
     const obs = this.editMode
       ? this.service.actualizar(zona)
       : this.service.crear(zona);
 
     obs.subscribe({
-      next: () => this.router.navigate(['../'], { relativeTo: this.route }),
-      error: () => alert('Error al guardar')
+      next: () => this.router.navigate(['/dashboard/zonas']),
+      error: err => {
+        console.error('Error al guardar zona', err);
+        alert('Error al guardar');
+      }
     });
   }
 

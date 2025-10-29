@@ -25,7 +25,7 @@ h2 { text-align:center; margin-bottom:20px; color:#333; }
 .search-row { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; align-items:center; }
 .search-group { display:flex; gap:5px; }
 .search-group input { padding:6px 8px; border:1px solid #ccc; border-radius:5px; font-size:14px; }
-.search-group button { padding:6px 10px; background-color:#007bff; border-radius:3px; border:none; color:white; }
+.search-group button { background-color:#007bff; border-radius:3px; border:none; color:white; }
 .search-group button:hover { background-color:#0056b3; transform: translateY(-1px); }
 
 /* estados */

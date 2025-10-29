@@ -25,8 +25,8 @@ export class ZonaService {
   }
 
   actualizar(zona: Zona): Observable<Zona> {
-  return this.http.put<Zona>(`${this.baseUrl}/actualizarZona/${zona.idZona}`, zona);
-  } 
+    return this.http.put<Zona>(`${this.baseUrl}/actualizarZona/${zona.idZona}`, zona);
+  }
 
   eliminar(id: number): Observable<any> {
   return this.http.delete(`${this.baseUrl}/eliminarZona?id=${id}`, {
