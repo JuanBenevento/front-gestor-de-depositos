@@ -11,6 +11,8 @@ import { UbicacionListComponent } from './features/gestion-ubicaciones/ubicacion
 import { UbicacionFormComponent } from './features/gestion-ubicaciones/ubicacion-form/ubicacion-form.component';
 import { ProveedoresListComponent } from './features/gestion-proveedores/proveedores-list/proveedores-list.component';
 import { ProveedoresFormComponent } from './features/gestion-proveedores/proveedores-form/proveedores-form.component';
+import { ClienteListComponent } from './features/gestion-clientes/cliente-list/cliente-list.component';
+import { ClienteFormComponent } from './features/gestion-clientes/cliente-form/cliente-form.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -34,8 +36,10 @@ export const routes: Routes = [
       { path: 'ubicaciones/editar/:id', component: UbicacionFormComponent, canActivate: [RoleGuard('ADMIN')] },
       { path: 'proveedores', component: ProveedoresListComponent, canActivate: [RoleGuard('ADMIN')] },
       { path: 'proveedores/nuevo', component: ProveedoresFormComponent, canActivate: [RoleGuard('ADMIN')] },
-      { path: 'proveedores/editar/:id', component: ProveedoresFormComponent, canActivate: [RoleGuard('ADMIN')] }
-
+      { path: 'proveedores/editar/:id', component: ProveedoresFormComponent, canActivate: [RoleGuard('ADMIN')] },
+      { path: 'clientes', component: ClienteListComponent, canActivate: [RoleGuard('ADMIN')] },
+      { path: 'clientes/nuevo', component: ClienteFormComponent, canActivate: [RoleGuard('ADMIN')] },
+      { path: 'clientes/editar/:id', component: ClienteFormComponent, canActivate: [RoleGuard('ADMIN')] }
     ]
   },
 
