@@ -1,0 +1,36 @@
+<div class="form-container">
+  <h2>{{ editMode ? 'Editar' : 'Nuevo' }} Proveedor</h2>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+    <div class="form-group">
+      <label>Nombre de proveedor</label>
+      <input type="text" formControlName="nombre">
+      @if (form.controls['nombre'].invalid && form.controls['nombre'].touched) {
+        <div class="error">Requerido</div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>Telefono</label>
+      <input type="text" formControlName="telefono">
+      @if (form.controls['telefono'].invalid && form.controls['telefono'].touched) {
+        <div class="error">Requerido</div>
+      }
+    </div>
+    
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" formControlName="email">
+      @if (form.controls['email'].invalid && form.controls['email'].touched) {
+        <div class="error">Requerido</div>
+      }
+    </div>
+
+    <div class="button-group">
+      <button type="submit" [disabled]="form.invalid">Guardar</button>
+      <button type="button" (click)="cancelar()" class="cancel-btn">Cancelar</button>
+    </div>
+
+  </form>
+</div>
