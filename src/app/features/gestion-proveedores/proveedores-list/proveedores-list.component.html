@@ -1,0 +1,67 @@
+<div class="user-management-container">
+  <h2>Gestion de Proveedores</h2>
+
+  <button class="btn new-btn" [routerLink]="['/dashboard/proveedores/nuevo']">
+    + Nuevo Proveedor
+  </button>
+
+   <div class="search-row">
+    <div class="search-group">
+      <input
+        type="number"
+        placeholder="ID del proveedor"
+        [(ngModel)]="idBuscar"
+        (keyup.enter)="buscarPorId()" 
+      />
+      <button (click)="buscarPorId()">Buscar ID</button>
+    </div>
+
+    @if (filtrado) {
+      <div class="search-group">
+        <button class="btn secondary-btn" (click)="refresh()">Limpiar</button>
+      </div>
+    }
+  </div>
+
+  @if (loading) {
+    <div class="loading">Cargando...</div>
+  }
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  @if (proveedores.length) {
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Telefono</th>
+          <th>Email</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (proveedor of proveedores; track proveedor.id_proveedor) {
+          <tr>
+            <td>{{ proveedor.id_proveedor }}</td>
+            <td>{{ proveedor.nombre }}</td>
+            <td>{{ proveedor.telefono }}</td>
+            <td>{{ proveedor.email }}</td>
+            <td class="actions">
+              <button [routerLink]="['/dashboard/proveedores/editar', proveedor.id_proveedor]" class="btn edit-btn">Editar</button>
+              <button (click)="eliminar(proveedor.id_proveedor!)" class="btn delete-btn">Eliminar</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  @if (!proveedores.length && !loading) {
+    <p>Sin Proveedores para mostrar.</p>
+  }
+
+  <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
+</div>

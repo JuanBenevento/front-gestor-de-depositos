@@ -9,6 +9,8 @@ import { ZonaListComponent } from './features/gestion-zonas/zona-list/zona-list.
 import { ZonaFormComponent } from './features/gestion-zonas/zona-form/zona-form.component';
 import { UbicacionListComponent } from './features/gestion-ubicaciones/ubicacion-list/ubicacion-list.component';
 import { UbicacionFormComponent } from './features/gestion-ubicaciones/ubicacion-form/ubicacion-form.component';
+import { ProveedoresListComponent } from './features/gestion-proveedores/proveedores-list/proveedores-list.component';
+import { ProveedoresFormComponent } from './features/gestion-proveedores/proveedores-form/proveedores-form.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -29,7 +31,11 @@ export const routes: Routes = [
       { path: 'zonas/editar/:id', component: ZonaFormComponent, canActivate: [RoleGuard('ADMIN')] },
       { path: 'ubicaciones', component: UbicacionListComponent, canActivate: [RoleGuard('ADMIN')] },
       { path: 'ubicaciones/nuevo', component: UbicacionFormComponent, canActivate: [RoleGuard('ADMIN')] },
-      { path: 'ubicaciones/editar/:id', component: UbicacionFormComponent, canActivate: [RoleGuard('ADMIN')] }
+      { path: 'ubicaciones/editar/:id', component: UbicacionFormComponent, canActivate: [RoleGuard('ADMIN')] },
+      { path: 'proveedores', component: ProveedoresListComponent, canActivate: [RoleGuard('ADMIN')] },
+      { path: 'proveedores/nuevo', component: ProveedoresFormComponent, canActivate: [RoleGuard('ADMIN')] },
+      { path: 'proveedores/editar/:id', component: ProveedoresFormComponent, canActivate: [RoleGuard('ADMIN')] }
+
     ]
   },
 
