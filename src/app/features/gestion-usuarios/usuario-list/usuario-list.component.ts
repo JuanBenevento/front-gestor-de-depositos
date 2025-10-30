@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './usuario-list.component.html',
   styleUrls: ['./usuario-list.component.css']
 })
-export class UsuariosListComponent implements OnInit {
+export class UsuarioListComponent implements OnInit {
 
   usuarios: Usuario[] = [];
   loading = true;
