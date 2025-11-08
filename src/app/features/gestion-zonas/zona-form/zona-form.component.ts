@@ -10,8 +10,7 @@ import { Zona } from '../../../core/models/zona/zona.model';
   selector: 'app-usuario-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule],
-  templateUrl: './zona-form.component.html',
-  styleUrls: ['./zona-form.component.css']
+  templateUrl: './zona-form.component.html'
 })
 export class ZonaFormComponent implements OnInit {
 

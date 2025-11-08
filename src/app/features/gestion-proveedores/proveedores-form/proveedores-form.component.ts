@@ -10,8 +10,7 @@ import { ProveedoresService } from '../../../core/services/proveedores.service';
   selector: 'app-proveedor-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule],
-  templateUrl: './proveedores-form.component.html',
-  styleUrls: ['./proveedores-form.component.css']
+  templateUrl: './proveedores-form.component.html'
 })
 export class ProveedoresFormComponent implements OnInit {
 
@@ -51,7 +50,6 @@ export class ProveedoresFormComponent implements OnInit {
       return;
     }
 
-    // Usar value para evitar incluir controles deshabilitados accidentalmente
     const proveedor: Proveedor = this.form.value;
     proveedor.id_proveedor = this.providerId;
 

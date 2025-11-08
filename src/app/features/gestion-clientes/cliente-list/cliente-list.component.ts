@@ -10,8 +10,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-clientes-list',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './cliente-list.component.html',
-  styleUrls: ['./cliente-list.component.css']
+  templateUrl: './cliente-list.component.html'
 })
 export class ClienteListComponent implements OnInit {
 

@@ -10,8 +10,7 @@ import { Cliente } from '../../../core/models/cliente/cliente.model';
   selector: 'app-cliente-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule],
-  templateUrl: './cliente-form.component.html',
-  styleUrls: ['./cliente-form.component.css']
+  templateUrl: './cliente-form.component.html'
 })
 export class ClienteFormComponent implements OnInit {
 

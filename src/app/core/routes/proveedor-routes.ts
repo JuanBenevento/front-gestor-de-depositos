@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { ProveedoresListComponent } from './proveedores-list/proveedores-list.component';
-import { ProveedoresFormComponent } from './proveedores-form/proveedores-form.component';
-import { RoleGuard } from '../../core/guards/role.guard';
+import { ProveedoresListComponent } from '../../features/gestion-proveedores/proveedores-list/proveedores-list.component';
+import { ProveedoresFormComponent } from '../../features/gestion-proveedores/proveedores-form/proveedores-form.component';
+import { RoleGuard } from '../guards/role.guard';
 
 export const proveedorRoutes: Routes = [
   { path: 'proveedores', component: ProveedoresListComponent, canActivate: [RoleGuard('ADMIN')] },

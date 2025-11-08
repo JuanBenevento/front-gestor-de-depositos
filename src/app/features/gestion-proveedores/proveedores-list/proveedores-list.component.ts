@@ -10,8 +10,7 @@ import { Proveedor } from '../../../core/models/proveedor/proveedor.model';
   selector: 'app-proveedores-list',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './proveedores-list.component.html',
-  styleUrls: ['./proveedores-list.component.css']
+  templateUrl: './proveedores-list.component.html'
 })
 export class ProveedoresListComponent implements OnInit {
   proveedores: Proveedor[] = [];

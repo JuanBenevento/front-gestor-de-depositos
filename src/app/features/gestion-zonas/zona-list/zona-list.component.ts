@@ -11,8 +11,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-zonas-list',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './zona-list.component.html',
-  styleUrls: ['./zona-list.component.css']
+  templateUrl: './zona-list.component.html'
 })
 export class ZonaListComponent implements OnInit {
   zonas: Zona[] = [];

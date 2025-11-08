@@ -10,8 +10,7 @@ import { Usuario } from '../../../core/models/usuario/usuario.model';
   selector: 'app-usuario-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule],
-  templateUrl: './usuario-form.component.html',
-  styleUrls: ['./usuario-form.component.css']
+  templateUrl: './usuario-form.component.html'
 })
 export class UsuarioFormComponent implements OnInit {
 
