@@ -97,7 +97,7 @@ export class ProductoListComponent implements OnInit {
         this.filtrado = true;
       },
       error: () => {
-        this.error = `No se encontró producto con codigo SKU "${sku}".`;
+        this.error = `No se encontro producto con codigo SKU "${sku}".`;
         this.productos = [];
         this.loading = false;
       }
