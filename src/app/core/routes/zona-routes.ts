@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { ZonaListComponent } from './zona-list/zona-list.component';
-import { ZonaFormComponent } from './zona-form/zona-form.component';
-import { RoleGuard } from '../../core/guards/role.guard';
+import { ZonaListComponent } from '../../features/gestion-zonas/zona-list/zona-list.component';
+import { ZonaFormComponent } from '../../features/gestion-zonas/zona-form/zona-form.component';
+import { RoleGuard } from '../guards/role.guard';
 
 export const zonaRoutes: Routes = [
   { path: 'zonas', component: ZonaListComponent, canActivate: [RoleGuard('ADMIN')] },

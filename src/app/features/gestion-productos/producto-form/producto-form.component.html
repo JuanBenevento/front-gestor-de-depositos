@@ -1,0 +1,44 @@
+<div class="form-container">
+  <h2>{{ editMode ? 'Editar' : 'Nuevo' }} Producto</h2>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+    <div class="form-group">
+      <label>Nombre del producto</label>
+      <input type="text" formControlName="nombre">
+      @if (form.controls['nombre'].invalid && form.controls['nombre'].touched) {
+        <div class="error">Requerido</div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>Descripcion</label>
+      <input type="text" formControlName="descripcion">
+      @if (form.controls['descripcion'].invalid && form.controls['descripcion'].touched) {
+        <div class="error">Requerido</div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>Codigo SKU</label>
+      <input type="text" formControlName="codigoSku">
+      @if (form.controls['codigoSku'].invalid && form.controls['codigoSku'].touched) {
+        <div class="error">Requerido</div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>Unidad de medida</label>
+      <input type="text" formControlName="unidad_medida">
+      @if (form.controls['unidad_medida'].invalid && form.controls['unidad_medida'].touched) {
+        <div class="error">Requerido</div>
+      }
+    </div>
+
+    <div class="button-group">
+      <button type="submit" [disabled]="form.invalid">Guardar</button>
+      <button type="button" class="cancel-btn" (click)="cancelar()">Cancelar</button>
+    </div>
+
+  </form>
+</div>

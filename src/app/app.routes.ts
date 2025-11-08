@@ -2,11 +2,12 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './features/login/login.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { AuthGuard } from './core/guards/auth.guard';
-import { usuarioRoutes } from './features/gestion-usuarios/routes';
-import { zonaRoutes } from './features/gestion-zonas/routes';
-import { ubicacionRoutes } from './features/gestion-ubicaciones/routes';
-import { proveedorRoutes } from './features/gestion-proveedores/routes';
-import { clienteRoutes } from './features/gestion-clientes/routes';
+import { usuarioRoutes } from './core/routes/usuario-routes';
+import { zonaRoutes } from './core/routes/zona-routes';
+import { ubicacionRoutes } from './core/routes/ubicacion-routes';
+import { proveedorRoutes } from './core/routes/proveedor-routes';
+import { clienteRoutes } from './core/routes/cliente-routes';
+import { productoRoutes } from './core/routes/producto-routes';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -23,7 +24,8 @@ export const routes: Routes = [
       ...zonaRoutes,
       ...ubicacionRoutes,
       ...proveedorRoutes,
-      ...clienteRoutes
+      ...clienteRoutes,
+      ...productoRoutes
     ]
   },
 

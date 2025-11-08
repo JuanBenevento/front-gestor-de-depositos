@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { UbicacionListComponent } from './ubicacion-list/ubicacion-list.component';
-import { UbicacionFormComponent } from './ubicacion-form/ubicacion-form.component';
-import { RoleGuard } from '../../core/guards/role.guard';
+import { UbicacionListComponent } from '../../features/gestion-ubicaciones/ubicacion-list/ubicacion-list.component';
+import { UbicacionFormComponent } from '../../features/gestion-ubicaciones/ubicacion-form/ubicacion-form.component';
+import { RoleGuard } from '../guards/role.guard';
 
 export const ubicacionRoutes: Routes = [
   { path: 'ubicaciones', component: UbicacionListComponent, canActivate: [RoleGuard('ADMIN')] },

@@ -10,8 +10,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-usuarios-list',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './usuario-list.component.html',
-  styleUrls: ['./usuario-list.component.css']
+  templateUrl: './usuario-list.component.html'
 })
 export class UsuarioListComponent implements OnInit {
 

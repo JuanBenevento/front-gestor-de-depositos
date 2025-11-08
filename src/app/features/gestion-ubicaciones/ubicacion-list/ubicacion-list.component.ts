@@ -10,8 +10,7 @@ import { ReporteUbicacion } from '../../../core/models/ubicacion/reporte-ubicaci
   selector: 'app-ubicaciones-list',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './ubicacion-list.component.html',
-  styleUrls: ['./ubicacion-list.component.css']
+  templateUrl: './ubicacion-list.component.html'
 })
 export class UbicacionListComponent implements OnInit {
   ubicaciones: Ubicacion[] = [];

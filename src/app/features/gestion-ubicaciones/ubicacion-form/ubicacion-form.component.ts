@@ -12,8 +12,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-ubicacion-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule],
-  templateUrl: './ubicacion-form.component.html',
-  styleUrls: ['./ubicacion-form.component.css']
+  templateUrl: './ubicacion-form.component.html'
 })
 export class UbicacionFormComponent implements OnInit {
   form!: FormGroup;
