@@ -1,0 +1,68 @@
+<div class="user-management-container">
+  <h2>Gestion de Ordenes de Despacho</h2>
+
+  <button class="btn new-btn" [routerLink]="['/dashboard/ordenesDespacho/nuevo']">
+    + Nueva Orden de Despacho
+  </button>
+
+  <div class="search-row">
+    <div class="search-group">
+      <input
+        type="number"
+        placeholder="ID de la orden de despacho"
+        [(ngModel)]="idBuscar"
+        (keyup.enter)="buscarPorId()"
+      />
+      <button (click)="buscarPorId()">Buscar ID</button>
+    </div>
+
+    @if (filtrado) {
+      <div class="search-group">
+        <button class="btn secondary-btn" (click)="refresh()">Limpiar</button>
+      </div>
+    }
+  </div>
+
+  @if (loading) {
+    <div class="loading">Cargando...</div>
+  }
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  @if (ordenes.length) {
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Fecha de despacho</th>
+          <th>Estado de orden</th>
+          <th>Cliente</th>>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (o of ordenes; track o.idOrdenDespacho) {
+          <tr>
+            <td>{{ o.idOrdenDespacho }}</td>
+            <td>{{ o.fechaDespacho| date: 'dd/MM/yyyy' }}</td>
+            <td>{{ o.estado }}</td>
+            <td>{{ o.cliente }}</td>
+            
+            <td class="actions">
+              <button [routerLink]="['/dashboard/ordenesDespacho/editar', o.idOrdenDespacho]" class="btn edit-btn"> Editar</button>
+              <button (click)="eliminar(o.idOrdenDespacho!)" class="btn delete-btn"> Eliminar</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  @if (!ordenes.length && !loading) {
+    <p>Sin ordenes de despacho para mostrar.</p>
+  }
+
+  <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
+</div>

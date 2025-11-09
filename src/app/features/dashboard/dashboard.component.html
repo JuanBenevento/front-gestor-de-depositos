@@ -1,38 +1,39 @@
-<nav class="navbar">
-  <div class="navbar-container">
+<div class="dashboard-container">
+
+  <nav class="sidebar">
     <div class="brand">Gestor de Depositos</div>
-    <button class="menu-toggle" (click)="toggleMenu()">☰</button>
 
-    <ul [class.open]="menuOpen" class="nav-links">
-
-      <li><a routerLink="/dashboard">Inicio</a></li>
+    <ul class="nav-links">
+      <li><button class="nav-btn" (click)="navigate('/dashboard')">Inicio</button></li>
 
       @if (isAdmin()) {
-        <li><a routerLink="/dashboard/usuarios">Usuarios</a></li>
-        <li><a routerLink="/dashboard/zonas">Zonas</a></li>
-        <li><a routerLink="/dashboard/ubicaciones">Ubicaciones</a></li>
-        <li><a routerLink="/dashboard/proveedores">Proveedores</a></li>
-        <li><a routerLink="/dashboard/clientes">Clientes</a></li>
+        <li><button class="nav-btn" (click)="navigate('/dashboard/usuarios')">Usuarios</button></li>
+        <li><button class="nav-btn" (click)="navigate('/dashboard/zonas')">Zonas</button></li>
+        <li><button class="nav-btn" (click)="navigate('/dashboard/ubicaciones')">Ubicaciones</button></li>
+        <li><button class="nav-btn" (click)="navigate('/dashboard/proveedores')">Proveedores</button></li>
+        <li><button class="nav-btn" (click)="navigate('/dashboard/clientes')">Clientes</button></li>
       }
 
       @if (isOperativo() || isAdmin()) {
         <li class="dropdown">
-          <a href="#" (click)="toggleDropdown($event)">Ordenes ▾</a>
-          <ul class="dropdown-menu">
-            <li><a routerLink="/ordenes-recepcion">Recepcion</a></li>
-            <li><a routerLink="/ordenes-despacho">Despacho</a></li>
+          <button class="nav-btn" (click)="toggleDropdown($event)">Ordenes ▾</button>
+          <ul class="dropdown-menu" [class.open]="dropdownsOpen['Ordenes ▾']">
+            <li><button class="nav-btn dropdown-item" (click)="navigate('/ordenes-recepcion')">Recepción</button></li>
+            <li><button class="nav-btn dropdown-item" (click)="navigate('/dashboard/ordenesDespacho')">Despacho</button></li>
           </ul>
         </li>
-
-        <li><a routerLink="/dashboard/productos">Productos</a></li>
-        <li><a routerLink="/movimiento-producto">Movimiento Inventario</a></li>
+        <li><button class="nav-btn" (click)="navigate('/dashboard/productos')">Productos</button></li>
+        <li><button class="nav-btn" (click)="navigate('/dashboard/inventarios')">Inventarios</button></li>
+        <li><button class="nav-btn" (click)="navigate('/movimiento-producto')">Movimiento Inventario</button></li>
       }
 
       <li class="logout-li">
-        <button class="logout-btn" (click)="logout()">Cerrar Sesion</button>
+        <button class="logout-btn" (click)="logout()">Cerrar Sesión</button>
       </li>
     </ul>
-  </div>
-</nav>
+  </nav>
 
-<router-outlet></router-outlet>
+  <div class="main-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

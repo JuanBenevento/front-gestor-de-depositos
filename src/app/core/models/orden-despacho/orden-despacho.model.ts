@@ -3,8 +3,8 @@ import { Cliente } from "../cliente/cliente.model";
 import { DetalleDespacho } from "./detalle-despacho.model";
 
 export default interface OrdenDespacho {
-  id_orden?: number;
-  fecha: string;
+  idOrdenDespacho?: number;
+  fechaDespacho: string;
   estado: EstadoDeOrden;
   cliente: Cliente;
   detalles: DetalleDespacho[];
