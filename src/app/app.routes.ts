@@ -8,6 +8,7 @@ import { ubicacionRoutes } from './core/routes/ubicacion-routes';
 import { proveedorRoutes } from './core/routes/proveedor-routes';
 import { clienteRoutes } from './core/routes/cliente-routes';
 import { productoRoutes } from './core/routes/producto-routes';
+import { OrdenDespachoRoutes } from './core/routes/ordenDespacho-routes';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -25,7 +26,8 @@ export const routes: Routes = [
       ...ubicacionRoutes,
       ...proveedorRoutes,
       ...clienteRoutes,
-      ...productoRoutes
+      ...productoRoutes,
+      ...OrdenDespachoRoutes
     ]
   },
 
