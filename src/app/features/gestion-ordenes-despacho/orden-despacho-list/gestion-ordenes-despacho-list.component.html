@@ -38,7 +38,7 @@
           <th>ID</th>
           <th>Fecha de despacho</th>
           <th>Estado de orden</th>
-          <th>Cliente</th>>
+          <th>Cliente</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -48,7 +48,7 @@
             <td>{{ o.idOrdenDespacho }}</td>
             <td>{{ o.fechaDespacho| date: 'dd/MM/yyyy' }}</td>
             <td>{{ o.estado }}</td>
-            <td>{{ o.cliente }}</td>
+            <td>{{ o.cliente.nombre }}</td>
             
             <td class="actions">
               <button [routerLink]="['/dashboard/ordenesDespacho/editar', o.idOrdenDespacho]" class="btn edit-btn"> Editar</button>

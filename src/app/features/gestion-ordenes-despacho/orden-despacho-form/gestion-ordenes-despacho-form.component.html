@@ -1,91 +1,70 @@
 <div class="form-container">
-      <h2>
-        @if (editMode) {
-          Editar
-        } @else {
-          Nueva
-        } Orden de despacho
-      </h2>
+  <h2>{{ editMode ? 'Editar' : 'Nueva' }} Orden de Despacho</h2>
 
-      <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
 
-        <div class="form-group">
-          <label>Fecha de despacho</label>
-          <input type="date" formControlName="fechaDespacho">
-          @if (form.controls['fechaDespacho'].invalid && form.controls['fechaDespacho'].touched) {
-            <div class="error">Requerido</div>
-          }
-        </div>
-
-        <div class="form-group">
-          <label>Estado de Orden</label>
-          <select formControlName="estado">
-            <option [ngValue]="EstadoDeOrden.PENDIENTE">PENDIENTE</option>
-            <option [ngValue]="EstadoDeOrden.COMPLETADA">COMPLETADA</option>
-          </select>
-        </div>
-
-        <div formGroupName="cliente">
-          <div class="form-group">
-            <label>ID Cliente</label>
-            <input type="number" formControlName="idCliente" placeholder="ID del cliente">
-            @if (form.get('cliente.idCliente')?.invalid && form.get('cliente.idCliente')?.touched) {
-              <div class="error">Requerido</div>
-            }
-          </div>
-          <div class="form-group">
-            <label>Nombre Cliente</label>
-            <input type="text" formControlName="nombre" placeholder="Nombre del cliente">
-          </div>
-        </div>
-
-        <div class="detalles">
-          <h3>Detalles de despacho</h3>
-          @for (item of detallesArray; track $index) {
-            <div [formGroup]="item.control" class="detalle">
-              
-              <div class="form-group producto-search-group">
-                <label>Producto (Stock: {{ item.control.get('productoSeleccionado')?.value?.stock ?? 0 }})</label>
-                
-                <input 
-                  type="text" 
-                  formControlName="inputProducto" 
-                  placeholder="Buscar por nombre o SKU"
-                  [attr.list]="'product-options-' + $index"
-                >
-                <datalist id="product-options-{{ $index }}">
-                  @for (prod of item.control.get('filteredProducts')?.value; track prod.idProducto) {
-                    <option [value]="prod.nombre + ' (' + prod.codigoSku + ')'">
-                  }
-                </datalist>
-
-                @if (item.control.get('productoSeleccionado')?.invalid && item.control.get('inputProducto')?.touched) {
-                    <div class="error">Debe seleccionar un producto válido.</div>
-                }
-              </div>
-              
-              <div class="form-group">
-                <label>Cantidad</label>
-                <input type="number" formControlName="cantidad" min="1">
-              </div>
-
-              @if (item.control.errors?.['stockInsuficiente']) {
-                  <div class="error-detalle">
-                      Stock insuficiente. Disponible: {{ item.control.errors!['stockInsuficiente'].availableStock }}
-                  </div>
-              }
-
-              <button type="button" (click)="eliminarDetalle($index)">Eliminar</button>
-            </div>
-          }
-
-          <button type="button" (click)="agregarDetalle()">Agregar Detalle</button>
-        </div>
-
-        <div class="button-group">
-          <button type="submit" [disabled]="form.invalid">Guardar</button>
-          <button type="button" (click)="cancelar()">Cancelar</button>
-        </div>
-
-      </form>
+    <div class="form-group">
+      <label>Fecha de despacho</label>
+      <input type="date" formControlName="fechaDespacho">
     </div>
+
+    <div class="form-group">
+      <label>Estado</label>
+      <select formControlName="estado">
+        <option [ngValue]="EstadoDeOrden.PENDIENTE">PENDIENTE</option>
+        <option [ngValue]="EstadoDeOrden.COMPLETADA">COMPLETADA</option>
+      </select>
+    </div>
+
+    <div formGroupName="cliente">
+      <div class="form-group">
+        <label>ID Cliente</label>
+        <input type="number" formControlName="idCliente" placeholder="ID del cliente">
+      </div>
+      <div class="form-group">
+        <label>Nombre Cliente</label>
+        <input type="text" formControlName="nombre" placeholder="Nombre del cliente" readonly>
+      </div>
+    </div>
+
+    <div class="detalles">
+      <h3>Detalles de despacho</h3>
+
+      @for (item of detallesArray; track $index) {
+        <div [formGroup]="item.control" class="detalle">
+
+          <label>Producto</label>
+          <input 
+            type="text" 
+            formControlName="inputProducto"
+            placeholder="Buscar por nombre o SKU"
+            [attr.list]="'product-options-' + $index">
+          <datalist id="product-options-{{ $index }}">
+            @for (prod of item.control.value.filteredProducts; track prod.idProducto) {
+              <option 
+                [value]="prod.nombre + ' (' + prod.codigoSku + ')'"
+                (click)="seleccionarProducto(item.index, prod)">
+              </option>
+            }
+          </datalist>
+
+          <div class="stock">Stock disponible: {{ item.control.value.stockDisponible }}</div>
+
+          <div class="form-group">
+            <label>Cantidad</label>
+            <input type="number" formControlName="cantidad" min="1">
+          </div>
+
+          <button type="button" (click)="eliminarDetalle($index)">Eliminar</button>
+        </div>
+      }
+
+      <button type="button" (click)="agregarDetalle()">Agregar Detalle</button>
+    </div>
+
+    <div class="button-group">
+      <button type="submit">Guardar</button>
+      <button type="button" (click)="cancelar()">Cancelar</button>
+    </div>
+  </form>
+</div>

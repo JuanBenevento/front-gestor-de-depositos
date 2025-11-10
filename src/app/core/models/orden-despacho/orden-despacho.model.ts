@@ -7,5 +7,5 @@ export default interface OrdenDespacho {
   fechaDespacho: string;
   estado: EstadoDeOrden;
   cliente: Cliente;
-  detalles: DetalleDespacho[];
+  detalle_despacho: DetalleDespacho[];
 }

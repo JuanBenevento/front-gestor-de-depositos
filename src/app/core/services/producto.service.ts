@@ -34,4 +34,8 @@ export class ProductoService {
   buscarPorCodigoSku(codigoSku: string): Observable<Producto> {
     return this.http.get<Producto>(`${this.apiUrl}/buscarPorCodigoSku?codigo=${codigoSku}`);
   }
+
+  buscarPorNombreOCodigo(valor: string): Observable<Producto[]> {
+  return this.http.get<Producto[]>(`${this.apiUrl}/buscarPorNombreOCodigo?valor=${valor}`);
+}
 }

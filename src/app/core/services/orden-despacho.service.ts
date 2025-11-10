@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import OrdenDespacho from '../models/orden-despacho/orden-despacho.model'
+import OrdenDespacho from '../models/orden-despacho/orden-despacho.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrdenDespachoService {
 
-  private apiUrl = 'http://localhost:8080/GestorDeDepositos/ordenDespacho';
+  private apiUrl = 'http://localhost:8080/GestorDeDepositos/ordenesDeDespacho';
 
   constructor(private http: HttpClient) {}
 
@@ -17,7 +17,7 @@ export class OrdenDespachoService {
   }
 
   buscarPorId(id: number): Observable<OrdenDespacho> {
-    return this.http.get<OrdenDespacho>(`${this.apiUrl}/buscarPorId?id=${id}`);
+    return this.http.get<OrdenDespacho>(`${this.apiUrl}/buscarPorId/${id}`);
   }
 
   crear(orden: OrdenDespacho): Observable<OrdenDespacho> {
@@ -25,7 +25,7 @@ export class OrdenDespachoService {
   }
 
   actualizar(id: number, orden: OrdenDespacho): Observable<OrdenDespacho> {
-    return this.http.put<OrdenDespacho>(`${this.apiUrl}/actualizarOrden/${id}`, orden);
+    return this.http.put<OrdenDespacho>(`${this.apiUrl}/actualizar/${id}`, orden);
   }
 
   eliminar(id: number): Observable<string> {
