@@ -161,12 +161,6 @@ export class OrdenesDespachoForm implements OnInit {
       .subscribe((stock) => {
         detalle.patchValue({ stockDisponible: stock });
       });
-
-    this.inventarioService
-      .obtenerStockPorProductoPorCodigoSku(producto.codigoSku!)
-      .subscribe((stock) => {
-        detalle.patchValue({ stockDisponible: stock });
-      });
   }
 
   eliminarDetalle(index: number) {

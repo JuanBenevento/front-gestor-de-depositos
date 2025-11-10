@@ -37,7 +37,7 @@
           <input 
             type="text" 
             formControlName="inputProducto"
-            placeholder="Buscar por nombre o SKU"
+            placeholder="Buscar por codigo SKU"
             [attr.list]="'product-options-' + $index">
           <datalist id="product-options-{{ $index }}">
             @for (prod of item.control.value.filteredProducts; track prod.idProducto) {

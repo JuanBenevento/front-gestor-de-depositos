@@ -9,16 +9,32 @@
     <div class="search-group">
       <input
         type="number"
-        placeholder="ID de la orden de despacho"
+        placeholder="ID de la orden"
         [(ngModel)]="idBuscar"
-        (keyup.enter)="buscarPorId()"
+        (input)="aplicarFiltros()"
       />
-      <button (click)="buscarPorId()">Buscar ID</button>
+    </div>
+
+    <div class="search-group">
+      <input
+        type="text"
+        placeholder="Nombre del cliente"
+        [(ngModel)]="nombreClienteBuscar"
+        (input)="aplicarFiltros()"
+      />
+    </div>
+
+    <div class="search-group">
+      <input
+        type="date"
+        [(ngModel)]="fechaBuscar"
+        (change)="aplicarFiltros()"
+      />
     </div>
 
     @if (filtrado) {
       <div class="search-group">
-        <button class="btn secondary-btn" (click)="refresh()">Limpiar</button>
+        <button class="btn secondary-btn" (click)="limpiarFiltros()">Limpiar</button>
       </div>
     }
   </div>
@@ -31,7 +47,7 @@
     <div class="error">{{ error }}</div>
   }
 
-  @if (ordenes.length) {
+  @if (ordenesFiltradas.length) {
     <table class="user-table">
       <thead>
         <tr>
@@ -43,16 +59,23 @@
         </tr>
       </thead>
       <tbody>
-        @for (o of ordenes; track o.idOrdenDespacho) {
+        @for (o of ordenesFiltradas; track o.idOrdenDespacho) {
           <tr>
             <td>{{ o.idOrdenDespacho }}</td>
-            <td>{{ o.fechaDespacho| date: 'dd/MM/yyyy' }}</td>
+            <td>{{ o.fechaDespacho | date: 'dd/MM/yyyy' }}</td>
             <td>{{ o.estado }}</td>
             <td>{{ o.cliente.nombre }}</td>
-            
+
             <td class="actions">
-              <button [routerLink]="['/dashboard/ordenesDespacho/editar', o.idOrdenDespacho]" class="btn edit-btn"> Editar</button>
-              <button (click)="eliminar(o.idOrdenDespacho!)" class="btn delete-btn"> Eliminar</button>
+              <button
+                [routerLink]="['/dashboard/ordenesDespacho/editar', o.idOrdenDespacho]"
+                class="btn edit-btn"
+              >
+                Editar
+              </button>
+              <button (click)="eliminar(o.idOrdenDespacho!)" class="btn delete-btn">
+                Eliminar
+              </button>
             </td>
           </tr>
         }
@@ -60,7 +83,7 @@
     </table>
   }
 
-  @if (!ordenes.length && !loading) {
+  @if (!ordenesFiltradas.length && !loading) {
     <p>Sin ordenes de despacho para mostrar.</p>
   }
 
