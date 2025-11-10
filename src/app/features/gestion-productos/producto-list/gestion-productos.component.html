@@ -1,0 +1,79 @@
+<div class="user-management-container">
+    <h2>Gestion de Productos</h2>
+  
+    <button class="btn new-btn" [routerLink]="['/dashboard/productos/nuevo']">
+      + Nuevo Producto
+    </button>
+  
+    <div class="search-row">
+      <div class="search-group">
+        <input
+          type="number"
+          placeholder="ID de producto"
+          [(ngModel)]="idBuscar"
+          (keyup.enter)="buscarPorId()"
+        />
+        <button (click)="buscarPorId()">Buscar ID</button>
+      </div>
+  
+      @if (filtrado) {
+        <div class="search-group">
+          <button class="btn secondary-btn" (click)="refresh()">Limpiar</button>
+        </div>
+      }
+    </div>
+  
+    @if (loading) {
+      <div class="loading">Cargando...</div>
+    }
+  
+    @if (error) {
+      <div class="error">{{ error }}</div>
+    }
+  
+    @if (productos.length) {
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripcion</th>
+            <th>Codigo SKU</th>
+            <th>Unidad de Medida</th>
+            <th>Fecha de Creacion</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of productos; track p.idProducto) {
+            <tr>
+              <td>{{ p.idProducto }}</td>
+              <td>{{ p.nombre }}</td>
+              <td>{{ p.descripcion }}</td>
+              <td>{{ p.codigoSku }}</td>
+              <td>{{ p.unidad_medida }}</td>
+              <td>{{ p.fecha_creacion }}</td>
+              <td class="actions">
+                <button
+                  [routerLink]="['/dashboard/productos/editar', p.idProducto]"
+                  class="btn edit-btn"
+                >
+                  Editar
+                </button>
+                <button (click)="eliminar(p.idProducto!)" class="btn delete-btn">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  
+    @if (!productos.length && !loading) {
+      <p>Sin productos para mostrar.</p>
+    }
+  
+    <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
+  </div>
+  
