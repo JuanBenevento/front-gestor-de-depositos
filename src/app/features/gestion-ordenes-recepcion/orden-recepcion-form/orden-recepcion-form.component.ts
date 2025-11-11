@@ -98,9 +98,6 @@ export class OrdenRecepcionFormComponent implements OnInit {
                 { emitEvent: false }
               );
 
-              console.log('valor:', valor);
-              console.log('productos:', productos);
-
               const exact = productos.find(
                 (p) =>
                   valor.toLowerCase() === p.nombre.toLowerCase() ||
