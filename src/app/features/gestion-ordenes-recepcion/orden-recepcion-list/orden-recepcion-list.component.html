@@ -1,0 +1,79 @@
+<div class="user-management-container">
+  <h2>Gestion de Ordenes de Recepcion</h2>
+
+  <button class="btn new-btn" [routerLink]="['/dashboard/ordenesRecepcion/nuevo']">
+    + Nueva Orden de Recepcion
+  </button>
+
+  <div class="search-row">
+    <div class="search-group">
+      <input
+        type="number"
+        placeholder="ID de la orden"
+        [(ngModel)]="idBuscar"
+        (input)="aplicarFiltros()"
+      />
+    </div>
+
+    <div class="search-group">
+      <input
+        type="date"
+        [(ngModel)]="fechaBuscar"
+        (change)="aplicarFiltros()"
+      />
+    </div>
+
+    @if (filtrado) {
+      <div class="search-group">
+        <button class="btn secondary-btn" (click)="limpiarFiltros()">Limpiar</button>
+      </div>
+    }
+  </div>
+
+  @if (loading) {
+    <div class="loading">Cargando...</div>
+  }
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  @if (ordenesFiltradas.length) {
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Fecha de recepcion</th>
+          <th>Estado de orden</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (o of ordenesFiltradas; track o.id_orden_recepcion) {
+          <tr>
+            <td>{{ o.id_orden_recepcion }}</td>
+            <td>{{ o.fecha | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ o.estado }}</td>
+            <td class="actions">
+              <button
+                routerLink="['/dashboard/ordenesRecepcion/editar', o.id_orden_recepcion]"
+                class="btn edit-btn"
+              >
+                Editar
+              </button>
+              <button (click)="eliminar(o.id_orden_recepcion!)" class="btn delete-btn">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  @if (!ordenesFiltradas.length && !loading) {
+    <p>Sin ordenes de recepcion para mostrar.</p>
+  }
+
+  <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
+</div>

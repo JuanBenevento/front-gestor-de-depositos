@@ -1,0 +1,59 @@
+<div class="form-container">
+  <h2>{{ editMode ? 'Editar' : 'Nueva' }} Orden de Recepcion</h2>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+    <div class="form-group">
+      <label>Fecha de recepcion</label>
+      <input type="date" formControlName="fecha">
+    </div>
+
+    <div class="form-group">
+      <label>Estado</label>
+      <select formControlName="estado">
+        <option [ngValue]="EstadoDeOrden.PENDIENTE">PENDIENTE</option>
+        <option [ngValue]="EstadoDeOrden.COMPLETADA">COMPLETADA</option>
+      </select>
+    </div>
+
+    <div class="detalles">
+      <h3>Detalles de recepcion</h3>
+
+      @for (item of detallesArray; track $index) {
+        <div [formGroup]="item.control" class="detalle">
+
+          <label>Producto</label>
+          <input 
+            type="text" 
+            formControlName="inputProducto"
+            placeholder="Buscar por codigo SKU"
+            [attr.list]="'product-options-' + $index">
+          <datalist id="product-options-{{ $index }}">
+            @for (prod of item.control.value.filteredProducts; track prod.idProducto) {
+              <option 
+                [value]="prod.nombre + ' (' + prod.codigoSku + ')'"
+                (click)="seleccionarProducto(item.index, prod)">
+              </option>
+            }
+          </datalist>
+
+          <div class="stock">Stock disponible: {{ item.control.value.stockDisponible }}</div>
+
+          <div class="form-group">
+            <label>Cantidad</label>
+            <input type="number" formControlName="cantidad" min="1">
+          </div>
+
+          <button type="button" (click)="eliminarDetalle($index)">Eliminar</button>
+        </div>
+      }
+
+      <button type="button" (click)="agregarDetalle()">Agregar Detalle</button>
+    </div>
+
+    <div class="button-group">
+      <button type="submit">Guardar</button>
+      <button type="button" (click)="cancelar()">Cancelar</button>
+    </div>
+  </form>
+</div>

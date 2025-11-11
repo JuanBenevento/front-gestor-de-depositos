@@ -1,101 +1,69 @@
-import { Component, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import {
-  ReactiveFormsModule,
-  FormBuilder,
-  Validators,
-  FormGroup,
-  FormsModule,
-  FormArray,
-  AbstractControl,
-} from "@angular/forms";
-import { OrdenDespachoService } from "../../../core/services/orden-despacho.service";
-import { DetalleDespachoService } from "../../../core/services/detalle-despacho.service";
-import { ProductoService } from "../../../core/services/producto.service";
-import { ClienteService } from "../../../core/services/cliente.service";
-import { InventarioService } from "../../../core/services/inventario.service";
-import { HttpClient } from "@angular/common/http";
-import { Router, ActivatedRoute, RouterModule } from "@angular/router";
-import { EstadoDeOrden } from "../../../core/enums/estados-de-orden.model";
-import { DetalleDespacho } from "../../../core/models/orden-despacho/detalle-despacho.model";
-import { Producto } from "../../../core/models/Producto/producto.model";
-import OrdenDespacho from "../../../core/models/orden-despacho/orden-despacho.model";
-import { debounceTime, switchMap, filter } from "rxjs/operators";
-import { of } from "rxjs";
+import { Component, OnInit } from '@angular/core';
+import { debounceTime, switchMap, of, filter } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
+
+import { EstadoDeOrden } from '../../../core/enums/estados-de-orden.model';
+import { OrdenRecepcionService } from '../../../core/services/orden-recepcion.service';
+import { DetalleOrdenRecepcionService } from '../../../core/services/detalle-orden-recepcion.service';
+import { InventarioService } from '../../../core/services/inventario.service';
+import { ProductoService } from '../../../core/services/producto.service';
+import { DetalleDespacho } from '../../../core/models/orden-despacho/detalle-despacho.model';
+import { Producto } from '../../../core/models/Producto/producto.model';
+import OrdenRecepcion from '../../../core/models/orden-recepcion/orden-recepcion.model';
+import { DetalleRecepcion } from '../../../core/models/orden-recepcion/detalle-recepcion.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "app-ordenes-despacho-form",
-  standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
-  templateUrl: `./gestion-ordenes-despacho-form.component.html`,
+  selector: 'app-orden-recepcion-form',
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './orden-recepcion-form.component.html',
+  styleUrl: './orden-recepcion-form.component.css'
 })
-export class OrdenesDespachoForm implements OnInit {
+export class OrdenRecepcionFormComponent implements OnInit {
   public EstadoDeOrden = EstadoDeOrden;
   form!: FormGroup;
   editMode = false;
   idOrden = 0;
 
   constructor(
-    private fb: FormBuilder,
-    private ordenDespachoService: OrdenDespachoService,
-    private detalleDespachoService: DetalleDespachoService,
+    private formFactory: FormBuilder,
+    private ordenRecepcionService: OrdenRecepcionService,
+    private detalleOrdenRecepcionService: DetalleOrdenRecepcionService,
     private inventarioService: InventarioService,
     private productoService: ProductoService,
-    private clienteService: ClienteService,
     private http: HttpClient,
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.form = this.fb.nonNullable.group({
-      idOrdenDespacho: [0],
-      fechaDespacho: ["", Validators.required],
+    this.form = this.formFactory.nonNullable.group({
+      idOrdenRecepcion: [0],
+      idProveedor: [null, Validators.required],
+      fecha: ["", Validators.required],
       estado: [EstadoDeOrden.PENDIENTE, Validators.required],
-      cliente: this.fb.group({
-        idCliente: [null, Validators.required],
-        nombre: [""],
-      }),
-      detalles: this.fb.array([]),
+      detalles: this.formFactory.array([]),
     });
-
-    this.form
-      .get("cliente.idCliente")
-      ?.valueChanges.pipe(
-        debounceTime(400),
-        switchMap((id) => (id ? this.clienteService.buscarPorId(id) : of(null)))
-      )
-      .subscribe((cliente) => {
-        if (cliente) {
-          this.form.patchValue(
-            { cliente: { nombre: cliente.nombre } },
-            { emitEvent: false }
-          );
-        } else {
-          this.form.patchValue(
-            { cliente: { nombre: "" } },
-            { emitEvent: false }
-          );
-        }
-      });
 
     const id = this.route.snapshot.paramMap.get("id");
     if (id) {
       this.editMode = true;
       this.idOrden = +id;
-      this.ordenDespachoService
-        .buscarPorId(this.idOrden)
-        .subscribe((data: OrdenDespacho) => {
+      this.ordenRecepcionService.buscarPorId(this.idOrden)
+        .subscribe((response: OrdenRecepcion) => {
           const dataToPatch = {
-            ...data,
-            fechaDespacho: data.fechaDespacho
-              ? new Date(data.fechaDespacho).toISOString().split("T")[0]
+            ...response,
+            fecha: response.fecha
+              ? new Date(response.fecha).toISOString().split("T")[0]
               : "",
           };
           this.form.patchValue(dataToPatch as any);
           this.detalles.clear();
-          (data.detalle_despacho || []).forEach((d: DetalleDespacho) =>
-            this.agregarDetalle(d)
+          (response.detalleRecepcionDTOList || []).forEach((detalle: DetalleRecepcion) =>
+            this.agregarDetalle(detalle)
           );
         });
     } else {
@@ -107,9 +75,9 @@ export class OrdenesDespachoForm implements OnInit {
     return this.form.get("detalles") as FormArray;
   }
 
-  agregarDetalle(detalle?: DetalleDespacho) {
-    const grupo = this.fb.group({
-      idDetalleDespacho: [detalle?.idDetalleDespacho || null],
+  agregarDetalle(detalle?: DetalleRecepcion) {
+    const grupo = this.formFactory.group({
+      idDetalleRecepcion: [detalle?.idDetalleRecepcion || null],
       inputProducto: [detalle?.producto?.nombre || "", Validators.required],
       productoSeleccionado: [detalle?.producto || null],
       cantidad: [detalle?.cantidad || 1, [Validators.required, Validators.min(1)]],
@@ -117,7 +85,7 @@ export class OrdenesDespachoForm implements OnInit {
       stockDisponible: [0],
     });
 
-    grupo
+   grupo
       .get("inputProducto")
       ?.valueChanges.pipe(
         debounceTime(400),
@@ -129,6 +97,9 @@ export class OrdenesDespachoForm implements OnInit {
                 { filteredProducts: productos },
                 { emitEvent: false }
               );
+
+              console.log('valor:', valor);
+              console.log('productos:', productos);
 
               const exact = productos.find(
                 (p) =>
@@ -197,25 +168,25 @@ export class OrdenesDespachoForm implements OnInit {
       producto: d.productoSeleccionado,
     }));
 
-    const orden: OrdenDespacho = {
-      idOrdenDespacho: formValue.idOrdenDespacho,
-      fechaDespacho: formValue.fechaDespacho,
+    const orden: OrdenRecepcion = {
+      id_orden_recepcion: formValue.idOrdenRecepcion,
+      fecha: formValue.fechaRecepcion,
       estado: formValue.estado,
-      cliente: formValue.cliente,
-      detalle_despacho: detalles,
+      idProveedor: formValue.proveedor,
+      detalleRecepcionDTOList: detalles,
     };
 
     const obs = this.editMode
-      ? this.ordenDespachoService.actualizar(orden.idOrdenDespacho!, orden)
-      : this.ordenDespachoService.crear(orden);
+      ? this.ordenRecepcionService.editar(orden.id_orden_recepcion!, orden)
+      : this.ordenRecepcionService.crear(orden);
 
     obs.subscribe({
-      next: () => this.router.navigate(["/dashboard/ordenesDespacho"]),
+      next: () => this.router.navigate(["/dashboard/ordenesRecepcion"]),
       error: (err: any) => console.error("Error al guardar orden:", err),
     });
   }
 
   cancelar(): void {
-    this.router.navigate(["/dashboard/ordenesDespacho"]);
+    this.router.navigate(["/dashboard/ordenesRecepcion"]);
   }
 }
