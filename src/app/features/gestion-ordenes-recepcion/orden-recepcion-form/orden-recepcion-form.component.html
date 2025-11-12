@@ -16,6 +16,46 @@
       </select>
     </div>
 
+    <div class="form-group">
+      <label>Proveedor *</label>
+      <div class="proveedor-input-container">
+        <input 
+          type="number" 
+          formControlName="idProveedor"
+          placeholder="Ingrese el ID del proveedor"
+          min="1">
+        <button type="button" (click)="abrirModalProveedor()" class="btn-create-info">Crear Nuevo Proveedor</button>
+      </div>
+      <div class="error-message" *ngIf="form.get('idProveedor')?.touched && form.get('idProveedor')?.invalid">
+        El proveedor es requerido
+      </div>
+      
+      <!-- Información del proveedor seleccionado -->
+      <div class="proveedor-info-card" *ngIf="proveedorSeleccionado">
+        <div class="proveedor-info-header">
+          <h4>📋 Información del Proveedor</h4>
+        </div>
+        <div class="proveedor-info-body">
+          <div class="proveedor-info-item">
+            <span class="label">ID:</span>
+            <span class="value">{{ proveedorSeleccionado.id_proveedor }}</span>
+          </div>
+          <div class="proveedor-info-item">
+            <span class="label">Nombre:</span>
+            <span class="value">{{ proveedorSeleccionado.nombre }}</span>
+          </div>
+          <div class="proveedor-info-item">
+            <span class="label">Teléfono:</span>
+            <span class="value">{{ proveedorSeleccionado.telefono }}</span>
+          </div>
+          <div class="proveedor-info-item">
+            <span class="label">Email:</span>
+            <span class="value">{{ proveedorSeleccionado.email }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="detalles">
       <h3>Detalles de recepcion</h3>
 
@@ -37,14 +77,14 @@
             }
           </datalist>
 
-          <div class="stock">Stock disponible: {{ item.control.value.stockDisponible }}</div>
+          <button type="button" (click)="abrirModalProducto(item.index)" class="btn-create-info">Crear Nuevo Producto</button>
 
           <div class="form-group">
             <label>Cantidad</label>
             <input type="number" formControlName="cantidad" min="1">
           </div>
 
-          <button type="button" (click)="eliminarDetalle($index)">Eliminar</button>
+          <button type="button" (click)="eliminarDetalle($index)" class="btn-delete">Eliminar</button>
         </div>
       }
 
@@ -57,3 +97,119 @@
     </div>
   </form>
 </div>
+
+<!-- Modal para crear producto -->
+<app-modal 
+  [isOpen]="showProductModal"
+  title="Crear Nuevo Producto"
+  confirmText="Crear Producto"
+  cancelText="Cancelar"
+  [canConfirm]="productForm?.valid || false"
+  (closed)="cerrarModalProducto()"
+  (confirmed)="confirmarCrearProducto()">
+  
+  <form [formGroup]="productForm" *ngIf="productForm">
+    <div class="form-group">
+      <label for="nombre">Nombre del Producto *</label>
+      <input 
+        id="nombre"
+        type="text" 
+        formControlName="nombre"
+        placeholder="Ingrese el nombre del producto"
+        [class.error]="productForm.get('nombre')?.touched && productForm.get('nombre')?.invalid">
+      <div class="error-message" *ngIf="productForm.get('nombre')?.touched && productForm.get('nombre')?.invalid">
+        El nombre es requerido
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="codigoSku">Código SKU *</label>
+      <input 
+        id="codigoSku"
+        type="text" 
+        formControlName="codigoSku"
+        placeholder="Ej: PRD001"
+        [class.error]="productForm.get('codigoSku')?.touched && productForm.get('codigoSku')?.invalid">
+      <div class="error-message" *ngIf="productForm.get('codigoSku')?.touched && productForm.get('codigoSku')?.invalid">
+        El código SKU es requerido
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="descripcion">Descripción</label>
+      <textarea 
+        id="descripcion"
+        formControlName="descripcion"
+        rows="3"
+        placeholder="Descripción opcional del producto"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="precio">Precio *</label>
+      <input 
+        id="precio"
+        type="number" 
+        formControlName="precio"
+        min="0"
+        step="0.01"
+        placeholder="0.00"
+        [class.error]="productForm.get('precio')?.touched && productForm.get('precio')?.invalid">
+      <div class="error-message" *ngIf="productForm.get('precio')?.touched && productForm.get('precio')?.invalid">
+        El precio debe ser mayor o igual a 0
+      </div>
+    </div>
+  </form>
+</app-modal>
+
+<!-- Modal para crear proveedor -->
+<app-modal 
+  [isOpen]="showProveedorModal"
+  title="Crear Nuevo Proveedor"
+  confirmText="Crear Proveedor"
+  cancelText="Cancelar"
+  [canConfirm]="proveedorForm?.valid || false"
+  (closed)="cerrarModalProveedor()"
+  (confirmed)="confirmarCrearProveedor()">
+  
+  <form [formGroup]="proveedorForm" *ngIf="proveedorForm">
+    <div class="form-group">
+      <label for="nombreProveedor">Nombre del Proveedor *</label>
+      <input 
+        id="nombreProveedor"
+        type="text" 
+        formControlName="nombre"
+        placeholder="Ingrese el nombre del proveedor"
+        [class.error]="proveedorForm.get('nombre')?.touched && proveedorForm.get('nombre')?.invalid">
+      <div class="error-message" *ngIf="proveedorForm.get('nombre')?.touched && proveedorForm.get('nombre')?.invalid">
+        El nombre es requerido
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="telefonoProveedor">Teléfono *</label>
+      <input 
+        id="telefonoProveedor"
+        type="tel" 
+        formControlName="telefono"
+        placeholder="Ej: +54 11 1234-5678"
+        [class.error]="proveedorForm.get('telefono')?.touched && proveedorForm.get('telefono')?.invalid">
+      <div class="error-message" *ngIf="proveedorForm.get('telefono')?.touched && proveedorForm.get('telefono')?.invalid">
+        El teléfono es requerido
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="emailProveedor">Email *</label>
+      <input 
+        id="emailProveedor"
+        type="email" 
+        formControlName="email"
+        placeholder="proveedor@empresa.com"
+        [class.error]="proveedorForm.get('email')?.touched && proveedorForm.get('email')?.invalid">
+      <div class="error-message" *ngIf="proveedorForm.get('email')?.touched && proveedorForm.get('email')?.invalid">
+        <span *ngIf="proveedorForm.get('email')?.errors?.['required']">El email es requerido</span>
+        <span *ngIf="proveedorForm.get('email')?.errors?.['email']">El formato del email no es válido</span>
+      </div>
+    </div>
+  </form>
+</app-modal>
