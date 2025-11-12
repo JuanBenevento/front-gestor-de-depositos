@@ -56,7 +56,7 @@
             <td>{{ o.estado }}</td>
             <td class="actions">
               <button
-                routerLink="['/dashboard/ordenesRecepcion/editar', o.id_orden_recepcion]"
+                (click)="verDetalles(o.id_orden_recepcion!)"
                 class="btn edit-btn"
               >
                 Editar

@@ -18,6 +18,7 @@ import OrdenRecepcion from '../../../core/models/orden-recepcion/orden-recepcion
 import { DetalleRecepcion } from '../../../core/models/orden-recepcion/detalle-recepcion.model';
 import { CommonModule } from '@angular/common';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
+import { OrdenRecepcionCabecera } from '../../../core/models/orden-recepcion/orden-recepcion-cabecera';
 
 @Component({
   selector: 'app-orden-recepcion-form',
@@ -105,7 +106,6 @@ export class OrdenRecepcionFormComponent implements OnInit {
       productoSeleccionado: [detalle?.producto || null],
       cantidad: [detalle?.cantidad || 1, [Validators.required, Validators.min(1)]],
       filteredProducts: [[] as Producto[]],
-      stockDisponible: [0],
     });
 
    grupo
@@ -175,26 +175,39 @@ export class OrdenRecepcionFormComponent implements OnInit {
     }
 
     const formValue = this.form.value;
-    const detalles: DetalleDespacho[] = formValue.detalles.map((d: any) => ({
-      idDetalleDespacho: d.idDetalleDespacho,
+    const detalles: DetalleRecepcion[] = formValue.detalles.map((d: any) => ({
       cantidad: d.cantidad,
       producto: d.productoSeleccionado,
     }));
 
     const orden: OrdenRecepcion = {
-      id_orden_recepcion: formValue.idOrdenRecepcion,
-      fecha: formValue.fechaRecepcion,
+      id_orden_recepcion: this.idOrden,
+      fecha: formValue.fecha,
       estado: formValue.estado,
-      idProveedor: formValue.proveedor,
-      detalleRecepcionDTOList: detalles,
+      idProveedor: formValue.idProveedor,
+      detalleRecepcionDTOList: [],
     };
 
     const obs = this.editMode
-      ? this.ordenRecepcionService.editar(orden.id_orden_recepcion!, orden)
+      ? this.ordenRecepcionService.editar(orden.id_orden_recepcion!, orden.estado!)
       : this.ordenRecepcionService.crear(orden);
 
     obs.subscribe({
-      next: () => this.router.navigate(["/dashboard/ordenesRecepcion"]),
+      next: (data) => {
+        if(!this.editMode) {
+          const partialOrder = data as OrdenRecepcionCabecera;
+          detalles.forEach(detalle => {
+            detalle.idOrdenRecepcion = partialOrder.idOrdenRecepcion;
+          });
+
+          this.detalleOrdenRecepcionService.crear(
+            { idOrdenRecepcion: partialOrder.idOrdenRecepcion,
+              detalles 
+            }
+          ).subscribe();
+        }
+         this.router.navigate(["/dashboard/ordenesRecepcion"]);
+      },
       error: (err: any) => console.error("Error al guardar orden:", err),
     });
   }

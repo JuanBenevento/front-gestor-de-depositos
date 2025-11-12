@@ -78,13 +78,27 @@ export class OrdenRecepcionListComponent {
 
   eliminar(id: number): void {
     if (!confirm('¿Eliminar orden de recepción?')) { return; }
+    
     this.ordenRecepcionService.eliminar(id).subscribe({
-      next: () => this.refresh(),
-      error: () => alert('Error al eliminar la orden.')
+      next: (response) => {
+        console.log('Orden eliminada:', response);
+        // Mostrar mensaje de éxito
+        alert('Orden eliminada correctamente');
+        // Refrescar la lista de órdenes
+        this.refresh();
+      },
+      error: (error) => {
+        console.error('Error al eliminar orden:', error);
+        alert('Error al eliminar la orden.');
+      }
     });
   }
 
   volver(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+  verDetalles(id: number): void {
+    this.router.navigate([`/dashboard/ordenesRecepcion/editar/${id}`]);
   }
 }

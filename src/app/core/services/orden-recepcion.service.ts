@@ -19,18 +19,20 @@ export class OrdenRecepcionService {
   }
 
   buscarPorId(id: number): Observable<OrdenRecepcion> {
-    return this.http.get<OrdenRecepcion>(`${this.apiUrl}/${id}`);
+    return this.http.get<OrdenRecepcion>(`${this.apiUrl}/buscar?id=${id}`);
   }
 
   crear(detalle: OrdenRecepcion): Observable<OrdenRecepcion> {
-    return this.http.post<OrdenRecepcion>(`${this.apiUrl}/crearOrdenRecepcion`, detalle);
+    return this.http.post<OrdenRecepcion>(`${this.apiUrl}/crearOrdenRecepcionCabecera`, detalle);
   }
 
-  editar(id: number, detalle: OrdenRecepcion): Observable<OrdenRecepcion> {
-    return this.http.put<OrdenRecepcion>(`${this.apiUrl}/editar/${id}`, detalle);
+  editar(id: number, estado: string): Observable<OrdenRecepcion> {
+    return this.http.put<OrdenRecepcion>(`${this.apiUrl}/actualizarEstadoOrden?idOrden=${id}&estado=${estado}`, {});
   }
 
-  eliminar(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/eliminar/${id}`);
+  eliminar(id: number): Observable<string> {
+    return this.http.delete(`${this.apiUrl}/eliminarOrden?idOrden=${id}`, { 
+      responseType: 'text' 
+    });
   }
 }

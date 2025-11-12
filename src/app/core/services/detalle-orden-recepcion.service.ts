@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
-import { DetalleRecepcion } from '../models/orden-recepcion/detalle-recepcion.model';
+import { DetalleRecepcion, DetalleRecepcionDTO } from '../models/orden-recepcion/detalle-recepcion.model';
 import { BASE_URL } from '../constants/baseUrl';
 
 @Injectable({
@@ -9,7 +9,7 @@ import { BASE_URL } from '../constants/baseUrl';
 })
 export class DetalleOrdenRecepcionService {
 
-  private apiUrl = `${BASE_URL}/detalle-orden-recepcion`;
+  private apiUrl = `${BASE_URL}/detalleRecepcion`;
 
     constructor(private http: HttpClient) {}
 
@@ -24,8 +24,8 @@ export class DetalleOrdenRecepcionService {
     return this.http.get<DetalleRecepcion>(`${this.apiUrl}/buscarDetallesPorIdOrden?id=${id}`);
   }
 
-  crear(detalle: DetalleRecepcion): Observable<DetalleRecepcion> {
-    return this.http.post<DetalleRecepcion>(`${this.apiUrl}/crearDetalleRecepcion`, detalle);
+  crear(detalles: DetalleRecepcionDTO): Observable<DetalleRecepcionDTO> {
+    return this.http.post<DetalleRecepcionDTO>(`${this.apiUrl}/crearDetallesRecepcion`, detalles);
   }
 
   editar(id: number, detalle: DetalleRecepcion): Observable<DetalleRecepcion> {

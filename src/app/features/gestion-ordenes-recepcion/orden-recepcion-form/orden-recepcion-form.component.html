@@ -5,7 +5,7 @@
 
     <div class="form-group">
       <label>Fecha de recepcion</label>
-      <input type="date" formControlName="fecha">
+      <input [readonly]="editMode" type="date" formControlName="fecha">
     </div>
 
     <div class="form-group">
@@ -16,6 +16,7 @@
       </select>
     </div>
 
+    @if (!editMode) {
     <div class="form-group">
       <label>Proveedor *</label>
       <div class="proveedor-input-container">
@@ -24,7 +25,7 @@
           formControlName="idProveedor"
           placeholder="Ingrese el ID del proveedor"
           min="1">
-        <button type="button" (click)="abrirModalProveedor()" class="btn-create-info">Crear Nuevo Proveedor</button>
+        <button type="button" (click)="abrirModalProveedor()" class="btn new-btn">Crear Nuevo Proveedor</button>
       </div>
       <div class="error-message" *ngIf="form.get('idProveedor')?.touched && form.get('idProveedor')?.invalid">
         El proveedor es requerido
@@ -55,6 +56,7 @@
         </div>
       </div>
     </div>
+    }
 
     <div class="detalles">
       <h3>Detalles de recepcion</h3>
@@ -67,7 +69,9 @@
             type="text" 
             formControlName="inputProducto"
             placeholder="Buscar por codigo SKU"
-            [attr.list]="'product-options-' + $index">
+            [attr.list]="'product-options-' + $index"
+            [readonly]="editMode"
+            >
           <datalist id="product-options-{{ $index }}">
             @for (prod of item.control.value.filteredProducts; track prod.idProducto) {
               <option 
@@ -77,18 +81,24 @@
             }
           </datalist>
 
-          <button type="button" (click)="abrirModalProducto(item.index)" class="btn-create-info">Crear Nuevo Producto</button>
+          @if (!editMode) {
+            <button type="button" (click)="abrirModalProducto(item.index)" class="btn new-btn">Crear Nuevo Producto</button>
+          }
 
           <div class="form-group">
             <label>Cantidad</label>
-            <input type="number" formControlName="cantidad" min="1">
+            <input [readonly]="editMode" type="number" formControlName="cantidad" min="1">
           </div>
 
-          <button type="button" (click)="eliminarDetalle($index)" class="btn-delete">Eliminar</button>
+          @if (!editMode) {
+            <button type="button" (click)="eliminarDetalle($index)" class="btn-delete">Eliminar</button>
+          }
         </div>
       }
 
-      <button type="button" (click)="agregarDetalle()">Agregar Detalle</button>
+      @if (!editMode) {
+        <button type="button" (click)="agregarDetalle()">Agregar Detalle</button>
+      }
     </div>
 
     <div class="button-group">
