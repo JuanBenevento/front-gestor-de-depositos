@@ -3,7 +3,7 @@
 
   <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
 
-    <div class="form-group">
+    <div class="form-group reception-date">
       <label>Fecha de recepcion</label>
       <input [readonly]="editMode" type="date" formControlName="fecha">
     </div>
@@ -16,8 +16,8 @@
       </select>
     </div>
 
-    @if (!editMode) {
     <div class="form-group">
+    @if (!editMode) {
       <label>Proveedor *</label>
       <div class="proveedor-input-container">
         <input 
@@ -30,6 +30,7 @@
       <div class="error-message" *ngIf="form.get('idProveedor')?.touched && form.get('idProveedor')?.invalid">
         El proveedor es requerido
       </div>
+    }
       
       <!-- Información del proveedor seleccionado -->
       <div class="proveedor-info-card" *ngIf="proveedorSeleccionado">
@@ -56,7 +57,7 @@
         </div>
       </div>
     </div>
-    }
+    
 
     <div class="detalles">
       <h3>Detalles de recepcion</h3>

@@ -21,7 +21,7 @@ export class DetalleOrdenRecepcionService {
     return this.http.get<DetalleRecepcion>(`${this.apiUrl}/buscarDetallePorId?id=${id}`);
   }
   buscarPorIdOrden(id: number): Observable<DetalleRecepcion> {
-    return this.http.get<DetalleRecepcion>(`${this.apiUrl}/buscarDetallesPorIdOrden?id=${id}`);
+    return this.http.get<DetalleRecepcion>(`${this.apiUrl}/buscarDetallesPorIdOrden?idOrden=${id}`);
   }
 
   crear(detalles: DetalleRecepcionDTO): Observable<DetalleRecepcionDTO> {
