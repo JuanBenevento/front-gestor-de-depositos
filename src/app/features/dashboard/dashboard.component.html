@@ -18,7 +18,7 @@
         <li class="dropdown">
           <button class="nav-btn" (click)="toggleDropdown($event)">Ordenes ▾</button>
           <ul class="dropdown-menu" [class.open]="dropdownsOpen['Ordenes ▾']">
-            <li><button class="nav-btn dropdown-item" (click)="navigate('/ordenes-recepcion')">Recepción</button></li>
+            <li><button class="nav-btn dropdown-item" (click)="navigate('/dashboard/ordenesRecepcion')">Recepción</button></li>
             <li><button class="nav-btn dropdown-item" (click)="navigate('/dashboard/ordenesDespacho')">Despacho</button></li>
           </ul>
         </li>

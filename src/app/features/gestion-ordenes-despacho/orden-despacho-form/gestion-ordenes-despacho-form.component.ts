@@ -13,7 +13,7 @@ import { OrdenDespachoService } from "../../../core/services/orden-despacho.serv
 import { DetalleDespachoService } from "../../../core/services/detalle-despacho.service";
 import { ProductoService } from "../../../core/services/producto.service";
 import { ClienteService } from "../../../core/services/cliente.service";
-import { inventarioService } from "../../../core/services/inventario.service";
+import { InventarioService } from "../../../core/services/inventario.service";
 import { HttpClient } from "@angular/common/http";
 import { Router, ActivatedRoute, RouterModule } from "@angular/router";
 import { EstadoDeOrden } from "../../../core/enums/estados-de-orden.model";
@@ -39,7 +39,7 @@ export class OrdenesDespachoForm implements OnInit {
     private fb: FormBuilder,
     private ordenDespachoService: OrdenDespachoService,
     private detalleDespachoService: DetalleDespachoService,
-    private inventarioService: inventarioService,
+    private inventarioService: InventarioService,
     private productoService: ProductoService,
     private clienteService: ClienteService,
     private http: HttpClient,
