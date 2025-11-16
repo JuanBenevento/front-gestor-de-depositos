@@ -2,7 +2,7 @@
 .form-container {
   max-width: 800px;
   margin: 2rem auto;
-  padding: 2rem;
+  padding: 4rem;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -52,6 +52,10 @@
   color: #dc3545;
   font-size: 0.875rem;
   margin-top: 0.25rem;
+}
+
+.reception-date input {
+  max-width: 200px;
 }
 
 /* Estilos para los detalles */
@@ -223,6 +227,10 @@ datalist {
 
 input[list] {
   position: relative;
+}
+
+.cantidad-group {
+  width: 100%;
 }
 
 /* Responsive */

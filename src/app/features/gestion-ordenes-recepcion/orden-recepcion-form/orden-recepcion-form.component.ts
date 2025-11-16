@@ -60,7 +60,7 @@ export class OrdenRecepcionFormComponent implements OnInit {
     this.form = this.formFactory.nonNullable.group({
       idOrdenRecepcion: [0],
       idProveedor: [null, Validators.required],
-      fecha: ["", Validators.required],
+      fecha: [new Date(), Validators.required],
       estado: [EstadoDeOrden.PENDIENTE, Validators.required],
       detalles: this.formFactory.array([]),
     });
@@ -78,11 +78,15 @@ export class OrdenRecepcionFormComponent implements OnInit {
               : "",
           };
           this.form.patchValue(dataToPatch as any);
-          this.detalles.clear();
-          (response.detalleRecepcionDTOList || []).forEach((detalle: DetalleRecepcion) =>
-            this.agregarDetalle(detalle)
-          );
-        });
+      });
+      this.detalleOrdenRecepcionService.buscarPorIdOrden(this.idOrden)
+        .subscribe((response: DetalleRecepcion) => {
+          if(Array.isArray(response)) {
+            this.detalles.clear();
+            response.forEach(det => this.agregarDetalle(det));
+            return;
+          }
+      });
     } else {
       this.agregarDetalle();
     }
@@ -168,7 +172,6 @@ export class OrdenRecepcionFormComponent implements OnInit {
   }
 
   guardar(): void {
-    console.log(this.form.value);
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -236,12 +239,10 @@ export class OrdenRecepcionFormComponent implements OnInit {
     if (this.productForm.valid) {
       const nuevoProducto = this.productForm.value;
       nuevoProducto.unidad_medida = 'unidad'; // Asignar una unidad de medida por defecto
-      console.log('Crear producto:', nuevoProducto);
       
       // Crear el producto
       this.productoService.crear(nuevoProducto).subscribe({
         next: (productoCreado) => {
-          console.log('Producto creado exitosamente:', productoCreado);
           this.cerrarModalProducto();
           
           // Buscar el producto recién creado por su código SKU y seleccionarlo
@@ -296,12 +297,10 @@ export class OrdenRecepcionFormComponent implements OnInit {
   confirmarCrearProveedor() {
     if (this.proveedorForm.valid) {
       const nuevoProveedor = this.proveedorForm.value;
-      console.log('Crear proveedor:', nuevoProveedor);
       
       // Crear el proveedor
       this.proveedoresService.crear(nuevoProveedor).subscribe({
         next: (proveedorCreado) => {
-          console.log('Proveedor creado exitosamente:', proveedorCreado);
           this.cerrarModalProveedor();
           
           // Seleccionar automáticamente el proveedor recién creado
