@@ -1,1 +1,97 @@
-<p>movimientos-list works!</p>
+<div class="user-management-container">
+  <h2>Gestion de Movimientos de Inventario</h2>
+
+  <button class="btn new-btn" [routerLink]="['/dashboard/movimientosInventario/nuevo']">
+    + Nuevo movimiento de inventario
+  </button>
+
+  <div class="search-row">
+    <div class="search-group">
+      <input
+        type="number"
+        placeholder="ID del movimiento"
+        [(ngModel)]="idBuscar"
+        (input)="aplicarFiltros()"
+      />
+    </div>
+
+    <div class="search-group">
+      <input
+        type="text"
+        placeholder="ID del producto"
+        [(ngModel)]="idProductoBuscar"
+        (input)="aplicarFiltros()"
+      />
+    </div>
+
+    <div class="search-group">
+      <input
+        type="date"
+        [(ngModel)]="fechaBuscar"
+        (change)="aplicarFiltros()"
+      />
+    </div>
+
+    @if (filtrado) {
+      <div class="search-group">
+        <button class="btn secondary-btn" (click)="limpiarFiltros()">Limpiar</button>
+      </div>
+    }
+  </div>
+
+  @if (loading) {
+    <div class="loading">Cargando...</div>
+  }
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  @if (movimientos.length) {
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Fecha de movimiento</th>
+          <th>Estado de movimiento</th>
+          <th>ID Producto</th>
+          <th>Cantidad</th>
+          <th>ID Ubicacion Origen</th>
+          <th>ID Ubicacion Destino</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (m of movimientos; track m.id_movimiento) {
+          <tr>
+            <td>{{ m.id_movimiento }}</td>
+            <td>{{ m.fecha | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ m.estado }}</td>
+            <td>{{ m.producto.idProducto }}</td>
+            <td>{{ m.cantidad }}</td>
+            <td>{{ m.ubicacionOrigen.idUbicacion }}</td>
+            <td>{{ m.ubicacionDestino.idUbicacion }}</td>
+
+            <td class="actions">
+              <button
+                [routerLink]="['/dashboard/movimientosInventario/editar', m.id_movimiento]"
+                class="btn edit-btn"
+              >
+                Editar
+              </button>
+              <button (click)="eliminar(m.id_movimiento!)" class="btn delete-btn">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  @if (!movimientos.length && !loading) {
+    <p>Sin movimientos de inventario para mostrar.</p>
+  }
+
+  <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
+</div>
