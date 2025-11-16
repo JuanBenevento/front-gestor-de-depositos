@@ -5,6 +5,7 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Proveedor } from '../../../core/models/proveedor/proveedor.model';
 import { ProveedoresService } from '../../../core/services/proveedores.service';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-proveedor-form',
@@ -23,6 +24,7 @@ export class ProveedoresFormComponent implements OnInit {
     private service: ProveedoresService,
     private route: ActivatedRoute,
     private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -61,13 +63,17 @@ export class ProveedoresFormComponent implements OnInit {
       next: () => this.router.navigate(['/dashboard/proveedores']),
       error: err  => {
         console.error('Error al guardar proveedor', err);
-        alert('Error al guardar');
+        this.showModal('Error al guardar', 'Error');
       }
     });
   }
 
   cancelar(): void {
     this.router.navigate(['/../dashboard/proveedores']);  
+  }
+
+  private showModal(message: string, title = 'Informacion'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 }
 

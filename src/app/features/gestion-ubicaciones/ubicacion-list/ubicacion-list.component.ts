@@ -5,6 +5,7 @@ import { UbicacionService } from '../../../core/services/ubicacion.service';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ReporteUbicacion } from '../../../core/models/ubicacion/reporte-ubicacion.model';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-ubicaciones-list',
@@ -21,7 +22,11 @@ export class UbicacionListComponent implements OnInit {
   reporte: ReporteUbicacion[] = [];
   mostrandoReporte = false;
 
-  constructor(private ubicacionService: UbicacionService, private router: Router) {}
+  constructor(
+    private ubicacionService: UbicacionService,
+    private router: Router,
+    private modalService: ModalService
+  ) {}
 
   ngOnInit(): void {
     this.refresh();
@@ -48,10 +53,13 @@ export class UbicacionListComponent implements OnInit {
 
   eliminar(id?: number): void {
     if (!id) return;
-    if (!confirm('¿Eliminar ubicación?')) { return; }
+    this.modalService.open({message: '¿Eliminar ubicación?', title: 'Eliminar', onConfirm: () => this.onConfirm(id)});
+  }
+
+  onConfirm = (id: number) => {
     this.ubicacionService.eliminar(id).subscribe({
       next: () => this.refresh(),
-      error: (err) => alert('Error al eliminar: ' + (err?.error || err?.message || ''))
+      error: (err) => this.showModal(`Error al eliminar: ${err?.error || err?.message || ''}`, 'Error')
     });
   }
 
@@ -85,12 +93,16 @@ export class UbicacionListComponent implements OnInit {
       }));
       this.mostrandoReporte = true;
     },
-    error: () => alert('Error al obtener reporte')
+    error: () => this.showModal('Error al obtener reporte', 'Error')
   });
 }
 
 
   volver(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+  private showModal(message: string, title = 'Informacion'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 }

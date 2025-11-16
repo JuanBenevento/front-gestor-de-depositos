@@ -5,6 +5,7 @@ import { UsuarioService } from '../../../core/services/usuario.service';
 import { Usuario } from '../../../core/models/usuario/usuario.model';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-usuarios-list',
@@ -23,7 +24,8 @@ export class UsuarioListComponent implements OnInit {
 
   constructor(
     private usuarioService: UsuarioService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -51,10 +53,13 @@ export class UsuarioListComponent implements OnInit {
 
 
   eliminar(id: number): void {
-    if (!confirm('¿Eliminar usuario?')) { return; }
+    this.modalService.open({message: '¿Eliminar usuario?', title: 'Eliminar', onConfirm: () => this.onConfirm(id)});
+  }
+
+  onConfirm = (id: number) => {
     this.usuarioService.eliminar(id).subscribe({
       next: () => this.refresh(),
-      error: () => alert('Error al eliminar')
+      error: () => this.showModal('Error al eliminar', 'Error')
     });
   }
 
@@ -103,5 +108,9 @@ export class UsuarioListComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  private showModal(message: string, title = 'Informacion'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 }

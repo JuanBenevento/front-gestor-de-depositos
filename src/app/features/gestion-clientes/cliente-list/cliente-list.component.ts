@@ -5,6 +5,7 @@ import { ClienteService } from '../../../core/services/cliente.service';
 import { Cliente } from '../../../core/models/cliente/cliente.model';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-clientes-list',
@@ -22,7 +23,8 @@ export class ClienteListComponent implements OnInit {
 
   constructor(
     private clienteService: ClienteService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -47,22 +49,29 @@ export class ClienteListComponent implements OnInit {
     });
   }
 
-
- eliminar(id: number): void {
-    if (confirm('¿Seguro que deseas eliminar este cliente?')) {
-      this.clienteService.eliminar(id).subscribe({
-        next: () => {
-          alert('Cliente eliminado correctamente');
-          this.refresh();
-        },
-        error: (err) => {
-          console.error('Error al eliminar cliente', err);
-          alert('Error al eliminar cliente');
-        }
-      });
-    }
+  onConfirm(id: number): void {
+    this.clienteService.eliminar(id).subscribe({
+      next: () => {
+        this.showModal('Cliente eliminado correctamente', 'Éxito');
+        this.refresh();
+      },
+      error: (err) => {
+        console.error('Error al eliminar cliente', err);
+        this.showModal('Error al eliminar cliente', 'Error');
+      }
+    });
   }
 
+  eliminar(id: number): void {
+    this.modalService.open({ 
+      title: 'Eliminar', 
+      message: '¿Seguro que deseas eliminar este cliente?', 
+      confirmText: 'Aceptar', 
+      onConfirm: () => this.onConfirm(id),
+      showCancelButton: true,
+      cancelText: 'Cancelar'
+    });
+  }
 
 
   volver(): void {
@@ -87,6 +96,10 @@ export class ClienteListComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  private showModal(message: string, title = 'Informacion'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 
 }
