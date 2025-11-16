@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProductoService } from '../../../core/services/producto.service';
 import { Producto } from '../../../core/models/Producto/producto.model';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-producto-list',
@@ -25,7 +26,8 @@ export class ProductoListComponent implements OnInit {
 
   constructor(
     private productoService: ProductoService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -54,15 +56,26 @@ export class ProductoListComponent implements OnInit {
   }
 
   eliminar(id: number): void {
-    if (confirm('¿Seguro que deseas eliminar este producto?')) {
+    this.modalService.open({ 
+      title: 'Eliminar', 
+      message: '¿Seguro que deseas eliminar este producto?', 
+      confirmText: 'Aceptar', 
+      onConfirm: () => this.onConfirm(id),
+      showCancelButton: true,
+      cancelText: 'Cancelar'
+    });
+  }
+
+  onConfirm(id: number): void {
+    if (id) {
       this.productoService.borrar(id).subscribe({
         next: () => {
-          alert('Producto eliminado correctamente');
+          this.showModal('Producto eliminado correctamente', 'Éxito');
           this.refresh();
         },
         error: err => {
           console.error('Error al eliminar producto', err);
-          alert('Error al eliminar producto');
+          this.showModal('Error al eliminar producto', 'Error');
         }
       });
     }
@@ -122,5 +135,9 @@ export class ProductoListComponent implements OnInit {
 
   volver(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+  private showModal(message: string, title = 'Informacion'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 }

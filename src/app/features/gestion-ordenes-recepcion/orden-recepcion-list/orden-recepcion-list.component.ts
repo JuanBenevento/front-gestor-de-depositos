@@ -4,6 +4,7 @@ import { OrdenRecepcionService } from '../../../core/services/orden-recepcion.se
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-orden-recepcion-list',
@@ -25,7 +26,8 @@ export class OrdenRecepcionListComponent {
 
   constructor(
     private ordenRecepcionService: OrdenRecepcionService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -76,22 +78,22 @@ export class OrdenRecepcionListComponent {
     this.filtrado = false;
   }
 
-  eliminar(id: number): void {
-    if (!confirm('¿Eliminar orden de recepción?')) { return; }
-    
+  onConfirm = (id: number) => {
     this.ordenRecepcionService.eliminar(id).subscribe({
       next: (response) => {
         console.log('Orden eliminada:', response);
-        // Mostrar mensaje de éxito
-        alert('Orden eliminada correctamente');
-        // Refrescar la lista de órdenes
+        this.showModal('Orden eliminada correctamente', 'Éxito');
         this.refresh();
       },
       error: (error) => {
         console.error('Error al eliminar orden:', error);
-        alert('Error al eliminar la orden.');
+        this.showModal('Error al eliminar la orden.', 'Error');
       }
     });
+  }
+
+  eliminar(id: number): void {
+    this.modalService.open({message: '¿Eliminar orden de recepción?', title: 'Eliminar', onConfirm: () => this.onConfirm(id)});
   }
 
   volver(): void {
@@ -100,5 +102,9 @@ export class OrdenRecepcionListComponent {
 
   verDetalles(id: number): void {
     this.router.navigate([`/dashboard/ordenesRecepcion/editar/${id}`]);
+  }
+
+  private showModal(message: string, title = 'Informacion'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 }

@@ -5,6 +5,7 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ZonaService } from '../../../core/services/zona.service';
 import { Zona } from '../../../core/models/zona/zona.model';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-usuario-form',
@@ -21,7 +22,8 @@ export class ZonaFormComponent implements OnInit {
     private fb: FormBuilder,
     private service: ZonaService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -57,13 +59,17 @@ export class ZonaFormComponent implements OnInit {
       next: () => this.router.navigate(['/dashboard/zonas']),
       error: err => {
         console.error('Error al guardar zona', err);
-        alert('Error al guardar');
+        this.showModal('Error al guardar', 'Error');
       }
     });
   }
 
   cancelar(): void {
     this.router.navigate(['/../dashboard/zonas']);  
+  }
+
+  private showModal(message: string, title = 'Informacion'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 }
 

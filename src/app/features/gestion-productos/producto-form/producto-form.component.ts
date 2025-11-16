@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductoService } from '../../../core/services/producto.service';
 import { Producto } from '../../../core/models/Producto/producto.model';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-producto-form',
@@ -20,7 +21,8 @@ export class ProductoFormComponent implements OnInit {
     private fb: FormBuilder,
     private service: ProductoService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -58,12 +60,16 @@ export class ProductoFormComponent implements OnInit {
       next: () => this.router.navigate(['/dashboard/productos']),
       error: err => {
         console.error('Error al guardar producto', err);
-        alert('Error al guardar producto');
+        this.showModal('Error al guardar producto', 'Error');
       }
     });
   }
 
   cancelar(): void {
     this.router.navigate(['/dashboard/productos']);
+  }
+
+  private showModal(message: string, title = 'Informacion'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 }

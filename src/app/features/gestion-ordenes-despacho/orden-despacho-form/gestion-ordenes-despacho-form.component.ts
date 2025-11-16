@@ -28,6 +28,7 @@ import {
   tap,
 } from "rxjs/operators";
 import { of } from "rxjs";
+import { ModalService } from "../../../shared/services/modal.service";
 
 @Component({
   selector: "app-ordenes-despacho-form",
@@ -50,7 +51,8 @@ export class OrdenesDespachoForm implements OnInit {
     private clienteService: ClienteService,
     private http: HttpClient,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -206,7 +208,7 @@ export class OrdenesDespachoForm implements OnInit {
       (c) => c.value.cantidad > c.value.stockDisponible
     );
     if (detallesInvalidos) {
-      alert("La cantidad solicitada supera el stock disponible.");
+      this.showModal("La cantidad solicitada supera el stock disponible.", "Error");
       return;
     }
 
@@ -237,5 +239,9 @@ export class OrdenesDespachoForm implements OnInit {
 
   cancelar(): void {
     this.router.navigate(["/dashboard/ordenesDespacho"]);
+  }
+
+  private showModal(message: string, title = "Informacion"): void {
+    this.modalService.open({ title, message, confirmText: "Aceptar" });
   }
 }
