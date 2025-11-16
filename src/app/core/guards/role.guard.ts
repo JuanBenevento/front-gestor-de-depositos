@@ -7,11 +7,24 @@ export const RoleGuard = (requiredRole: string): CanActivateFn => {
     const authService = inject(AuthService);
     const router = inject(Router);
 
-    if (authService.isAuthenticated() && authService.hasRole(requiredRole.toUpperCase())) {
+    if (!authService.isAuthenticated()) {
+      router.navigate(['/login']);
+      return false;
+    }
+
+    if (authService.isTokenExpired()) {
+      console.warn("Token expirado detectado por RoleGuard.");
+      authService.logout();
+      router.navigate(['/login'], { queryParams: { expired: true } });
+      return false;
+    }
+
+    if (authService.hasRole(requiredRole.toUpperCase())) {
       return true;
     }
 
-    router.navigate(['/dashboard']); 
+    console.warn("Rol insuficiente.");
+    router.navigate(['/dashboard'], { queryParams: { forbidden: true } });
     return false;
   };
 };

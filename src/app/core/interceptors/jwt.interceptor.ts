@@ -14,25 +14,69 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     ? req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+        },
       })
     : req;
 
-  console.log('Interceptor activo -> URL:', authReq.url);
-
   return next(authReq).pipe(
     catchError(error => {
-      // Solo hacer logout/redirección si el backend devuelve un error real 401 o 403
-      if (error.status === 401) {
-        console.warn('Token inválido o sesión expirada');
-        authService.logout();
-        router.navigate(['/login']);
-      } else if (error.status === 403) {
-        console.warn('Acceso denegado');
-        router.navigate(['/dashboard']);
+      const currentUrl = router.url;
+
+      const backendMessage =
+        error?.error?.message ||
+        error?.error ||
+        error?.message ||
+        '';
+
+      if (backendMessage.toString().toLowerCase().includes("expired")) {
+        console.warn("Token expirado. Debes iniciar sesion nuevamente.");
+
+        if (!currentUrl.includes('/login')) {
+          authService.logout();
+          router.navigate(['/login'], {
+            queryParams: { expired: true }
+          });
+        }
+
+        return throwError(() => error);
       }
-      // Re-lanzamos el error para que el componente lo pueda manejar si quiere
+
+      if (backendMessage.toString().toLowerCase().includes("invalid")) {
+        console.warn("Token invalido.");
+
+        if (!currentUrl.includes('/login')) {
+          authService.logout();
+          router.navigate(['/login'], {
+            queryParams: { invalid: true }
+          });
+        }
+
+        return throwError(() => error);
+      }
+
+      if (error.status === 403) {
+        console.warn("Acceso denegado por permisos.");
+
+        if (!currentUrl.includes('/dashboard')) {
+          router.navigate(['/dashboard'], {
+            queryParams: { forbidden: true }
+          });
+        }
+
+        return throwError(() => error);
+      }
+
+      if (error.status === 401) {
+        console.warn("No autorizado o token no valido.");
+
+        if (!currentUrl.includes('/login')) {
+          authService.logout();
+          router.navigate(['/login']);
+        }
+
+        return throwError(() => error);
+      }
+
       return throwError(() => error);
     })
   );
