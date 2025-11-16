@@ -20,7 +20,13 @@ import { EstadoDeOrden } from "../../../core/enums/estados-de-orden.model";
 import { DetalleDespacho } from "../../../core/models/orden-despacho/detalle-despacho.model";
 import { Producto } from "../../../core/models/Producto/producto.model";
 import OrdenDespacho from "../../../core/models/orden-despacho/orden-despacho.model";
-import { debounceTime, switchMap, filter } from "rxjs/operators";
+import {
+  debounceTime,
+  switchMap,
+  filter,
+  catchError,
+  tap,
+} from "rxjs/operators";
 import { of } from "rxjs";
 
 @Component({
@@ -63,21 +69,35 @@ export class OrdenesDespachoForm implements OnInit {
       .get("cliente.idCliente")
       ?.valueChanges.pipe(
         debounceTime(400),
-        switchMap((id) => (id ? this.clienteService.buscarPorId(id) : of(null)))
+        switchMap((id) => {
+          const numericId = Number(id);
+
+          if (!numericId || isNaN(numericId)) {
+            return of(null);
+          }
+
+          return this.clienteService.buscarPorId(numericId).pipe(
+            catchError((err) => {
+              console.warn("ERROR capturado al buscar cliente:", err);
+              return of(null);
+            })
+          );
+        }),
+        tap((cliente) => {
+          if (cliente) {
+            this.form.patchValue(
+              { cliente: { nombre: cliente.nombre } },
+              { emitEvent: false }
+            );
+          } else {
+            this.form.patchValue(
+              { cliente: { nombre: "" } },
+              { emitEvent: false }
+            );
+          }
+        })
       )
-      .subscribe((cliente) => {
-        if (cliente) {
-          this.form.patchValue(
-            { cliente: { nombre: cliente.nombre } },
-            { emitEvent: false }
-          );
-        } else {
-          this.form.patchValue(
-            { cliente: { nombre: "" } },
-            { emitEvent: false }
-          );
-        }
-      });
+      .subscribe();
 
     const id = this.route.snapshot.paramMap.get("id");
     if (id) {

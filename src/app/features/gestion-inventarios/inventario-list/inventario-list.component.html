@@ -1,0 +1,83 @@
+<div class="user-management-container">
+  <h2>Gestión de Inventarios</h2>
+
+  <button class="btn new-btn" [routerLink]="['/dashboard/inventarios/nuevo']">
+    + Nuevo Inventario
+  </button>
+
+  <div class="search-row">
+
+    <div class="search-group">
+      <input
+        type="text"
+        placeholder="Buscar SKU o Nombre..."
+        [formControl]="busquedaSKU"
+      />
+    </div>
+
+    <div class="search-group">
+      <select [formControl]="filtroUbicacion">
+        <option [ngValue]="null">Todas las ubicaciones</option>
+
+        @for (u of ubicaciones; track u.idUbicacion) {
+          <option [ngValue]="u.idUbicacion">
+            {{ u.codigo }} ({{ u.capacidadMaxima }}u)
+          </option>
+        }
+      </select>
+    </div>
+
+  </div>
+
+  @if (loading) {
+    <div class="loading">Cargando...</div>
+  }
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  @if (inventariosFiltrados.length > 0) {
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Producto</th>
+          <th>SKU</th>
+          <th>Ubicación</th>
+          <th>Cantidad</th>
+          <th>Fecha</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (inv of inventariosFiltrados; track inv.id_inventario) {
+          <tr>
+            <td>{{ inv.id_inventario }}</td>
+            <td>{{ inv.producto.nombre }}</td>
+            <td>{{ inv.producto.codigoSku }}</td>
+            <td>{{ inv.ubicacion.codigo }}</td>
+            <td>{{ inv.cantidad }}</td>
+            <td>{{ inv.fecha_actualizacion | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <div class="actions">
+                <button [routerLink]="['/dashboard/inventarios/editar', inv.id_inventario]" class="btn edit-btn">Editar</button>
+                <button class="delete-btn" (click)="eliminar(inv.id_inventario!)">
+                  Eliminar
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  @if (!loading && inventariosFiltrados.length === 0) {
+    <p>No hay inventarios para mostrar.</p>
+  }
+
+  <button class="btn secondary-btn small-btn" (click)="volver()">
+    ← Volver
+  </button>
+</div>
