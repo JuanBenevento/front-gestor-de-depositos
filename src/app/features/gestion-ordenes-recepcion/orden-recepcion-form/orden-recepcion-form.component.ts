@@ -60,7 +60,7 @@ export class OrdenRecepcionFormComponent implements OnInit {
     this.form = this.formFactory.nonNullable.group({
       idOrdenRecepcion: [0],
       idProveedor: [null, Validators.required],
-      fecha: ["", Validators.required],
+      fecha: [new Date(), Validators.required],
       estado: [EstadoDeOrden.PENDIENTE, Validators.required],
       detalles: this.formFactory.array([]),
     });

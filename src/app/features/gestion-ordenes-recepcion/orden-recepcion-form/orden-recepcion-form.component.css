@@ -229,6 +229,10 @@ input[list] {
   position: relative;
 }
 
+.cantidad-group {
+  width: 100%;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .form-container {

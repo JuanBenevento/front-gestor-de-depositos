@@ -70,6 +70,7 @@
             type="text" 
             formControlName="inputProducto"
             placeholder="Buscar por codigo SKU"
+            class="product-input"
             [attr.list]="'product-options-' + $index"
             [readonly]="editMode"
             >
@@ -86,7 +87,7 @@
             <button type="button" (click)="abrirModalProducto(item.index)" class="btn new-btn">Crear Nuevo Producto</button>
           }
 
-          <div class="form-group">
+          <div class="form-group cantidad-group">
             <label>Cantidad</label>
             <input [readonly]="editMode" type="number" formControlName="cantidad" min="1">
           </div>
