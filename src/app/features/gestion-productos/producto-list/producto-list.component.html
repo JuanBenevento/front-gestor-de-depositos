@@ -6,6 +6,7 @@
   </button>
 
   <div class="search-row">
+
     <div class="search-group">
       <input
         type="number"
@@ -19,11 +20,20 @@
     <div class="search-group">
       <input
         type="text"
-        placeholder="Codigo SKU del producto"
+        placeholder="Código SKU del producto"
         [(ngModel)]="skuBuscar"
         (keyup.enter)="buscarPorSku()"
       />
       <button (click)="buscarPorSku()">Buscar SKU</button>
+    </div>
+
+    <div class="search-group">
+      <input
+        type="text"
+        placeholder="Nombre del producto"
+        [(ngModel)]="nombreBuscar"
+        (input)="filtrarPorNombre()"   
+      />
     </div>
 
     @if (filtrado) {
@@ -41,7 +51,7 @@
     <div class="error">{{ error }}</div>
   }
 
-  @if (productos.length) {
+  @if (productosFiltrados.length) {
     <table class="user-table">
       <thead>
         <tr>
@@ -55,7 +65,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (p of productos; track p.idProducto) {
+        @for (p of productosFiltrados; track p.idProducto) {
           <tr>
             <td>{{ p.idProducto }}</td>
             <td>{{ p.nombre }}</td>
@@ -80,7 +90,7 @@
     </table>
   }
 
-  @if (!productos.length && !loading) {
+  @if (!productosFiltrados.length && !loading) {
     <p>Sin productos para mostrar.</p>
   }
 

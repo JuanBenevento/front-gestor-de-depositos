@@ -14,10 +14,13 @@ import { Producto } from '../../../core/models/Producto/producto.model';
 export class ProductoListComponent implements OnInit {
 
   productos: Producto[] = [];
+  productosFiltrados: Producto[] = [];  // lista visible en la tabla
   loading = true;
   error = '';
+
   idBuscar: string = '';
   skuBuscar: string = '';
+  nombreBuscar: string = '';
   filtrado = false;
 
   constructor(
@@ -34,11 +37,13 @@ export class ProductoListComponent implements OnInit {
     this.error = '';
     this.idBuscar = '';
     this.skuBuscar = '';
+    this.nombreBuscar = '';
     this.filtrado = false;
 
     this.productoService.listar().subscribe({
       next: data => {
         this.productos = data;
+        this.productosFiltrados = [...data]; 
         this.loading = false;
       },
       error: () => {
@@ -69,22 +74,23 @@ export class ProductoListComponent implements OnInit {
 
     this.error = '';
     this.loading = true;
+
     this.productoService.buscarPorId(id).subscribe({
       next: producto => {
-        this.productos = [producto];
+        this.productosFiltrados = [producto];
         this.loading = false;
         this.filtrado = true;
       },
       error: () => {
         this.error = `No se encontró el producto con ID ${id}.`;
-        this.productos = [];
+        this.productosFiltrados = [];
         this.loading = false;
       }
     });
   }
 
-    buscarPorSku(): void {
-    const sku = this.skuBuscar.trim().toUpperCase();
+  buscarPorSku(): void {
+    const sku = (this.skuBuscar ?? '').trim();
     if (!sku) return;
 
     this.error = '';
@@ -92,16 +98,26 @@ export class ProductoListComponent implements OnInit {
 
     this.productoService.buscarPorCodigoSku(sku).subscribe({
       next: producto => {
-        this.productos = [producto];
+        this.productosFiltrados = [producto];
         this.loading = false;
         this.filtrado = true;
       },
       error: () => {
-        this.error = `No se encontro producto con codigo SKU "${sku}".`;
-        this.productos = [];
+        this.error = `No se encontró producto con código SKU "${sku}".`;
+        this.productosFiltrados = [];
         this.loading = false;
       }
     });
+  }
+
+  filtrarPorNombre(): void {
+    const valor = this.nombreBuscar.toLowerCase().trim();
+
+    this.productosFiltrados = this.productos.filter(p =>
+      p.nombre?.toLowerCase().includes(valor)
+    );
+
+    this.filtrado = valor.length > 0;
   }
 
   volver(): void {
