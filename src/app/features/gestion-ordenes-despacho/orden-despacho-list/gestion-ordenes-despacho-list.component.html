@@ -67,12 +67,7 @@
             <td>{{ o.cliente.nombre }}</td>
 
             <td class="actions">
-              <button
-                [routerLink]="['/dashboard/ordenesDespacho/editar', o.idOrdenDespacho]"
-                class="btn edit-btn"
-              >
-                Editar
-              </button>
+              <button [routerLink]="['/dashboard/ordenesDespacho/editar', o.idOrdenDespacho]" class="btn edit-btn">Editar</button>
               <button (click)="eliminar(o.idOrdenDespacho!)" class="btn delete-btn">
                 Eliminar
               </button>

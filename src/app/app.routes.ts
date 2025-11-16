@@ -10,6 +10,7 @@ import { clienteRoutes } from './core/routes/cliente-routes';
 import { productoRoutes } from './core/routes/producto-routes';
 import { OrdenDespachoRoutes } from './core/routes/ordenDespacho-routes';
 import { OrdenRecepcionRoutes } from './core/routes/ordenRecepcion-routes';
+import { InventarioRoutes } from './core/routes/inventario-routes';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -29,7 +30,8 @@ export const routes: Routes = [
       ...clienteRoutes,
       ...productoRoutes,
       ...OrdenDespachoRoutes,
-      ...OrdenRecepcionRoutes
+      ...OrdenRecepcionRoutes,
+      ...InventarioRoutes
     ]
   },
 
