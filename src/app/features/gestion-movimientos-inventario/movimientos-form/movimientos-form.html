@@ -1,1 +1,156 @@
-<p>movimientos-form works!</p>
+<div class="form-container">
+	<h2>{{ editMode ? 'Editar' : 'Nuevo' }} Movimiento de Inventario</h2>
+
+	<form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+		<div class="form-group">
+			<label for="productoId">Producto *</label>
+			<div class="inline-group">
+				<input
+					id="productoId"
+					type="number"
+					min="1"
+					formControlName="productoId"
+					placeholder="ID de producto"
+				/>
+			</div>
+			<div class="error-message" *ngIf="productoError">{{ productoError }}</div>
+			<div class="error-message" *ngIf="form.get('productoId')?.touched && form.get('productoId')?.invalid">
+				El producto es requerido
+			</div>
+
+			<div class="entity-info-card" *ngIf="productoSeleccionado">
+				<div class="entity-info-header">
+					<h4>Informacion del producto</h4>
+				</div>
+				<div class="entity-info-body">
+					<div>
+						<span class="label">Nombre</span>
+						<span class="value">{{ productoSeleccionado.nombre }}</span>
+					</div>
+					<div>
+						<span class="label">Codigo SKU</span>
+						<span class="value">{{ productoSeleccionado.codigoSku }}</span>
+					</div>
+					<div>
+						<span class="label">Unidad</span>
+						<span class="value">{{ productoSeleccionado.unidad_medida }}</span>
+					</div>
+					<div>
+						<span class="label">Fecha creacion</span>
+						<span class="value">{{ productoSeleccionado.fecha_creacion | date:'short' }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="ubicacionOrigenId">Ubicacion origen *</label>
+			<input
+				id="ubicacionOrigenId"
+				type="text"
+				formControlName="ubicacionOrigenId"
+				placeholder="ID de ubicacion origen"
+			/>
+			<div class="error-message" *ngIf="ubicacionOrigenError">{{ ubicacionOrigenError }}</div>
+			<div class="error-message" *ngIf="form.get('ubicacionOrigenId')?.touched && form.get('ubicacionOrigenId')?.invalid">
+				La ubicacion de origen es requerida
+			</div>
+
+			<div class="entity-info-card" *ngIf="ubicacionOrigenSeleccionada">
+				<div class="entity-info-header">
+					<h4>Ubicacion origen</h4>
+				</div>
+				<div class="entity-info-body">
+					<div>
+						<span class="label">Codigo</span>
+						<span class="value">{{ ubicacionOrigenSeleccionada.codigo }}</span>
+					</div>
+					<div>
+						<span class="label">Zona</span>
+						<span class="value">{{ ubicacionOrigenSeleccionada.zona?.nombre || '-' }}</span>
+					</div>
+					<div>
+						<span class="label">Capacidad</span>
+						<span class="value">{{ ubicacionOrigenSeleccionada.capacidadMaxima }}</span>
+					</div>
+					<div>
+						<span class="label">Ocupado</span>
+						<span class="value">{{ ubicacionOrigenSeleccionada.ocupadoActual }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="ubicacionDestinoId">Ubicacion destino *</label>
+			<input
+				id="ubicacionDestinoId"
+				type="text"
+				formControlName="ubicacionDestinoId"
+				placeholder="ID de ubicacion destino"
+			/>
+			<div class="error-message" *ngIf="ubicacionDestinoError">{{ ubicacionDestinoError }}</div>
+			<div class="error-message" *ngIf="form.get('ubicacionDestinoId')?.touched && form.get('ubicacionDestinoId')?.invalid">
+				La ubicacion de destino es requerida
+			</div>
+
+			<div class="entity-info-card" *ngIf="ubicacionDestinoSeleccionada">
+				<div class="entity-info-header">
+					<h4>Ubicacion destino</h4>
+				</div>
+				<div class="entity-info-body">
+					<div>
+						<span class="label">Codigo</span>
+						<span class="value">{{ ubicacionDestinoSeleccionada.codigo }}</span>
+					</div>
+					<div>
+						<span class="label">Zona</span>
+						<span class="value">{{ ubicacionDestinoSeleccionada.zona?.nombre || '-' }}</span>
+					</div>
+					<div>
+						<span class="label">Capacidad</span>
+						<span class="value">{{ ubicacionDestinoSeleccionada.capacidadMaxima }}</span>
+					</div>
+					<div>
+						<span class="label">Ocupado</span>
+						<span class="value">{{ ubicacionDestinoSeleccionada.ocupadoActual }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="cantidad">Cantidad *</label>
+			<input
+				id="cantidad"
+				type="number"
+				min="1"
+				step="0.1"
+				formControlName="cantidad"
+			/>
+			<div class="error-message" *ngIf="form.get('cantidad')?.touched && form.get('cantidad')?.invalid">
+				Ingresar una cantidad valida (minimo 1)
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="estado">Estado *</label>
+			<select id="estado" formControlName="estado">
+				<option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label for="fecha">Fecha *</label>
+			<input id="fecha" type="date" formControlName="fecha" />
+			<div class="error-message" *ngIf="form.get('fecha')?.touched && form.get('fecha')?.invalid">
+				Seleccionar una fecha valida
+			</div>
+		</div>
+
+		<div class="button-group">
+			<button type="submit">Guardar</button>
+			<button type="button" (click)="cancelar()">Cancelar</button>
+		</div>
+	</form>
+</div>
