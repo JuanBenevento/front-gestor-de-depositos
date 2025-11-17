@@ -4,7 +4,8 @@ import { ZonaService } from '../../../core/services/zona.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
+import { ModalService } from '../../../shared/services/modal.service';
 
 
 @Component({
@@ -22,7 +23,8 @@ export class ZonaListComponent implements OnInit {
 
   constructor(
     private zonaService: ZonaService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -48,10 +50,13 @@ export class ZonaListComponent implements OnInit {
   }
 
   eliminar(id: number): void {
-    if (!confirm('¿Eliminar zona?')) { return; }
+    this.modalService.open({message: '¿Eliminar zona?', title: 'Eliminar', onConfirm: () => this.onConfirm(id)});
+  }
+
+  onConfirm = (id: number) => {
     this.zonaService.eliminar(id).subscribe({
       next: () => this.refresh(),
-      error: () => alert('Error al eliminar')
+      error: () => this.showModal('Error al eliminar', 'Error')
     });
   }
 
@@ -81,6 +86,10 @@ export class ZonaListComponent implements OnInit {
     this.idBuscar = '';
     this.filtrado = false;
     this.refresh();
+  }
+
+  private showModal(message: string, title = 'Información'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 
 }

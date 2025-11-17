@@ -1,0 +1,74 @@
+<div class="form-container">
+  <h2>{{ editMode ? "Editar Inventario" : "Nuevo Inventario" }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <!-- AUTOCOMPLETE PRODUCTO -->
+    <div class="form-group">
+      <label for="productoInput">Producto</label>
+
+      <input
+        id="productoInput"
+        type="text"
+        formControlName="productoInput"
+        placeholder="Buscar por nombre o código SKU..."
+        autocomplete="off"
+      />
+
+      <!-- LISTA DE RESULTADOS -->
+      <ul class="autocomplete-list" *ngIf="productosFiltrados.length > 0">
+        <li
+          *ngFor="let p of productosFiltrados"
+          (click)="seleccionarProducto(p)"
+        >
+          {{ p.nombre }} ({{ p.codigoSku }})
+        </li>
+      </ul>
+
+      <!-- ERROR -->
+      <div class="error" *ngIf="form.get('producto.idProducto')?.invalid && form.get('producto.idProducto')?.touched">
+        Debe seleccionar un producto válido.
+      </div>
+    </div>
+
+    <!-- UBICACIÓN -->
+    <div class="form-group" formGroupName="ubicacion">
+      <label for="ubicacion">Ubicación</label>
+
+      <select id="ubicacion" formControlName="idUbicacion">
+        <option [ngValue]="null">Seleccione una ubicación...</option>
+
+        <option *ngFor="let u of ubicaciones" [ngValue]="u.idUbicacion">
+          {{ u.codigo }} — Cap: {{ u.capacidadMaxima }} / Ocupado: {{ u.ocupadoActual }}
+        </option>
+      </select>
+
+      <div class="info" *ngIf="capacidadDisponible > 0">
+        Capacidad disponible: <strong>{{ capacidadDisponible }}</strong>
+      </div>
+    </div>
+
+    <!-- CANTIDAD -->
+    <div class="form-group">
+      <label for="cantidad">Cantidad</label>
+
+      <input
+        id="cantidad"
+        type="number"
+        formControlName="cantidad"
+        min="1"
+      />
+
+      <div class="error" *ngIf="form.get('cantidad')?.hasError('capacidad')">
+        La cantidad excede la capacidad disponible.
+      </div>
+    </div>
+
+    <!-- BOTONES -->
+    <div class="button-group">
+      <button type="submit">Guardar</button>
+      <button type="button" class="cancel-btn" (click)="cancelar()">Cancelar</button>
+    </div>
+
+  </form>
+</div>

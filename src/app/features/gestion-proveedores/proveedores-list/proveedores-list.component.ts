@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms'; 
 import { ProveedoresService } from '../../../core/services/proveedores.service';
 import { Proveedor } from '../../../core/models/proveedor/proveedor.model';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-proveedores-list',
@@ -21,7 +22,8 @@ export class ProveedoresListComponent implements OnInit {
 
   constructor(
     private service: ProveedoresService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -50,17 +52,25 @@ export class ProveedoresListComponent implements OnInit {
     this.router.navigate(['/dashboard']);
   }
 
- eliminar(id: number): void {
-    if (confirm('¿Eliminar Proveedor?')) {
-      this.service.eliminar(id).subscribe({
-        next: (res) => {
-          alert("El proveedor se eliminó correctamente.");
-          this.refresh();
-        } ,
-        error: () => alert('Error al eliminar')
-      });
-     }
+  eliminar(id: number): void {
+    this.modalService.open({ 
+      title: 'Eliminar', 
+      message: '¿Eliminar proveedor?', 
+      confirmText: 'Aceptar', 
+      onConfirm: () => this.onConfirm(id), 
+      showCancelButton: true,
+      cancelText: 'Cancelar' 
+    });
+  }
 
+  onConfirm = (id: number) => {
+    this.service.eliminar(id).subscribe({
+      next: (res) => {
+        this.showModal('El proveedor se eliminó correctamente.', 'Éxito');
+        this.refresh();
+        } ,
+        error: () => this.showModal('Error al eliminar', 'Error')
+      });
   }
  
   
@@ -87,6 +97,10 @@ export class ProveedoresListComponent implements OnInit {
     this.idBuscar = '';
     this.filtrado = false;
     this.refresh();
+  }
+
+  private showModal(message: string, title = 'Informacion'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 
 }

@@ -7,6 +7,7 @@ import { ZonaService } from '../../../core/services/zona.service';
 import { Ubicacion } from '../../../core/models/ubicacion/ubicacion.model';
 import { Zona } from '../../../core/models/zona/zona.model';
 import { FormsModule } from '@angular/forms';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-ubicacion-form',
@@ -25,7 +26,8 @@ export class UbicacionFormComponent implements OnInit {
     private ubicacionService: UbicacionService,
     private zonaService: ZonaService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -64,7 +66,7 @@ export class UbicacionFormComponent implements OnInit {
             ocupadoActual: u.ocupadoActual
           });
         },
-        error: () => alert('Error al cargar la ubicacion')
+  error: () => this.showModal('Error al cargar la ubicacion', 'Error')
       });
     }
   }
@@ -101,7 +103,7 @@ export class UbicacionFormComponent implements OnInit {
         if (existe) {
           this.form.get('codigo')?.setErrors({ duplicado: true });
           this.form.get('codigo')?.markAsTouched();
-          alert('Ya existe una ubicacion con ese codigo en la zona seleccionada.');
+          this.showModal('Ya existe una ubicacion con ese codigo en la zona seleccionada.', 'Error');
           return;
         }
 
@@ -113,18 +115,22 @@ export class UbicacionFormComponent implements OnInit {
           next: () => this.router.navigate(['/dashboard/ubicaciones']),
           error: err => {
             console.error(err);
-            alert('Error al guardar la ubicacion.');
+            this.showModal('Error al guardar la ubicacion.', 'Error');
           }
         });
       },
       error: err => {
         console.error('Error al validar duplicados', err);
-        alert('No se pudo validar si la ubicacion ya existe. Intente nuevamente.');
+        this.showModal('No se pudo validar si la ubicacion ya existe. Intente nuevamente.', 'Error');
       }
     });
   }
 
   cancelar(): void {
     this.router.navigate(['/dashboard/ubicaciones']);
+  }
+
+  private showModal(message: string, title = 'Informacion'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 }

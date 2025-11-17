@@ -10,6 +10,7 @@ import { clienteRoutes } from './core/routes/cliente-routes';
 import { productoRoutes } from './core/routes/producto-routes';
 import { OrdenDespachoRoutes } from './core/routes/ordenDespacho-routes';
 import { OrdenRecepcionRoutes } from './core/routes/ordenRecepcion-routes';
+import { InventarioRoutes } from './core/routes/inventario-routes';
 import { MovimientosInventarioRoutes } from './core/routes/movimiento-inventario.router';
 
 export const routes: Routes = [
@@ -31,6 +32,7 @@ export const routes: Routes = [
       ...productoRoutes,
       ...OrdenDespachoRoutes,
       ...OrdenRecepcionRoutes,
+      ...InventarioRoutes,
       ...MovimientosInventarioRoutes
     ]
   },

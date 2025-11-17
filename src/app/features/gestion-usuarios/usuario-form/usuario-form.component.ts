@@ -5,6 +5,7 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { Usuario } from '../../../core/models/usuario/usuario.model';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-usuario-form',
@@ -21,7 +22,8 @@ export class UsuarioFormComponent implements OnInit {
     private fb: FormBuilder,
     private service: UsuarioService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -60,11 +62,11 @@ export class UsuarioFormComponent implements OnInit {
       error: err => {
         console.error('Error al guardar usuario', err);
         if (err && err.status === 401) {
-          alert('No autorizado. La sesion puede haber expirado.');
+          this.showModal('No autorizado. La sesion puede haber expirado.', 'Error');
         } else if (err && err.status === 400) {
-          alert('Datos invalidos. Verifique el formulario.');
+          this.showModal('Datos invalidos. Verifique el formulario.', 'Error');
         } else {
-          alert('Error al guardar');
+          this.showModal('Error al guardar', 'Error');
         }
       }
     });
@@ -72,6 +74,10 @@ export class UsuarioFormComponent implements OnInit {
 
   cancelar(): void {
     this.router.navigate(['/../dashboard/usuarios']);  
+  }
+
+  private showModal(message: string, title = 'Informacion'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 }
 

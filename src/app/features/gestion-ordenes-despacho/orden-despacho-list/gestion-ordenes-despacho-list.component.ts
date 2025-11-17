@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { OrdenDespachoService } from '../../../core/services/orden-despacho.service';
 import OrdenDespacho from '../../../core/models/orden-despacho/orden-despacho.model';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-ordenes-despacho-list',
@@ -25,7 +26,8 @@ export class OrdenDespachoListComponent implements OnInit {
 
   constructor(
     private ordenDespachoService: OrdenDespachoService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -83,15 +85,22 @@ export class OrdenDespachoListComponent implements OnInit {
     this.filtrado = false;
   }
 
-  eliminar(id: number): void {
-    if (!confirm('¿Eliminar orden de despacho?')) { return; }
+  onConfirm = (id: number) => {
     this.ordenDespachoService.eliminar(id).subscribe({
       next: () => this.refresh(),
-      error: () => alert('Error al eliminar la orden.')
+      error: () => this.showModal('Error al eliminar la orden.', 'Error')
     });
+  }
+
+  eliminar(id: number): void {
+    this.modalService.open({message: '¿Eliminar orden de despacho?', title: 'Eliminar', onConfirm: () => this.onConfirm(id)});
   }
 
   volver(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+  private showModal(message: string, title = 'Informacion'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 }

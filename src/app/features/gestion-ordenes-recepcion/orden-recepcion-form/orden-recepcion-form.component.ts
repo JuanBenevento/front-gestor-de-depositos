@@ -18,6 +18,7 @@ import { DetalleRecepcion } from '../../../core/models/orden-recepcion/detalle-r
 import { CommonModule } from '@angular/common';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { OrdenRecepcionCabecera } from '../../../core/models/orden-recepcion/orden-recepcion-cabecera';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-orden-recepcion-form',
@@ -52,7 +53,8 @@ export class OrdenRecepcionFormComponent implements OnInit {
     private proveedoresService: ProveedoresService,
     private http: HttpClient,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -249,7 +251,7 @@ export class OrdenRecepcionFormComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error al crear producto:', err);
-          alert('Error al crear el producto. Por favor, inténtalo de nuevo.');
+          this.showModal('Error al crear el producto. Por favor, inténtalo de nuevo.', 'Error');
         }
       });
     } else {
@@ -307,7 +309,7 @@ export class OrdenRecepcionFormComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error al crear proveedor:', err);
-          alert('Error al crear el proveedor. Por favor, inténtalo de nuevo.');
+          this.showModal('Error al crear el proveedor. Por favor, inténtalo de nuevo.', 'Error');
         }
       });
     } else {
@@ -348,5 +350,9 @@ export class OrdenRecepcionFormComponent implements OnInit {
         console.error('Error al buscar el proveedor recién creado:', err);
       }
     });
+  }
+
+  private showModal(message: string, title = 'Informacion'): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar' });
   }
 }
