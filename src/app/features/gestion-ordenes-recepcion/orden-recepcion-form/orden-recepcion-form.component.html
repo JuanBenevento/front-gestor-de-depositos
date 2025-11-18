@@ -32,7 +32,6 @@
       </div>
     }
       
-      <!-- Información del proveedor seleccionado -->
       <div class="proveedor-info-card" *ngIf="proveedorSeleccionado">
         <div class="proveedor-info-header">
           <h4>📋 Informacion del Proveedor</h4>
@@ -110,7 +109,6 @@
   </form>
 </div>
 
-<!-- Modal para crear producto -->
 <app-modal 
   [isOpen]="showProductModal"
   title="Crear Nuevo Producto"
@@ -146,6 +144,19 @@
         El código SKU es requerido
       </div>
     </div>
+
+    <div class="form-group">
+      <label for="unidad_medida">Unidad de medida *</label>
+      <input 
+        id="unidad_medida"
+        type="text" 
+        formControlName="unidad_medida"
+        placeholder="Ingrese la unidad de medida del producto"
+        [class.error]="productForm.get('unidad_medida')?.touched && productForm.get('unidad_medida')?.invalid">
+      <div class="error-message" *ngIf="productForm.get('unidad_medida')?.touched && productForm.get('unidad_medida')?.invalid">
+        La unidad de medida es requerida.
+      </div>
+    </div>
     
     <div class="form-group">
       <label for="descripcion">Descripción</label>
@@ -173,7 +184,6 @@
   </form>
 </app-modal>
 
-<!-- Modal para crear proveedor -->
 <app-modal 
   [isOpen]="showProveedorModal"
   title="Crear Nuevo Proveedor"

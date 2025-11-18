@@ -8,6 +8,9 @@ export interface DetalleRecepcion {
 }
 
 export interface DetalleRecepcionDTO {
+  idDetalleRecepcion?: number;
+  producto: any;           
+  cantidad: number;
   idOrdenRecepcion?: number;
-  detalles: DetalleRecepcion[];
+  codigoSku: string;
 }

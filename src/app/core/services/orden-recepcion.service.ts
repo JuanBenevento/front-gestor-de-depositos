@@ -23,7 +23,7 @@ export class OrdenRecepcionService {
   }
 
   crear(detalle: OrdenRecepcion): Observable<OrdenRecepcion> {
-    return this.http.post<OrdenRecepcion>(`${this.apiUrl}/crearOrdenRecepcionCabecera`, detalle);
+    return this.http.post<OrdenRecepcion>(`${this.apiUrl}/crearOrdenRecepcion`, detalle);
   }
 
   editar(id: number, estado: string): Observable<OrdenRecepcion> {

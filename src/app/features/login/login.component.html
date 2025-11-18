@@ -1,13 +1,17 @@
-<div class="login-container">
-  <h2>Gestor de Depositos</h2>
-  <form (ngSubmit)="onSubmit()">
-    <label>Usuario</label>
-    <input type="text" [(ngModel)]="credentials.nombre" name="username" required>
+<div class="login-page">
+  <div class="login-container">
+    <h2>Gestor de Depositos</h2>
 
-    <label>Contraseña</label>
-    <input type="password" [(ngModel)]="credentials.contrasenia" name="password" required>
+    <form (ngSubmit)="onSubmit()">
+      <label>Usuario</label>
+      <input type="text" [(ngModel)]="credentials.nombre" name="username" required>
 
-    <button type="submit">Ingresar</button>
-    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-  </form>
+      <label>Contraseña</label>
+      <input type="password" [(ngModel)]="credentials.contrasenia" name="password" required>
+
+      <button type="submit">Ingresar</button>
+
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    </form>
+  </div>
 </div>

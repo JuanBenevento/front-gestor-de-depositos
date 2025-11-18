@@ -3,8 +3,6 @@ import { debounceTime, switchMap, of, filter } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-
-
 import { EstadoDeOrden } from '../../../core/enums/estados-de-orden.model';
 import { OrdenRecepcionService } from '../../../core/services/orden-recepcion.service';
 import { DetalleOrdenRecepcionService } from '../../../core/services/detalle-orden-recepcion.service';
@@ -31,17 +29,14 @@ export class OrdenRecepcionFormComponent implements OnInit {
   form!: FormGroup;
   editMode = false;
   idOrden = 0;
-  
-  // Modal para crear producto
+
   showProductModal = false;
   productForm!: FormGroup;
-  activeDetalleIndex = 0; // Índice del detalle activo donde se seleccionará el producto
+  activeDetalleIndex = 0; 
 
-  // Modal para crear proveedor
   showProveedorModal = false;
   proveedorForm!: FormGroup;
   
-  // Proveedor seleccionado para mostrar información
   proveedorSeleccionado: Proveedor | null = null;
 
   constructor(
@@ -92,7 +87,6 @@ export class OrdenRecepcionFormComponent implements OnInit {
       this.agregarDetalle();
     }
 
-    // Configurar listener para búsqueda de proveedor
     this.form.get('idProveedor')?.valueChanges.pipe(
       debounceTime(500),
       filter((id): id is number => !!id && id > 0),
@@ -179,17 +173,30 @@ export class OrdenRecepcionFormComponent implements OnInit {
     }
 
     const formValue = this.form.value;
-    const detalles: DetalleRecepcion[] = formValue.detalles.map((d: any) => ({
-      cantidad: d.cantidad,
-      producto: d.productoSeleccionado,
-    }));
+
+    for (const det of formValue.detalles) {
+      if (!det.productoSeleccionado) {
+        this.showModal('Hay un detalle sin producto seleccionado.', 'Error');
+        return;
+      }
+    }
+
+    const detallesDTO = formValue.detalles
+      .filter((d: any) => d.productoSeleccionado != null)
+      .map((d: any) => ({
+        idDetalleRecepcion: d.idDetalleRecepcion ?? null,
+        producto: d.productoSeleccionado,
+        cantidad: d.cantidad,
+        codigoSku: d.productoSeleccionado.codigoSku,
+        idOrdenRecepcion: this.idOrden ?? null
+      }));
 
     const orden: OrdenRecepcion = {
       id_orden_recepcion: this.idOrden,
       fecha: formValue.fecha,
       estado: formValue.estado,
       idProveedor: formValue.idProveedor,
-      detalleRecepcionDTOList: [],
+      detalleRecepcionDTOList: detallesDTO
     };
 
     const obs = this.editMode
@@ -197,36 +204,24 @@ export class OrdenRecepcionFormComponent implements OnInit {
       : this.ordenRecepcionService.crear(orden);
 
     obs.subscribe({
-      next: (data) => {
-        if(!this.editMode) {
-          const partialOrder = data as OrdenRecepcionCabecera;
-          detalles.forEach(detalle => {
-            detalle.idOrdenRecepcion = partialOrder.idOrdenRecepcion;
-          });
-
-          this.detalleOrdenRecepcionService.crear(
-            { idOrdenRecepcion: partialOrder.idOrdenRecepcion,
-              detalles 
-            }
-          ).subscribe();
-        }
-         this.router.navigate(["/dashboard/ordenesRecepcion"]);
-      },
+      next: () => this.router.navigate(["/dashboard/ordenesRecepcion"]),
       error: (err: any) => console.error("Error al guardar orden:", err),
     });
   }
+
+
 
   cancelar(): void {
     this.router.navigate(["/dashboard/ordenesRecepcion"]);
   }
 
-  // Métodos para el modal de crear producto
   abrirModalProducto(detalleIndex: number = this.detalles.length - 1) {
     this.activeDetalleIndex = detalleIndex;
     this.showProductModal = true;
     this.productForm = this.formFactory.group({
       nombre: ['', Validators.required],
       codigoSku: ['', Validators.required],
+      unidad_medida: ['', Validators.required],
       descripcion: [''],
       precio: [0, [Validators.required, Validators.min(0)]],
     });
@@ -239,14 +234,11 @@ export class OrdenRecepcionFormComponent implements OnInit {
   confirmarCrearProducto() {
     if (this.productForm.valid) {
       const nuevoProducto = this.productForm.value;
-      nuevoProducto.unidad_medida = 'unidad'; // Asignar una unidad de medida por defecto
       
-      // Crear el producto
       this.productoService.crear(nuevoProducto).subscribe({
         next: (productoCreado) => {
           this.cerrarModalProducto();
           
-          // Buscar el producto recién creado por su código SKU y seleccionarlo
           this.buscarYSeleccionarProductoCreado(nuevoProducto.codigoSku);
         },
         error: (err) => {
@@ -260,7 +252,7 @@ export class OrdenRecepcionFormComponent implements OnInit {
   }
 
   private buscarYSeleccionarProductoCreado(codigoSku: string) {
-    // Buscar el producto por código SKU
+
     this.productoService.buscarPorNombreOCodigo(codigoSku).subscribe({
       next: (productos: Producto[]) => {
         const productoEncontrado = productos.find(p => 
@@ -268,7 +260,7 @@ export class OrdenRecepcionFormComponent implements OnInit {
         );
         
         if (productoEncontrado) {
-          // Seleccionar el producto en el detalle activo
+
           this.seleccionarProducto(this.activeDetalleIndex, productoEncontrado);
           console.log(`Producto ${productoEncontrado.nombre} seleccionado automáticamente`);
         } else {
@@ -281,7 +273,6 @@ export class OrdenRecepcionFormComponent implements OnInit {
     });
   }
 
-  // Métodos para el modal de crear proveedor
   abrirModalProveedor() {
     this.showProveedorModal = true;
     this.proveedorForm = this.formFactory.group({
@@ -299,12 +290,10 @@ export class OrdenRecepcionFormComponent implements OnInit {
     if (this.proveedorForm.valid) {
       const nuevoProveedor = this.proveedorForm.value;
       
-      // Crear el proveedor
       this.proveedoresService.crear(nuevoProveedor).subscribe({
         next: (proveedorCreado) => {
           this.cerrarModalProveedor();
           
-          // Seleccionar automáticamente el proveedor recién creado
           this.buscarYSeleccionarProveedorCreado(proveedorCreado.id_proveedor!);
         },
         error: (err) => {
@@ -333,11 +322,11 @@ export class OrdenRecepcionFormComponent implements OnInit {
   }
 
   private buscarYSeleccionarProveedorCreado(idProveedor: number) {
-    // Buscar el proveedor por ID
+
     this.proveedoresService.buscarPorId(idProveedor).subscribe({
       next: (proveedorEncontrado: Proveedor) => {
         if (proveedorEncontrado) {
-          // Seleccionar el proveedor en el formulario principal
+  
           this.form.patchValue({
             idProveedor: proveedorEncontrado.id_proveedor
           });

@@ -24,7 +24,7 @@ export class LoginComponent {
 
   this.authService.login(this.credentials).subscribe({
     next: (response: LoginResponse) => {
-      // Login exitoso
+     
       const rol = this.authService.getRole() || '';
       if (rol === 'ADMIN' || rol === 'OPERATIVO') {
         this.router.navigate(['/dashboard']);
@@ -35,7 +35,6 @@ export class LoginComponent {
     error: (err) => {
       console.error('Error de login:', err);
 
-      // Solo mostramos un mensaje genérico si es login fallido
       if (err.status === 401) {
         this.errorMessage = 'Usuario o contraseña incorrectos';
       } else {

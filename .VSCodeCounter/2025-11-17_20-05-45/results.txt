@@ -1,0 +1,203 @@
+Date : 2025-11-17 20:05:45
+Directory : c:\TPPROGRA4\GestorDeDepositos
+Total : 113 files,  15049 codes, 88 comments, 992 blanks, all 16129 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          5 |      9,872 |          4 |          5 |      9,881 |
+| TypeScript         |         73 |      3,046 |         33 |        593 |      3,672 |
+| HTML               |         24 |      1,229 |          7 |        207 |      1,443 |
+| PostCSS            |          9 |        834 |         42 |        162 |      1,038 |
+| Markdown           |          1 |         36 |          0 |         24 |         60 |
+| JSON with Comments |          1 |         32 |          2 |          1 |         35 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                      | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                         |        113 |     15,049 |         88 |        992 |     16,129 |
+| . (Files)                                                                                                                                 |          7 |      9,940 |          6 |         30 |      9,976 |
+| src                                                                                                                                       |        106 |      5,109 |         82 |        962 |      6,153 |
+| src (Files)                                                                                                                               |          3 |        237 |         28 |         54 |        319 |
+| src\app                                                                                                                                   |        103 |      4,872 |         54 |        908 |      5,834 |
+| src\app (Files)                                                                                                                           |          6 |         90 |          0 |         16 |        106 |
+| src\app\core                                                                                                                              |         43 |        734 |          1 |        201 |        936 |
+| src\app\core\constants                                                                                                                    |          1 |          1 |          0 |          0 |          1 |
+| src\app\core\enums                                                                                                                        |          1 |          4 |          0 |          0 |          4 |
+| src\app\core\guards                                                                                                                       |          2 |         60 |          0 |         16 |         76 |
+| src\app\core\interceptors                                                                                                                 |          1 |         65 |          0 |         18 |         83 |
+| src\app\core\models                                                                                                                       |         16 |        133 |          0 |         19 |        152 |
+| src\app\core\models\Producto                                                                                                              |          1 |          9 |          0 |          1 |         10 |
+| src\app\core\models\auth                                                                                                                  |          2 |          9 |          0 |          2 |         11 |
+| src\app\core\models\cliente                                                                                                               |          1 |          6 |          0 |          1 |          7 |
+| src\app\core\models\inventario                                                                                                            |          1 |         14 |          0 |          1 |         15 |
+| src\app\core\models\movimiento-inventario                                                                                                 |          1 |         14 |          0 |          2 |         16 |
+| src\app\core\models\orden-despacho                                                                                                        |          2 |         17 |          0 |          3 |         20 |
+| src\app\core\models\orden-recepcion                                                                                                       |          3 |         28 |          0 |          4 |         32 |
+| src\app\core\models\proveedor                                                                                                             |          1 |          6 |          0 |          1 |          7 |
+| src\app\core\models\ubicacion                                                                                                             |          2 |         17 |          0 |          2 |         19 |
+| src\app\core\models\usuario                                                                                                               |          1 |          8 |          0 |          1 |          9 |
+| src\app\core\models\zona                                                                                                                  |          1 |          5 |          0 |          1 |          6 |
+| src\app\core\routes                                                                                                                       |          9 |         81 |          0 |         24 |        105 |
+| src\app\core\services                                                                                                                     |         13 |        390 |          1 |        124 |        515 |
+| src\app\features                                                                                                                          |         50 |      3,650 |         53 |        633 |      4,336 |
+| src\app\features\dashboard                                                                                                                |          3 |        187 |          6 |         35 |        228 |
+| src\app\features\gestion-clientes                                                                                                         |          4 |        253 |          0 |         44 |        297 |
+| src\app\features\gestion-clientes\cliente-form                                                                                            |          2 |         96 |          0 |         20 |        116 |
+| src\app\features\gestion-clientes\cliente-list                                                                                            |          2 |        157 |          0 |         24 |        181 |
+| src\app\features\gestion-inventarios                                                                                                      |          4 |        344 |         23 |         77 |        444 |
+| src\app\features\gestion-inventarios\inventario-form                                                                                      |          2 |        187 |         22 |         46 |        255 |
+| src\app\features\gestion-inventarios\inventario-list                                                                                      |          2 |        157 |          1 |         31 |        189 |
+| src\app\features\gestion-movimientos-inventario                                                                                           |          6 |         38 |          0 |         13 |         51 |
+| src\app\features\gestion-movimientos-inventario\movimientos-form                                                                          |          3 |         10 |          0 |          5 |         15 |
+| src\app\features\gestion-movimientos-inventario\movimientos-list                                                                          |          3 |         28 |          0 |          8 |         36 |
+| src\app\features\gestion-ordenes-despacho                                                                                                 |          4 |        443 |          0 |         70 |        513 |
+| src\app\features\gestion-ordenes-despacho\orden-despacho-form                                                                             |          2 |        280 |          0 |         39 |        319 |
+| src\app\features\gestion-ordenes-despacho\orden-despacho-list                                                                             |          2 |        163 |          0 |         31 |        194 |
+| src\app\features\gestion-ordenes-recepcion                                                                                                |          6 |        860 |         23 |        137 |      1,020 |
+| src\app\features\gestion-ordenes-recepcion\orden-recepcion-form                                                                           |          3 |        698 |         23 |        107 |        828 |
+| src\app\features\gestion-ordenes-recepcion\orden-recepcion-list                                                                           |          3 |        162 |          0 |         30 |        192 |
+| src\app\features\gestion-productos                                                                                                        |          4 |        311 |          0 |         53 |        364 |
+| src\app\features\gestion-productos\producto-form                                                                                          |          2 |        101 |          0 |         20 |        121 |
+| src\app\features\gestion-productos\producto-list                                                                                          |          2 |        210 |          0 |         33 |        243 |
+| src\app\features\gestion-proveedores                                                                                                      |          4 |        247 |          0 |         45 |        292 |
+| src\app\features\gestion-proveedores\proveedores-form                                                                                     |          2 |         96 |          0 |         21 |        117 |
+| src\app\features\gestion-proveedores\proveedores-list                                                                                     |          2 |        151 |          0 |         24 |        175 |
+| src\app\features\gestion-ubicaciones                                                                                                      |          4 |        347 |          0 |         47 |        394 |
+| src\app\features\gestion-ubicaciones\ubicacion-form                                                                                       |          2 |        165 |          0 |         22 |        187 |
+| src\app\features\gestion-ubicaciones\ubicacion-list                                                                                       |          2 |        182 |          0 |         25 |        207 |
+| src\app\features\gestion-usuarios                                                                                                         |          4 |        291 |          0 |         49 |        340 |
+| src\app\features\gestion-usuarios\usuario-form                                                                                            |          2 |        114 |          0 |         22 |        136 |
+| src\app\features\gestion-usuarios\usuario-list                                                                                            |          2 |        177 |          0 |         27 |        204 |
+| src\app\features\gestion-zonas                                                                                                            |          4 |        221 |          1 |         41 |        263 |
+| src\app\features\gestion-zonas\zona-form                                                                                                  |          2 |         82 |          1 |         19 |        102 |
+| src\app\features\gestion-zonas\zona-list                                                                                                  |          2 |        139 |          0 |         22 |        161 |
+| src\app\features\login                                                                                                                    |          3 |        108 |          0 |         22 |        130 |
+| src\app\shared                                                                                                                            |          4 |        398 |          0 |         58 |        456 |
+| src\app\shared\components                                                                                                                 |          3 |        342 |          0 |         49 |        391 |
+| src\app\shared\components\modal                                                                                                           |          3 |        342 |          0 |         49 |        391 |
+| src\app\shared\services                                                                                                                   |          1 |         56 |          0 |          9 |         65 |
++-------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                                                  | language           | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\TPPROGRA4\GestorDeDepositos\README.md                                                                                                  | Markdown           |         36 |          0 |         24 |         60 |
+| c:\TPPROGRA4\GestorDeDepositos\angular.json                                                                                               | JSON               |         92 |          0 |          1 |         93 |
+| c:\TPPROGRA4\GestorDeDepositos\package-lock.json                                                                                          | JSON               |      9,707 |          0 |          1 |      9,708 |
+| c:\TPPROGRA4\GestorDeDepositos\package.json                                                                                               | JSON               |         48 |          0 |          1 |         49 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\app.config.ts                                                                                      | TypeScript         |         12 |          0 |          1 |         13 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\app.css                                                                                            | PostCSS            |          3 |          0 |          0 |          3 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\app.html                                                                                           | HTML               |          4 |          0 |          3 |          7 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\app.routes.ts                                                                                      | TypeScript         |         35 |          0 |          5 |         40 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\app.spec.ts                                                                                        | TypeScript         |         20 |          0 |          4 |         24 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\app.ts                                                                                             | TypeScript         |         16 |          0 |          3 |         19 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\constants\baseUrl.ts                                                                          | TypeScript         |          1 |          0 |          0 |          1 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\enums\estados-de-orden.model.ts                                                               | TypeScript         |          4 |          0 |          0 |          4 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\guards\auth.guard.ts                                                                          | TypeScript         |         35 |          0 |         10 |         45 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\guards\role.guard.ts                                                                          | TypeScript         |         25 |          0 |          6 |         31 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\interceptors\jwt.interceptor.ts                                                               | TypeScript         |         65 |          0 |         18 |         83 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\Producto\producto.model.ts                                                             | TypeScript         |          9 |          0 |          1 |         10 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\auth\login-request.model.ts                                                            | TypeScript         |          4 |          0 |          1 |          5 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\auth\login-response.model.ts                                                           | TypeScript         |          5 |          0 |          1 |          6 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\cliente\cliente.model.ts                                                               | TypeScript         |          6 |          0 |          1 |          7 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\inventario\inventario.model.ts                                                         | TypeScript         |         14 |          0 |          1 |         15 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\movimiento-inventario\movimiento-inventario.module.ts                                  | TypeScript         |         14 |          0 |          2 |         16 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\orden-despacho\detalle-despacho.model.ts                                               | TypeScript         |          7 |          0 |          2 |          9 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\orden-despacho\orden-despacho.model.ts                                                 | TypeScript         |         10 |          0 |          1 |         11 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\orden-recepcion\detalle-recepcion.model.ts                                             | TypeScript         |         14 |          0 |          3 |         17 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\orden-recepcion\orden-recepcion-cabecera.ts                                            | TypeScript         |          5 |          0 |          0 |          5 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\orden-recepcion\orden-recepcion.model.ts                                               | TypeScript         |          9 |          0 |          1 |         10 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\proveedor\proveedor.model.ts                                                           | TypeScript         |          6 |          0 |          1 |          7 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\ubicacion\reporte-ubicacion.model.ts                                                   | TypeScript         |          6 |          0 |          1 |          7 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\ubicacion\ubicacion.model.ts                                                           | TypeScript         |         11 |          0 |          1 |         12 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\usuario\usuario.model.ts                                                               | TypeScript         |          8 |          0 |          1 |          9 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\models\zona\zona.model.ts                                                                     | TypeScript         |          5 |          0 |          1 |          6 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\routes\cliente-routes.ts                                                                      | TypeScript         |          9 |          0 |          3 |         12 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\routes\inventario-routes.ts                                                                   | TypeScript         |          9 |          0 |          1 |         10 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\routes\ordenDespacho-routes.ts                                                                | TypeScript         |          9 |          0 |          3 |         12 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\routes\ordenRecepcion-routes.ts                                                               | TypeScript         |          9 |          0 |          3 |         12 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\routes\producto-routes.ts                                                                     | TypeScript         |          9 |          0 |          2 |         11 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\routes\proveedor-routes.ts                                                                    | TypeScript         |          9 |          0 |          3 |         12 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\routes\ubicacion-routes.ts                                                                    | TypeScript         |          9 |          0 |          3 |         12 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\routes\usuario-routes.ts                                                                      | TypeScript         |          9 |          0 |          3 |         12 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\routes\zona-routes.ts                                                                         | TypeScript         |          9 |          0 |          3 |         12 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\services\auth.service.ts                                                                      | TypeScript         |         44 |          1 |         13 |         58 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\services\cliente.service.ts                                                                   | TypeScript         |         26 |          0 |          7 |         33 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\services\detalle-despacho.service.ts                                                          | TypeScript         |         26 |          0 |          8 |         34 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\services\detalle-orden-recepcion.service.ts                                                   | TypeScript         |         30 |          0 |          9 |         39 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\services\inventario.service.ts                                                                | TypeScript         |         37 |          0 |         13 |         50 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\services\movimientos-inventario.service.ts                                                    | TypeScript         |         27 |          0 |          9 |         36 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\services\orden-despacho.service.ts                                                            | TypeScript         |         26 |          0 |          9 |         35 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\services\orden-recepcion.service.ts                                                           | TypeScript         |         29 |          0 |         10 |         39 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\services\producto.service.ts                                                                  | TypeScript         |         32 |          0 |         10 |         42 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\services\proveedores.service.ts                                                               | TypeScript         |         24 |          0 |          8 |         32 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\services\ubicacion.service.ts                                                                 | TypeScript         |         32 |          0 |          9 |         41 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\services\usuario.service.ts                                                                   | TypeScript         |         29 |          0 |         10 |         39 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\core\services\zona.service.ts                                                                      | TypeScript         |         28 |          0 |          9 |         37 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\dashboard\dashboard.component.css                                                         | PostCSS            |        112 |          6 |         19 |        137 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\dashboard\dashboard.component.html                                                        | HTML               |         33 |          0 |          7 |         40 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\dashboard\dashboard.component.ts                                                          | TypeScript         |         42 |          0 |          9 |         51 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-clientes\cliente-form\cliente-form.component.html                                 | HTML               |         27 |          0 |          7 |         34 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-clientes\cliente-form\cliente-form.component.ts                                   | TypeScript         |         69 |          0 |         13 |         82 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-clientes\cliente-list\cliente-list.component.html                                 | HTML               |         66 |          0 |          9 |         75 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-clientes\cliente-list\cliente-list.component.ts                                   | TypeScript         |         91 |          0 |         15 |        106 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-inventarios\inventario-form\inventario-form.component.html                        | HTML               |         54 |          6 |         15 |         75 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-inventarios\inventario-form\inventario-form.component.ts                          | TypeScript         |        133 |         16 |         31 |        180 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-inventarios\inventario-list\inventario-list.component.html                        | HTML               |         72 |          0 |         12 |         84 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-inventarios\inventario-list\inventario-list.component.ts                          | TypeScript         |         85 |          1 |         19 |        105 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-movimientos-inventario\movimientos-form\movimientos-form.css                      | PostCSS            |          0 |          0 |          1 |          1 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-movimientos-inventario\movimientos-form\movimientos-form.html                     | HTML               |          1 |          0 |          1 |          2 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-movimientos-inventario\movimientos-form\movimientos-form.ts                       | TypeScript         |          9 |          0 |          3 |         12 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-movimientos-inventario\movimientos-list\movimientos-list.css                      | PostCSS            |          0 |          0 |          1 |          1 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-movimientos-inventario\movimientos-list\movimientos-list.html                     | HTML               |          1 |          0 |          1 |          2 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-movimientos-inventario\movimientos-list\movimientos-list.ts                       | TypeScript         |         27 |          0 |          6 |         33 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ordenes-despacho\orden-despacho-form\gestion-ordenes-despacho-form.component.html | HTML               |         58 |          0 |         13 |         71 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ordenes-despacho\orden-despacho-form\gestion-ordenes-despacho-form.component.ts   | TypeScript         |        222 |          0 |         26 |        248 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ordenes-despacho\orden-despacho-list\gestion-ordenes-despacho-list.component.html | HTML               |         75 |          0 |         12 |         87 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ordenes-despacho\orden-despacho-list\gestion-ordenes-despacho-list.component.ts   | TypeScript         |         88 |          0 |         19 |        107 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ordenes-recepcion\orden-recepcion-form\orden-recepcion-form.component.css         | PostCSS            |        204 |          8 |         39 |        251 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ordenes-recepcion\orden-recepcion-form\orden-recepcion-form.component.html        | HTML               |        201 |          1 |         24 |        226 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ordenes-recepcion\orden-recepcion-form\orden-recepcion-form.component.ts          | TypeScript         |        293 |         14 |         44 |        351 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ordenes-recepcion\orden-recepcion-list\orden-recepcion-list.component.css         | PostCSS            |          0 |          0 |          1 |          1 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ordenes-recepcion\orden-recepcion-list\orden-recepcion-list.component.html        | HTML               |         70 |          0 |         10 |         80 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ordenes-recepcion\orden-recepcion-list\orden-recepcion-list.component.ts          | TypeScript         |         92 |          0 |         19 |        111 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-productos\producto-form\producto-form.component.html                              | HTML               |         37 |          0 |          8 |         45 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-productos\producto-form\producto-form.component.ts                                | TypeScript         |         64 |          0 |         12 |         76 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-productos\producto-list\producto-list.component.html                              | HTML               |         87 |          0 |         12 |         99 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-productos\producto-list\producto-list.component.ts                                | TypeScript         |        123 |          0 |         21 |        144 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-proveedores\proveedores-form\proveedores-form.component.html                      | HTML               |         30 |          0 |          7 |         37 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-proveedores\proveedores-form\proveedores-form.component.ts                        | TypeScript         |         66 |          0 |         14 |         80 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-proveedores\proveedores-list\proveedores-list.component.html                      | HTML               |         59 |          0 |          9 |         68 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-proveedores\proveedores-list\proveedores-list.component.ts                        | TypeScript         |         92 |          0 |         15 |        107 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ubicaciones\ubicacion-form\ubicacion-form.component.html                          | HTML               |         44 |          0 |          6 |         50 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ubicaciones\ubicacion-form\ubicacion-form.component.ts                            | TypeScript         |        121 |          0 |         16 |        137 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ubicaciones\ubicacion-list\ubicacion-list.component.html                          | HTML               |         87 |          0 |         11 |         98 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-ubicaciones\ubicacion-list\ubicacion-list.component.ts                            | TypeScript         |         95 |          0 |         14 |        109 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-usuarios\usuario-form\usuario-form.component.html                                 | HTML               |         43 |          0 |          9 |         52 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-usuarios\usuario-form\usuario-form.component.ts                                   | TypeScript         |         71 |          0 |         13 |         84 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-usuarios\usuario-list\usuario-list.component.html                                 | HTML               |         77 |          0 |         10 |         87 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-usuarios\usuario-list\usuario-list.component.ts                                   | TypeScript         |        100 |          0 |         17 |        117 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-zonas\zona-form\zona-form.component.html                                          | HTML               |         20 |          0 |          6 |         26 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-zonas\zona-form\zona-form.component.ts                                            | TypeScript         |         62 |          1 |         13 |         76 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-zonas\zona-list\zona-list.component.html                                          | HTML               |         57 |          0 |          9 |         66 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\gestion-zonas\zona-list\zona-list.component.ts                                            | TypeScript         |         82 |          0 |         13 |         95 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\login\login.component.css                                                                 | PostCSS            |         55 |          0 |          9 |         64 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\login\login.component.html                                                                | HTML               |         13 |          0 |          5 |         18 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\features\login\login.component.ts                                                                  | TypeScript         |         40 |          0 |          8 |         48 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\shared\components\modal\modal-host.component.ts                                                    | TypeScript         |         36 |          0 |          4 |         40 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\shared\components\modal\modal.component.css                                                        | PostCSS            |        242 |          0 |         41 |        283 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\shared\components\modal\modal.component.ts                                                         | TypeScript         |         64 |          0 |          4 |         68 |
+| c:\TPPROGRA4\GestorDeDepositos\src\app\shared\services\modal.service.ts                                                                   | TypeScript         |         56 |          0 |          9 |         65 |
+| c:\TPPROGRA4\GestorDeDepositos\src\index.html                                                                                             | HTML               |         13 |          0 |          1 |         14 |
+| c:\TPPROGRA4\GestorDeDepositos\src\main.ts                                                                                                | TypeScript         |          6 |          0 |          2 |          8 |
+| c:\TPPROGRA4\GestorDeDepositos\src\styles.css                                                                                             | PostCSS            |        218 |         28 |         51 |        297 |
+| c:\TPPROGRA4\GestorDeDepositos\tsconfig.app.json                                                                                          | JSON               |         13 |          2 |          1 |         16 |
+| c:\TPPROGRA4\GestorDeDepositos\tsconfig.json                                                                                              | JSON with Comments |         32 |          2 |          1 |         35 |
+| c:\TPPROGRA4\GestorDeDepositos\tsconfig.spec.json                                                                                         | JSON               |         12 |          2 |          1 |         15 |
+| Total                                                                                                                                     |                    |     15,049 |         88 |        992 |     16,129 |
++-------------------------------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

@@ -26,9 +26,11 @@ import {
   filter,
   catchError,
   tap,
+  distinctUntilChanged,
 } from "rxjs/operators";
 import { of } from "rxjs";
 import { ModalService } from "../../../shared/services/modal.service";
+import { Cliente } from "../../../core/models/cliente/cliente.model";
 
 @Component({
   selector: "app-ordenes-despacho-form",
@@ -41,6 +43,8 @@ export class OrdenesDespachoForm implements OnInit {
   form!: FormGroup;
   editMode = false;
   idOrden = 0;
+
+   clienteSeleccionado: Cliente | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -67,39 +71,15 @@ export class OrdenesDespachoForm implements OnInit {
       detalles: this.fb.array([]),
     });
 
-    this.form
-      .get("cliente.idCliente")
-      ?.valueChanges.pipe(
+    // Buscar cliente automáticamente cuando el id cambie (debounced)
+    const idControl = this.form.get(["cliente", "idCliente"]);
+    idControl?.valueChanges
+      .pipe(
         debounceTime(400),
-        switchMap((id) => {
-          const numericId = Number(id);
-
-          if (!numericId || isNaN(numericId)) {
-            return of(null);
-          }
-
-          return this.clienteService.buscarPorId(numericId).pipe(
-            catchError((err) => {
-              console.warn("ERROR capturado al buscar cliente:", err);
-              return of(null);
-            })
-          );
-        }),
-        tap((cliente) => {
-          if (cliente) {
-            this.form.patchValue(
-              { cliente: { nombre: cliente.nombre } },
-              { emitEvent: false }
-            );
-          } else {
-            this.form.patchValue(
-              { cliente: { nombre: "" } },
-              { emitEvent: false }
-            );
-          }
-        })
+        distinctUntilChanged(),
+        filter((v) => v !== null && v !== undefined && v !== "" && !isNaN(Number(v)))
       )
-      .subscribe();
+      .subscribe((v) => this.buscarClientePorId(Number(v)));
 
     const id = this.route.snapshot.paramMap.get("id");
     if (id) {
@@ -115,6 +95,12 @@ export class OrdenesDespachoForm implements OnInit {
               : "",
           };
           this.form.patchValue(dataToPatch as any);
+          // Si la orden trae cliente, mostrarlo en la tarjeta
+          if (data.cliente) {
+            this.clienteSeleccionado = data.cliente as Cliente;
+            // También asegurar que el subgrupo cliente del formulario esté consistente
+            this.form.patchValue({ cliente: { idCliente: data.cliente.idCliente, nombre: data.cliente.nombre } });
+          }
           this.detalles.clear();
           (data.detalle_despacho || []).forEach((d: DetalleDespacho) =>
             this.agregarDetalle(d)
@@ -123,6 +109,39 @@ export class OrdenesDespachoForm implements OnInit {
     } else {
       this.agregarDetalle();
     }
+  }
+
+  
+  buscarClientePorId(id: number | string | null | undefined) {
+    console.log('buscarClientePorId llamado con:', id);
+    const numId = Number(id);
+    if (!numId || isNaN(numId)) {
+      console.warn('Id invalido pasado a buscarClientePorId:', id);
+      this.clienteSeleccionado = null;
+      return;
+    }
+
+    // log para debug: qué URL debería llamarse (se verá también en Network)
+    console.log(`Realizando GET a: ${this.clienteService['baseUrl']}/buscarPorId?id=${numId}`);
+
+    this.clienteService.buscarPorId(numId).subscribe({
+      next: (cliente: Cliente) => {
+        console.log('Respuesta buscarPorId:', cliente);
+        if (cliente) {
+          this.clienteSeleccionado = cliente;
+          // Mantener el formulario consistente con el cliente cargado
+          this.form.patchValue({ cliente: { idCliente: cliente.idCliente, nombre: cliente.nombre } });
+          console.log(`Cliente encontrado: ${cliente.nombre}`);
+        } else {
+          this.clienteSeleccionado = null;
+          console.warn(`No se encontro el cliente con ID: ${numId}`);
+        }
+      },
+      error: (err) => {
+        this.clienteSeleccionado = null;
+        console.warn('Error al buscar cliente', err);
+      }
+    });
   }
 
   get detalles(): FormArray {
@@ -175,11 +194,11 @@ export class OrdenesDespachoForm implements OnInit {
     const detalle = this.detalles.at(index);
     detalle.patchValue({
       productoSeleccionado: producto,
-      inputProducto: `${producto.nombre} (${producto.codigoSku})`,
+      inputProducto: `${producto.codigoSku}`,
     });
 
     this.inventarioService
-      .obtenerStockPorProductoPorId(producto.idProducto!)
+      .obtenerStockPorProductoPorCodigoSku(producto.codigoSku!)
       .subscribe((stock) => {
         detalle.patchValue({ stockDisponible: stock });
       });
