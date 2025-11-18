@@ -140,12 +140,18 @@
 			</select>
 		</div>
 
-		<div class="form-group">
-			<label for="fecha">Fecha *</label>
-			<input id="fecha" type="date" formControlName="fecha" />
-			<div class="error-message" *ngIf="form.get('fecha')?.touched && form.get('fecha')?.invalid">
-				Seleccionar una fecha valida
-			</div>
+			<div class="form-group">
+				<label for="fecha">Fecha *</label>
+				<input id="fecha" type="date" formControlName="fecha" [max]="maxFecha" />
+				<div class="error-message" *ngIf="form.get('fecha')?.touched && form.get('fecha')?.hasError('required')">
+					Seleccionar una fecha valida
+				</div>
+				<div class="error-message" *ngIf="form.get('fecha')?.touched && form.get('fecha')?.hasError('fechaFutura')">
+					No se permiten fechas futuras
+				</div>
+				<div class="error-message" *ngIf="form.get('fecha')?.touched && form.get('fecha')?.hasError('fechaInvalida')">
+					Seleccionar una fecha valida
+				</div>
 		</div>
 
 		<div class="button-group">

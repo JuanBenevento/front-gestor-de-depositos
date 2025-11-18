@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Observable, Subject, catchError, debounceTime, distinctUntilChanged, of, switchMap, take, takeUntil, tap } from 'rxjs';
 import { Producto } from '../../../core/models/Producto/producto.model';
 import { Ubicacion } from '../../../core/models/ubicacion/ubicacion.model';
@@ -27,7 +27,21 @@ export class MovimientosForm implements OnInit, OnDestroy {
   private readonly router: Router = inject(Router);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
 
-  protected readonly estados = MOVIMIENTO_INVENTARIO_ESTADOS;
+  readonly estados = MOVIMIENTO_INVENTARIO_ESTADOS;
+  readonly maxFecha = this.formatDate(new Date());
+  private readonly noFutureDateValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const value = (control.value ?? '').toString();
+    if (!value) {
+      return null;
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      return { fechaInvalida: true };
+    }
+
+    const today = this.formatDate(new Date());
+    return value > today ? { fechaFutura: true } : null;
+  };
 
   form = this.fb.nonNullable.group({
     id_movimiento: [0],
@@ -36,7 +50,7 @@ export class MovimientosForm implements OnInit, OnDestroy {
     ubicacionDestinoId: ['', [Validators.required]],
     cantidad: [1, [Validators.required, Validators.min(1)]],
     estado: [MovimientoInventarioEstado.REUBICACION, Validators.required],
-    fecha: ['', Validators.required]
+    fecha: ['', [Validators.required, this.noFutureDateValidator]]
   });
 
   productoSeleccionado: Producto | null = null;
@@ -52,10 +66,10 @@ export class MovimientosForm implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    this.form.patchValue({ fecha: this.formatDate(new Date()) });
+    this.form.patchValue({ fecha: this.maxFecha });
     this.setupProductoLookup();
-  this.setupUbicacionLookup('ubicacionOrigenId');
-  this.setupUbicacionLookup('ubicacionDestinoId');
+    this.setupUbicacionLookup('ubicacionOrigenId');
+    this.setupUbicacionLookup('ubicacionDestinoId');
     this.tryLoadMovimiento();
   }
 
