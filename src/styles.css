@@ -1,5 +1,20 @@
 /* ============================
-   CONTENEDORES GENERALES
+  VARIABLES GLOBALES
+============================ */
+
+:root {
+  --btn-primary: #0d6efd;
+  --btn-primary-hover: #0a58ca;
+  --btn-success: #198754;
+  --btn-success-hover: #157347;
+  --btn-secondary: #6c757d;
+  --btn-secondary-hover: #5a6268;
+  --btn-danger: #dc3545;
+  --btn-danger-hover: #bb2d3b;
+}
+
+/* ============================
+  CONTENEDORES GENERALES
 ============================ */
 
 .user-management-container,
@@ -49,44 +64,44 @@ button:hover:not(:disabled) {
 
 /* Botón Nuevo */
 .new-btn {
-  background-color: #198754;
+  background-color: var(--btn-success);
   color: white;
   margin-bottom: 20px;
   display: inline-block;
 }
 
 .new-btn:hover {
-  background-color: #157347;
+  background-color: var(--btn-success-hover);
 }
 
 /* Botones secundarios */
 .secondary-btn {
-  background-color: #6c757d;
+  background-color: var(--btn-secondary);
   color: white;
 }
 
 .secondary-btn:hover {
-  background-color: #5a6268;
+  background-color: var(--btn-secondary-hover);
 }
 
 /* Botón eliminar */
 .delete-btn {
-  background-color: #dc3545;
+  background-color: var(--btn-danger);
   color: white;
 }
 
 .delete-btn:hover {
-  background-color: #bb2d3b;
+  background-color: var(--btn-danger-hover);
 }
 
 /* Botón editar */
 .edit-btn {
-  background-color: #0d6efd;
+  background-color: var(--btn-primary);
   color: white;
 }
 
 .edit-btn:hover {
-  background-color: #0a58ca;
+  background-color: var(--btn-primary-hover);
 }
 
 /* Botón pequeño */
@@ -123,17 +138,17 @@ button:hover:not(:disabled) {
 
 .search-group input:focus {
   outline: none;
-  border-color: #0d6efd;
-  box-shadow: 0 0 4px rgba(13,110,253,0.3);
+  border-color: var(--btn-primary);
+  box-shadow: 0 0 4px rgba(13, 110, 253, 0.3);
 }
 
 .search-group button {
-  background-color: #0d6efd;
+  background-color: var(--btn-primary);
   color: white;
 }
 
 .search-group button:hover {
-  background-color: #0a58ca;
+  background-color: var(--btn-primary-hover);
 }
 
 /* ============================
@@ -221,8 +236,8 @@ select {
 
 input:focus,
 select:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 5px rgba(13,110,253,0.3);
+  border-color: var(--btn-primary);
+  box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
   outline: none;
 }
 
