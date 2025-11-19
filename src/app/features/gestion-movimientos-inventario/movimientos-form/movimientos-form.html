@@ -7,10 +7,10 @@
 			[control]="form.controls.productoId"
 			type="number"
 			[min]="1"
-			required
+			[required]="true"
 			placeholder="ID de producto"
 			[externalError]="productoError"
-			[validationMessages]="validationMessages.productoId"
+			[validationMessages]="validationMessages['productoId']"
 			id="productoId"
 		></app-form-text-input>
 
@@ -29,10 +29,10 @@
 			label="Ubicacion origen"
 			[control]="form.controls.ubicacionOrigenId"
 			type="text"
-			required
+			[required]="true"
 			placeholder="ID de ubicacion origen"
 			[externalError]="ubicacionOrigenError"
-			[validationMessages]="validationMessages.ubicacionOrigenId"
+			[validationMessages]="validationMessages['ubicacionOrigenId']"
 			id="ubicacionOrigenId"
 		></app-form-text-input>
 
@@ -51,10 +51,10 @@
 			label="Ubicacion destino"
 			[control]="form.controls.ubicacionDestinoId"
 			type="text"
-			required
+			[required]="true"
 			placeholder="ID de ubicacion destino"
 			[externalError]="ubicacionDestinoError"
-			[validationMessages]="validationMessages.ubicacionDestinoId"
+			[validationMessages]="validationMessages['ubicacionDestinoId']"
 			id="ubicacionDestinoId"
 		></app-form-text-input>
 
@@ -75,8 +75,8 @@
 			type="number"
 			[min]="1"
 			step="0.1"
-			required
-			[validationMessages]="validationMessages.cantidad"
+			[required]="true"
+			[validationMessages]="validationMessages['cantidad']"
 			id="cantidad"
 		></app-form-text-input>
 
@@ -95,7 +95,7 @@
 			type="date"
 			[required]="true"
 			[max]="maxFecha"
-			[validationMessages]="validationMessages.fecha"
+			[validationMessages]="validationMessages['fecha']"
 			id="fecha"
 		></app-form-text-input>
 
