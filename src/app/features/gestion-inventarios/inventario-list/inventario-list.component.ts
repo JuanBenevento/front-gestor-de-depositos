@@ -7,6 +7,7 @@ import { debounceTime, switchMap, startWith } from 'rxjs/operators';
 import { InventarioService } from '../../../core/services/inventario.service';
 import { UbicacionService } from '../../../core/services/ubicacion.service';
 import { Inventario } from '../../../core/models/inventario/inventario.model';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-inventario-list',
@@ -29,7 +30,8 @@ export class InventarioListComponent implements OnInit {
   constructor(
     private service: InventarioService,
     private ubicacionService: UbicacionService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -90,11 +92,31 @@ export class InventarioListComponent implements OnInit {
   }
 
   eliminar(id: number) {
-    if (!confirm('¿Eliminar inventario?')) return;
+    this.modalService.open({
+      title: 'Eliminar inventario',
+      message: '¿Eliminar inventario?',
+      confirmText: 'Eliminar',
+      showCancelButton: true,
+      onConfirm: () => this.confirmarEliminacion(id)
+    });
+  }
 
+  private confirmarEliminacion(id: number): void {
     this.service.eliminar(id).subscribe({
-      next: () => this.cargarInventarios(),
-      error: () => alert('Error al eliminar inventario')
+      next: () => {
+        this.cargarInventarios();
+        this.showModal('Inventario eliminado correctamente.', 'Operación exitosa');
+      },
+      error: () => this.showModal('Error al eliminar inventario', 'Error')
+    });
+  }
+
+  private showModal(message: string, title: string, onConfirm?: () => void): void {
+    this.modalService.open({
+      title,
+      message,
+      confirmText: 'Aceptar',
+      onConfirm
     });
   }
 
