@@ -11,6 +11,7 @@ import { productoRoutes } from './core/routes/producto-routes';
 import { OrdenDespachoRoutes } from './core/routes/ordenDespacho-routes';
 import { OrdenRecepcionRoutes } from './core/routes/ordenRecepcion-routes';
 import { InventarioRoutes } from './core/routes/inventario-routes';
+import { DepositoLayoutRoutes } from './core/routes/deposito-layout.routes';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -31,7 +32,8 @@ export const routes: Routes = [
       ...productoRoutes,
       ...OrdenDespachoRoutes,
       ...OrdenRecepcionRoutes,
-      ...InventarioRoutes
+      ...InventarioRoutes,
+      ...DepositoLayoutRoutes
     ]
   },
 

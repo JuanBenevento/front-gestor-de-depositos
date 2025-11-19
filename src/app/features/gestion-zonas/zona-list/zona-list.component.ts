@@ -56,7 +56,17 @@ export class ZonaListComponent implements OnInit {
   onConfirm = (id: number) => {
     this.zonaService.eliminar(id).subscribe({
       next: () => this.refresh(),
-      error: () => this.showModal('Error al eliminar', 'Error')
+      error: (err) => {
+        let message = 'Error al eliminar la zona.';
+
+        if (typeof err.error === 'string') {
+          message = err.error;
+        } else if (err.error?.error) {
+          message = err.error.error; 
+        }
+
+        this.showModal(message, 'Error');
+      }
     });
   }
 

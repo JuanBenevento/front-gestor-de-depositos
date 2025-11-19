@@ -1,0 +1,143 @@
+<div class="layout-page">
+
+  <div class="toolbar">
+    <div class="left-tools">
+      <button (click)="resetLocal()">Reset local</button>
+    </div>
+
+    <div class="right-tools">
+      <span class="hint">Arrastrá las ubicaciones directamente sobre el mapa. Haz click en una zona o ubicación para editar.</span>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <!-- MAPA -->
+    <div class="map-area">
+      <svg width="100%" height="700" viewBox="0 0 1200 800">
+        <g *ngFor="let zona of layout">
+          <g *ngFor="let u of zona.ubicaciones">
+            <rect
+              class="ubicacion"
+              [attr.x]="u.x"
+              [attr.y]="u.y"
+              [attr.width]="u.w"
+              [attr.height]="u.h"
+              [attr.fill]="zona.color || '#888'"
+              rx="6"
+              (pointerdown)="startDrag(u, $event)"
+              (click)="$event.stopPropagation(); selectUbicacion(u)"
+            ></rect>
+
+            <text [attr.x]="u.x + 8" [attr.y]="u.y + 20" class="text-title">{{ u.codigo }}</text>
+            <text [attr.x]="u.x + 8" [attr.y]="u.y + 38" class="text-sub">{{ u.ocupadoActual }} / {{ u.capacidadMaxima }}</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- PANEL LATERAL -->
+    <aside class="side-panel">
+      <section class="panel-section">
+        <h3>Zonas</h3>
+
+        <ul class="list">
+          <li *ngFor="let z of layout" [class.selected]="selectedZonaId === z.idZona">
+            <button (click)="selectZona(z)">{{ z.nombre || 'Zona ' + z.idZona }}</button>
+          </li>
+        </ul>
+
+        <div *ngIf="selectedZonaId !== null" class="editor">
+          <h4>Editar Zona</h4>
+          <label>Nombre</label>
+          <input [(ngModel)]="zonaEdit.nombre" />
+          <label>Color</label>
+          <input type="color" [(ngModel)]="zonaEdit.color" />
+          <div class="actions">
+            <button (click)="saveZonaEdits()">Guardar Zona</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h3>Ubicaciones</h3>
+
+        <div class="ub-actions">
+          <button (click)="addUbicacionToZona()">+ Agregar (a zona seleccionada)</button>
+        </div>
+
+        <ul class="list small">
+          <li *ngFor="let z of layout">
+            <div class="zone-title">{{ z.nombre }}</div>
+            <ul>
+              <li *ngFor="let u of z.ubicaciones" [class.selected]="selectedUbicacionId === u.idUbicacion">
+                <div class="ubic-row">
+                  <button (click)="selectUbicacion(u)">{{ u.codigo }}</button>
+                  <button class="del" (click)="removeUbicacion(u)">Eliminar</button>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <div *ngIf="selectedUbicacionId !== null" class="editor">
+          <h4>Editar Ubicación</h4>
+          <label>Código</label>
+          <input [(ngModel)]="ubicacionEdit.codigo" />
+          <label>Ancho (px)</label>
+          <input type="number" min="40" [(ngModel)]="ubicacionEdit.w" />
+          <label>Alto (px)</label>
+          <input type="number" min="20" [(ngModel)]="ubicacionEdit.h" />
+          <label>Capacidad Máxima</label>
+          <input type="number" min="0" [(ngModel)]="ubicacionEdit.capacidadMaxima" />
+          <div class="actions">
+            <button (click)="saveUbicacionEdits()">Guardar Ubicación</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- NUEVO: Buscador de Zonas -->
+      <section class="panel-section">
+        <h3>Buscar Zona</h3>
+        <input type="text" placeholder="Buscar zona..." [(ngModel)]="searchTerm" (input)="filterZonas()" />
+
+        <ul class="list small">
+          <li *ngFor="let z of filteredZonas">
+            <button (click)="selectZonaFromSearch(z)">{{ z.nombre }}</button>
+          </li>
+        </ul>
+
+        <div *ngIf="zonaSearchSelected">
+          <h4>Ubicaciones en {{ zonaSearchSelected.nombre }}</h4>
+          <ul class="list small">
+            <li *ngFor="let u of zonaSearchSelected.ubicaciones">
+              <button (click)="showInventario(u)">{{ u.codigo }}</button>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- NUEVO: Detalle inventario de una ubicación -->
+      <section *ngIf="ubicacionInventario" class="panel-section">
+        <h3>Inventario de {{ ubicacionInventario.codigo }}</h3>
+
+        <table class="inv-table">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of ubicacionInventario.productos">
+              <td>{{ p.sku }}</td>
+              <td>{{ p.nombre }}</td>
+              <td>{{ p.cantidad }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+    </aside>
+  </div>
+</div>
