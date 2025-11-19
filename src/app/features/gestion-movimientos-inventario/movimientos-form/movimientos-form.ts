@@ -39,8 +39,7 @@ export class MovimientosForm implements OnInit, OnDestroy {
       return { fechaInvalida: true };
     }
 
-    const today = this.formatDate(new Date());
-    return value > today ? { fechaFutura: true } : null;
+    return value > this.maxFecha ? { fechaFutura: true } : null;
   };
 
   form = this.fb.nonNullable.group({
@@ -70,6 +69,7 @@ export class MovimientosForm implements OnInit, OnDestroy {
     this.setupProductoLookup();
     this.setupUbicacionLookup('ubicacionOrigenId');
     this.setupUbicacionLookup('ubicacionDestinoId');
+    this.setupFechaLookup();
     this.tryLoadMovimiento();
   }
 
@@ -79,6 +79,12 @@ export class MovimientosForm implements OnInit, OnDestroy {
   }
 
   guardar(): void {
+    const fechaControl = this.form.get('fecha');
+    if (fechaControl?.value && fechaControl.value > this.maxFecha) {
+      fechaControl.setErrors({ ...(fechaControl.errors ?? {}), fechaFutura: true });
+      fechaControl.markAsTouched();
+    }
+
     if (this.form.invalid || !this.productoSeleccionado || !this.ubicacionOrigenSeleccionada || !this.ubicacionDestinoSeleccionada) {
       this.form.markAllAsTouched();
       this.showModal('Revisar los datos del formulario antes de continuar.', 'Datos incompletos');
@@ -147,6 +153,7 @@ export class MovimientosForm implements OnInit, OnDestroy {
           : MovimientoInventarioEstado.REUBICACION,
       fecha
     }, { emitEvent: false });
+    this.form.get('fecha')?.updateValueAndValidity();
 
     this.productoSeleccionado = movimiento.producto ?? null;
     if (productoId) {
@@ -266,6 +273,27 @@ export class MovimientosForm implements OnInit, OnDestroy {
       }),
       takeUntil(this.destroy$)
     ).subscribe();
+  }
+
+  private setupFechaLookup(): void {
+    const control = this.form.get('fecha');
+    if (!control) return;
+
+    control.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        if (!value) {
+          return;
+        }
+
+        if (value > this.maxFecha) {
+          control.setErrors({ ...(control.errors ?? {}), fechaFutura: true });
+        } else if (control.errors?.['fechaFutura']) {
+          const cleanedErrors = { ...(control.errors ?? {}) } as Record<string, unknown>;
+          delete cleanedErrors['fechaFutura'];
+          control.setErrors(Object.keys(cleanedErrors).length ? cleanedErrors : null);
+        }
+      });
   }
 
   private lookupUbicacion(value: string | number): Observable<Ubicacion> {

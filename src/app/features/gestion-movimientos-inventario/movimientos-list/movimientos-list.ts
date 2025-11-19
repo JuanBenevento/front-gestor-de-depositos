@@ -5,6 +5,7 @@ import { MovimientoInventario } from '../../../core/models/movimiento-inventario
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-movimientos-list',
@@ -25,7 +26,8 @@ export class MovimientosList implements OnInit {
 
   constructor(
     private service: MovimientosInventarioService,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -50,16 +52,33 @@ export class MovimientosList implements OnInit {
     this.router.navigate(['/dashboard']);
   }
 
- eliminar(id: number): void {
-    if (confirm('¿Eliminar movimiento de inventario?')) {
-      this.service.eliminar(id).subscribe({
-        next: (res) => {
-          alert("El movimiento de inventario se eliminó correctamente.");
-          this.refresh();
-        } ,
-        error: () => alert('Error al eliminar')
-      });
-    }
+  eliminar(id: number): void {
+    this.modalService.open({
+      title: 'Eliminar movimiento',
+      message: '¿Eliminar movimiento de inventario?',
+      confirmText: 'Eliminar',
+      showCancelButton: true,
+      onConfirm: () => this.confirmarEliminacion(id)
+    });
+  }
+
+  private confirmarEliminacion(id: number): void {
+    this.service.eliminar(id).subscribe({
+      next: () => {
+        this.refresh();
+        this.showModal('El movimiento de inventario se eliminó correctamente.', 'Operación exitosa');
+      },
+      error: () => this.showModal('Error al eliminar el movimiento de inventario.', 'Error')
+    });
+  }
+
+  private showModal(message: string, title: string, onConfirm?: () => void): void {
+    this.modalService.open({
+      title,
+      message,
+      confirmText: 'Aceptar',
+      onConfirm
+    });
   }
 
   limpiarFiltros(): void {

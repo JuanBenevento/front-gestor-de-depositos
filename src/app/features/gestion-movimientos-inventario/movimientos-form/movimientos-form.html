@@ -142,7 +142,7 @@
 
 			<div class="form-group">
 				<label for="fecha">Fecha *</label>
-				<input id="fecha" type="date" formControlName="fecha" [max]="maxFecha" />
+				<input id="fecha" type="date" formControlName="fecha" [attr.max]="maxFecha" />
 				<div class="error-message" *ngIf="form.get('fecha')?.touched && form.get('fecha')?.hasError('required')">
 					Seleccionar una fecha valida
 				</div>

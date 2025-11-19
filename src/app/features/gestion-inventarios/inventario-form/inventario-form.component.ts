@@ -13,6 +13,7 @@ import { of } from 'rxjs';
 import { InventarioService } from '../../../core/services/inventario.service';
 import { ProductoService } from '../../../core/services/producto.service';
 import { UbicacionService } from '../../../core/services/ubicacion.service';
+import { ModalService } from '../../../shared/services/modal.service';
 
 import { Producto } from '../../../core/models/Producto/producto.model';
 import { Inventario } from '../../../core/models/inventario/inventario.model';
@@ -42,7 +43,8 @@ export class InventarioFormComponent implements OnInit {
     private productoService: ProductoService,
     private ubicacionService: UbicacionService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -168,12 +170,21 @@ export class InventarioFormComponent implements OnInit {
       next: () => this.router.navigate(['/dashboard/inventarios']),
       error: (err) => {
         console.error(err);
-        alert(err.error || "Error al guardar inventario");
+        this.showModal(err.error || 'Error al guardar inventario', 'Error');
       }
     });
   }
 
   cancelar() {
     this.router.navigate(['/dashboard/inventarios']);
+  }
+
+  private showModal(message: string, title: string, onConfirm?: () => void): void {
+    this.modalService.open({
+      title,
+      message,
+      confirmText: 'Aceptar',
+      onConfirm
+    });
   }
 }
