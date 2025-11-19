@@ -1,0 +1,35 @@
+<section class="zones-map" *ngIf="!loading && !error && zonas.length; else zonesState">
+  <article class="zone-card" *ngFor="let zona of zonas; trackBy: trackByZona">
+    <header class="zone-header">
+      <div>
+        <p class="zone-name">{{ zona.nombre }}</p>
+        <p class="zone-description">{{ zona.descripcion }}</p>
+        <p class="zone-stats">
+          {{ zona.ubicaciones.length }} ubicaciones · {{ getZonaOcupacion(zona) }} ocupación
+        </p>
+      </div>
+      <span class="zone-free">{{ getZonaCapacidadLibre(zona) }} libres</span>
+    </header>
+
+    <div class="zone-grid">
+      <div
+        class="location-square"
+        *ngFor="let ubicacion of zona.ubicaciones; trackBy: trackByUbicacion"
+        [class.state-low]="getUbicacionEstado(ubicacion) === 'low'"
+        [class.state-medium]="getUbicacionEstado(ubicacion) === 'medium'"
+        [class.state-high]="getUbicacionEstado(ubicacion) === 'high'"
+      >
+        <span class="location-code">{{ ubicacion.codigo }}</span>
+        <span class="location-capacity">{{ ubicacion.ocupado }}/{{ ubicacion.capacidad }}</span>
+      </div>
+    </div>
+  </article>
+</section>
+
+<ng-template #zonesState>
+  <div class="zones-state" *ngIf="loading">Cargando distribución de zonas...</div>
+  <div class="zones-state error" *ngIf="!loading && error">{{ error }}</div>
+  <div class="zones-state" *ngIf="!loading && !error && !zonas.length">
+    No hay ubicaciones registradas para mostrar en el mapa.
+  </div>
+</ng-template>
