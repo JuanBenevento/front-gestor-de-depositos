@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/login/login.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { DashboardHomeComponent } from './features/dashboard/dashboard-home/dashboard-home.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { usuarioRoutes } from './core/routes/usuario-routes';
 import { zonaRoutes } from './core/routes/zona-routes';
@@ -24,6 +25,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: ['ADMIN', 'OPERATIVO'] },
     children: [
+      { path: '', component: DashboardHomeComponent },
       ...usuarioRoutes,
       ...zonaRoutes,
       ...ubicacionRoutes,

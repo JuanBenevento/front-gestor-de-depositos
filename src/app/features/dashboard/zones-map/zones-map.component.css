@@ -1,0 +1,134 @@
+:host {
+  display: block;
+}
+
+.zones-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.zone-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 1rem;
+  background: #ffffff;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  aspect-ratio: 1 / 1;
+}
+
+.zone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.zone-name {
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0;
+  color: #0f172a;
+}
+
+.zone-description {
+	margin: 0.15rem 0;
+	font-size: 0.8rem;
+	color: #64748b;
+}
+
+.zone-stats {
+  margin: 0;
+  color: #475569;
+  font-size: 0.85rem;
+}
+
+.zone-free {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--btn-success, #198754);
+}
+
+.zone-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.location-square {
+  border-radius: 12px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 0.8rem;
+  aspect-ratio: 1 / 1;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.location-square:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px rgba(15, 23, 42, 0.12);
+}
+
+.location-code {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.location-capacity {
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+.location-square.state-low {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.12);
+  color: #065f46;
+}
+
+.location-square.state-medium {
+  border-color: rgba(250, 204, 21, 0.5);
+  background: rgba(250, 204, 21, 0.18);
+  color: #713f12;
+}
+
+.location-square.state-high {
+  border-color: rgba(239, 68, 68, 0.6);
+  background: rgba(239, 68, 68, 0.2);
+  color: #7f1d1d;
+}
+
+.zones-state {
+  border: 1px dashed #cbd5f5;
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+  color: #475569;
+  background: #f8fafc;
+}
+
+.zones-state.error {
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #b91c1c;
+  background: rgba(254, 226, 226, 0.6);
+}
+
+@media (max-width: 640px) {
+  .zones-map {
+    grid-template-columns: 1fr;
+  }
+
+  .zone-card {
+    aspect-ratio: auto;
+  }
+}
