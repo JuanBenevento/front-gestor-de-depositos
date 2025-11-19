@@ -94,7 +94,7 @@ export class MovimientosList implements OnInit {
 
     if (this.idBuscar) {
       const idBuscado = +this.idBuscar;
-      movimientosFiltrados = movimientosFiltrados.filter(m => m.id_movimiento === idBuscado);
+      movimientosFiltrados = movimientosFiltrados.filter( m => m.idMovimientoInventario === idBuscado);
     }
 
     this.movimientos = movimientosFiltrados;

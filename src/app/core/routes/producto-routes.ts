@@ -4,7 +4,7 @@ import { ProductoListComponent } from '../../features/gestion-productos/producto
 import { ProductoFormComponent } from '../../features/gestion-productos/producto-form/producto-form.component';
 
 export const productoRoutes: Routes = [
-  { path: 'productos', component: ProductoListComponent, canActivate: [RoleGuard('ADMIN')] },
-  { path: 'productos/nuevo', component: ProductoFormComponent, canActivate: [RoleGuard('ADMIN')] },
-  { path: 'productos/editar/:id', component: ProductoFormComponent, canActivate: [RoleGuard('ADMIN')] }
+  { path: 'productos', component: ProductoListComponent, canActivate: [RoleGuard(['ADMIN', 'OPERATIVO'])] },
+  { path: 'productos/nuevo', component: ProductoFormComponent, canActivate: [RoleGuard(['ADMIN', 'OPERATIVO'])] },
+  { path: 'productos/editar/:id', component: ProductoFormComponent, canActivate: [RoleGuard(['ADMIN', 'OPERATIVO'])] }
 ];

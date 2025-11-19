@@ -4,8 +4,8 @@ import { OrdenesDespachoForm } from '../../features/gestion-ordenes-despacho/ord
 import { RoleGuard } from '../guards/role.guard';
 
 export const OrdenDespachoRoutes: Routes = [
-  { path: 'ordenesDespacho', component: OrdenDespachoListComponent, canActivate: [RoleGuard('ADMIN')] },
-  { path: 'ordenesDespacho/nuevo', component: OrdenesDespachoForm, canActivate: [RoleGuard('ADMIN')] },
-  { path: 'ordenesDespacho/editar/:id', component: OrdenesDespachoForm, canActivate: [RoleGuard('ADMIN')] }
+  { path: 'ordenesDespacho', component: OrdenDespachoListComponent, canActivate: [RoleGuard(['ADMIN', 'OPERATIVO'])] },
+  { path: 'ordenesDespacho/nuevo', component: OrdenesDespachoForm, canActivate: [RoleGuard(['ADMIN', 'OPERATIVO'])] },
+  { path: 'ordenesDespacho/editar/:id', component: OrdenesDespachoForm, canActivate: [RoleGuard(['ADMIN', 'OPERATIVO'])] }
 ];
 

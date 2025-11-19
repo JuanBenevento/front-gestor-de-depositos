@@ -21,9 +21,6 @@ export class DepositoLayoutService {
     private inventarioService: InventarioService
   ) {}
 
-  /**
-   * Construye layout usando tus servicios backend existentes y aplica coordenadas desde localStorage si existen.
-   */
   getLayout(): Observable<ZonaLayout[]> {
     return forkJoin({
       zonas: this.zonaService.listar(),
@@ -74,27 +71,18 @@ export class DepositoLayoutService {
     );
   }
 
-  /**
-   * Guarda coordenadas solo en localStorage (prototipo frontend-only).
-   */
   saveCoordsLocal(ubicacionId: number, x: number, y: number) {
     const map = this._readCoordsFromStorage();
     map[ubicacionId] = { x, y };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
   }
 
-  /**
-   * Exporta el JSON con coordenadas y pequeño snapshot del layout
-   */
   exportLayoutJSON(layout: ZonaLayout[]) {
     const coords = this._readCoordsFromStorage();
     const payload = { coords, timestamp: new Date().toISOString() };
     return JSON.stringify(payload, null, 2);
   }
 
-  /**
-   * Importa JSON (formato esperado: { coords: { idUb: {x, y}, ... }})
-   */
   importLayoutJSON(jsonString: string) {
     try {
       const parsed = JSON.parse(jsonString);
@@ -112,7 +100,6 @@ export class DepositoLayoutService {
     localStorage.removeItem(STORAGE_KEY);
   }
 
-  // ---- helpers ----
   private _colorForZona(idZona: number): string {
     const colors = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#FF33F3'];
     return colors[idZona % colors.length];

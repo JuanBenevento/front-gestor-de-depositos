@@ -12,6 +12,7 @@ import { OrdenDespachoRoutes } from './core/routes/ordenDespacho-routes';
 import { OrdenRecepcionRoutes } from './core/routes/ordenRecepcion-routes';
 import { InventarioRoutes } from './core/routes/inventario-routes';
 import { DepositoLayoutRoutes } from './core/routes/deposito-layout.routes';
+import { MovimientosInventarioRoutes } from './core/routes/movimiento-inventario.router';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -33,6 +34,7 @@ export const routes: Routes = [
       ...OrdenDespachoRoutes,
       ...OrdenRecepcionRoutes,
       ...InventarioRoutes,
+      ...MovimientosInventarioRoutes,
       ...DepositoLayoutRoutes
     ]
   },

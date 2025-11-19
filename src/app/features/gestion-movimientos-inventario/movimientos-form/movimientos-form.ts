@@ -59,7 +59,7 @@ export class MovimientosForm implements OnInit, OnDestroy {
   };
 
   form = this.fb.nonNullable.group({
-    id_movimiento: [0],
+    idMovimientoInventario: [0],
     productoId: ['', [Validators.required]],
     ubicacionOrigenId: ['', [Validators.required]],
     ubicacionDestinoId: ['', [Validators.required]],
@@ -118,7 +118,10 @@ export class MovimientosForm implements OnInit, OnDestroy {
     };
 
     const request$ = this.editMode
-      ? this.movimientosService.actualizar({ ...payload, id_movimiento: this.movimientoId })
+      ? this.movimientosService.actualizar({
+          ...payload,
+          idMovimientoInventario: this.movimientoId
+        })
       : this.movimientosService.crear(payload);
 
     request$.subscribe({
@@ -159,7 +162,7 @@ export class MovimientosForm implements OnInit, OnDestroy {
   const productoId = movimiento.producto?.idProducto ?? (movimiento.producto as any)?.id ?? null;
 
     this.form.patchValue({
-      id_movimiento: movimiento.id_movimiento ?? 0,
+      idMovimientoInventario: movimiento.idMovimientoInventario ?? 0,
       productoId: productoId ? productoId.toString() : '',
       ubicacionOrigenId: origenId,
       ubicacionDestinoId: destinoId,

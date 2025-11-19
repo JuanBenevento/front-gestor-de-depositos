@@ -6,6 +6,6 @@ export const DepositoLayoutRoutes: Routes = [
   {
     path: 'depositoLayout',
     component: DepositoLayoutComponent,
-    canActivate: [RoleGuard('Admin')]
+    canActivate: [RoleGuard(['ADMIN', 'OPERATIVO'])]
   }
 ];

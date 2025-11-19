@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
-export const RoleGuard = (requiredRole: string): CanActivateFn => {
+export const RoleGuard = (requiredRoles: string | string[]): CanActivateFn => {
   return () => {
     const authService = inject(AuthService);
     const router = inject(Router);
@@ -19,7 +19,11 @@ export const RoleGuard = (requiredRole: string): CanActivateFn => {
       return false;
     }
 
-    if (authService.hasRole(requiredRole.toUpperCase())) {
+    const roles = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles];
+
+    const hasRole = roles.some(role => authService.hasRole(role.toUpperCase()));
+
+    if (hasRole) {
       return true;
     }
 

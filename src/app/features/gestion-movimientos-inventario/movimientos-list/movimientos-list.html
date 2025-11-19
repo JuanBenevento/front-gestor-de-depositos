@@ -63,26 +63,19 @@
         </tr>
       </thead>
       <tbody>
-        @for (m of movimientos; track m.id_movimiento) {
+        @for (m of movimientos; track m.idMovimientoInventario) {
           <tr>
-            <td>{{ m.id_movimiento }}</td>
+            <td>{{ m.idMovimientoInventario }}</td>
             <td>{{ m.fecha | date: 'dd/MM/yyyy' }}</td>
             <td>{{ m.estado }}</td>
             <td>{{ m.producto.idProducto }}</td>
             <td>{{ m.cantidad }}</td>
-            <td>{{ m.ubicacionOrigen.idUbicacion }}</td>
-            <td>{{ m.ubicacionDestino.idUbicacion }}</td>
+            <td>{{ m.ubicacionOrigen?.idUbicacion }}</td>
+            <td>{{ m.ubicacionDestino?.idUbicacion }}</td>
 
             <td class="actions">
-              <button
-                [routerLink]="['/dashboard/movimientosInventario/editar', m.id_movimiento]"
-                class="btn edit-btn"
-              >
-                Editar
-              </button>
-              <button (click)="eliminar(m.id_movimiento!)" class="btn delete-btn">
-                Eliminar
-              </button>
+                <button [routerLink]="['/dashboard/movimientosInventario/editar', m.idMovimientoInventario]" class="btn edit-btn">Editar</button>
+                <button (click)="eliminar(m.idMovimientoInventario!)" class="btn delete-btn">Eliminar</button>
             </td>
           </tr>
         }

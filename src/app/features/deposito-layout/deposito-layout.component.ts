@@ -7,6 +7,7 @@ import { DepositoLayoutService } from '../../core/services/deposito-layout.servi
 import { ZonaLayout } from '../../core/models/deposito-layout/zona-layout.model';
 import { UbicacionLayout } from '../../core/models/deposito-layout/ubicacion-layout.model';
 import { ProductoStock } from '../../core/models/deposito-layout/producto-stock.model';
+import { InventarioService } from '../../core/services/inventario.service';
 
 @Component({
   selector: 'app-deposito-layout',
@@ -20,35 +21,33 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
   layout: ZonaLayout[] = [];
   subs = new Subscription();
 
-  // estado UI
   selectedZonaId: number | null = null;
   selectedUbicacionId: number | null = null;
 
-  // drag state
   private draggingUbicacionId: number | null = null;
   private dragOffset = { x: 0, y: 0 };
 
-  // meta local (width/height, customColor por ubicacion, capacidadMax modificada en UI)
   private META_KEY = 'mapa-deposito-meta-v1';
   metaMap: Record<number, { w: number; h: number; color?: string; capacidadMaxima?: number }> = {};
 
-  // formulario / inputs temporales
   zonaEdit = { idZona: 0, nombre: '', color: '' };
   ubicacionEdit = { idUbicacion: 0, codigo: '', w: 140, h: 70, capacidadMaxima: 0 };
 
-  // --------- NUEVAS PROPIEDADES (búsqueda + modal) ----------
   searchTerm = '';
   filteredZonas: ZonaLayout[] = [];
   zonaSearchSelected: ZonaLayout | null = null;
   ubicacionInventario: UbicacionLayout | null = null;
 
-  // modal resize zona
+
   zonaResizeModal = false;
   zonaScaleX = 1;
   zonaScaleY = 1;
   zonaEditing: ZonaLayout | null = null;
 
-  constructor(private layoutService: DepositoLayoutService) {}
+  constructor(
+    private layoutService: DepositoLayoutService,
+    private inventarioService: InventarioService
+  ) {}
 
   ngOnInit(): void {
     this.loadMeta();
@@ -60,7 +59,6 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
     this._removeWindowListeners();
   }
 
-  // ---------------- meta ----------------
   private _ensureMeta(idUbicacion: number): void {
     if (!this.metaMap[idUbicacion]) {
       this.metaMap[idUbicacion] = { w: 140, h: 70 };
@@ -82,12 +80,10 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ---------------- layout ----------------
   loadLayout() {
     this.subs.add(
       this.layoutService.getLayout().subscribe(zs => {
         this.layout = zs;
-        // aplicar meta (w,h,color,capacidad) si existen
         for (const zona of this.layout) {
           for (const u of zona.ubicaciones) {
             const m = this.metaMap[u.idUbicacion];
@@ -97,19 +93,17 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
               if (m.capacidadMaxima !== undefined) u.capacidadMaxima = m.capacidadMaxima;
               if (m.color) (zona as any).color = m.color;
             } else {
-              // defaults si no existen
               (u as any).w = (u as any).w ?? 140;
               (u as any).h = (u as any).h ?? 70;
             }
           }
         }
-        // si hay término de búsqueda activo, actualizar la lista
+
         if (this.searchTerm) this.filterZonas();
       })
     );
   }
 
-  // ---------------- Drag & Drop (Pointer Events) ----------------
   startDrag(u: UbicacionLayout, ev: PointerEvent) {
     ev.preventDefault();
     this.draggingUbicacionId = u.idUbicacion;
@@ -163,13 +157,10 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  // ---------------- Selecciones y edición ----------------
-  // modificada: ahora abre modal de resize de zona también
   selectZona(z: ZonaLayout) {
     this.selectedZonaId = z.idZona;
     this.zonaEdit = { idZona: z.idZona, nombre: z.nombre, color: (z as any).color || '#999999' };
 
-    // abrir modal para ajustar tamaño de la zona
     this.zonaEditing = z;
     this.zonaScaleX = 1;
     this.zonaScaleY = 1;
@@ -183,7 +174,6 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
     z.nombre = this.zonaEdit.nombre;
     (z as any).color = this.zonaEdit.color;
 
-    // actualizar metaMap para que color persista al exportar/importar
     for (const u of z.ubicaciones) {
       this._ensureMeta(u.idUbicacion);
       this.metaMap[u.idUbicacion].color = this.zonaEdit.color;
@@ -191,7 +181,6 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
     this.saveMeta();
   }
 
-  // ---------------- Export / Import / Reset ----------------
   exportAll(): void {
     try {
       const json = this.layoutService.exportLayoutJSON(this.layout);
@@ -235,7 +224,6 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
     this.loadLayout();
   }
 
-  // ---------------- Ubicaciones (add/remove/edit) ----------------
   addUbicacionToZona(): void {
     if (this.selectedZonaId == null) {
       alert('Seleccione una zona primero');
@@ -243,7 +231,7 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
     }
     const z = this.layout.find(x => x.idZona === this.selectedZonaId);
     if (!z) return;
-    const newId = Date.now(); // id temporal en frontend
+    const newId = Date.now(); 
     const nueva: UbicacionLayout = {
       idUbicacion: newId,
       codigo: 'U' + newId,
@@ -269,7 +257,7 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
       h: (u as any).h || 70,
       capacidadMaxima: u.capacidadMaxima || 0
     };
-    // limpiamos el panel de inventario si seleccionas por el mapa
+
     this.ubicacionInventario = null;
   }
 
@@ -293,7 +281,7 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
     (u as any).w = this.ubicacionEdit.w;
     (u as any).h = this.ubicacionEdit.h;
     u.capacidadMaxima = this.ubicacionEdit.capacidadMaxima;
-    // actualizar metaMap
+
     this._ensureMeta(u.idUbicacion);
     this.metaMap[u.idUbicacion].w = (u as any).w;
     this.metaMap[u.idUbicacion].h = (u as any).h;
@@ -301,7 +289,7 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
     this.saveMeta();
   }
 
-  // ---------------- BÚSQUEDA Y DETALLES ----------------
+
   filterZonas() {
     const term = this.searchTerm.toLowerCase().trim();
     if (!term) {
@@ -318,16 +306,33 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
   }
 
   showInventario(u: UbicacionLayout) {
-    // como el objeto u ya trae productos desde servicio, lo mostramos directo
-    this.ubicacionInventario = u;
-    // opcional: si necesitás refrescar desde backend, podés llamar a inventarioService aquí
+    this.subs.add(
+      this.inventarioService.listar().subscribe({
+        next: (inventarios) => {
+          const productosEnUbicacion = inventarios.filter(inv => inv.ubicacion.idUbicacion === u.idUbicacion);
+
+          this.ubicacionInventario = {
+            ...u,
+            productos: productosEnUbicacion.map(inv => ({
+              sku: inv.producto.codigoSku || 'SIN_SKU',
+              nombre: inv.producto.nombre || 'Producto sin nombre',
+              cantidad: inv.cantidad
+            }))
+          };
+        },
+        error: (err) => {
+          console.error('Error cargando inventario', err);
+          this.ubicacionInventario = null;
+        }
+      })
+    );
   }
 
-  // ----------------- Modal de resize de zona -----------------
+
   applyZonaScale() {
     if (!this.zonaEditing) return;
     for (const u of this.zonaEditing.ubicaciones) {
-      // aplicamos escala y guardamos en metaMap
+
       (u as any).w = Math.max(20, Math.round(((u as any).w || 140) * this.zonaScaleX));
       (u as any).h = Math.max(10, Math.round(((u as any).h || 70) * this.zonaScaleY));
 

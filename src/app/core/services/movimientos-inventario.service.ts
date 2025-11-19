@@ -9,11 +9,9 @@ import { MovimientoInventario } from '../models/movimiento-inventario/movimiento
 })
 export class MovimientosInventarioService {
 
-  constructor(
-    private http: HttpClient
-  ) { }
-
   private readonly apiUrl = `${BASE_URL}/movimientoInventario`;
+
+  constructor(private http: HttpClient) {}
 
   listar(): Observable<MovimientoInventario[]> {
     return this.http.get<MovimientoInventario[]>(`${this.apiUrl}/todos`);
@@ -28,7 +26,10 @@ export class MovimientosInventarioService {
   }
 
   actualizar(movimiento: any): Observable<MovimientoInventario> {
-    return this.http.put<MovimientoInventario>(`${this.apiUrl}/editar?id=${movimiento?.id_movimiento}`, movimiento);
+    return this.http.put<MovimientoInventario>(
+      `${this.apiUrl}/editar?id=${movimiento.idMovimientoInventario}`,
+      movimiento
+    );
   }
 
   eliminar(id: number): Observable<string> {

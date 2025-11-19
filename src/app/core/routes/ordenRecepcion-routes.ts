@@ -4,8 +4,8 @@ import { OrdenRecepcionListComponent } from '../../features/gestion-ordenes-rece
 import { OrdenRecepcionFormComponent } from '../../features/gestion-ordenes-recepcion/orden-recepcion-form/orden-recepcion-form.component';
 
 export const OrdenRecepcionRoutes: Routes = [
-  { path: 'ordenesRecepcion', component: OrdenRecepcionListComponent, canActivate: [RoleGuard('ADMIN')] },
-  { path: 'ordenesRecepcion/nuevo', component: OrdenRecepcionFormComponent, canActivate: [RoleGuard('ADMIN')] },
-  { path: 'ordenesRecepcion/editar/:id', component: OrdenRecepcionFormComponent, canActivate: [RoleGuard('ADMIN')] }
+  { path: 'ordenesRecepcion', component: OrdenRecepcionListComponent, canActivate: [RoleGuard(['ADMIN', 'OPERATIVO'])] },
+  { path: 'ordenesRecepcion/nuevo', component: OrdenRecepcionFormComponent, canActivate: [RoleGuard(['ADMIN', 'OPERATIVO'])] },
+  { path: 'ordenesRecepcion/editar/:id', component: OrdenRecepcionFormComponent, canActivate: [RoleGuard(['ADMIN', 'OPERATIVO'])] }
 ];
 
