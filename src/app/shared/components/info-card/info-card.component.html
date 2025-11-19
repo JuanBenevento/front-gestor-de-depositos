@@ -1,0 +1,11 @@
+<div class="entity-info-card" *ngIf="items?.length">
+  <div class="entity-info-header">
+    <h4>{{ title }}</h4>
+  </div>
+  <div class="entity-info-body">
+    <div *ngFor="let item of items">
+      <span class="label">{{ item.label }}</span>
+      <span class="value">{{ item.value || '-' }}</span>
+    </div>
+  </div>
+</div>

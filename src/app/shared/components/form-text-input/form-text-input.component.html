@@ -1,0 +1,41 @@
+<div class="form-group">
+  <label [for]="inputId">
+    {{ label }}
+    <span *ngIf="required && showRequiredIndicator" class="required-indicator" aria-hidden="true">*</span>
+  </label>
+
+  <div class="inline-group" *ngIf="inline; else plainInput">
+    <input
+      [id]="inputId"
+      [type]="type"
+      [placeholder]="placeholder"
+      [attr.min]="min"
+      [attr.max]="max"
+      [attr.step]="step"
+      [attr.inputmode]="inputmode"
+      [attr.autocomplete]="autocomplete"
+      [formControl]="control"
+      [disabled]="disabled"
+    />
+  </div>
+
+  <ng-template #plainInput>
+    <input
+      [id]="inputId"
+      [type]="type"
+      [placeholder]="placeholder"
+      [attr.min]="min"
+      [attr.max]="max"
+      [attr.step]="step"
+      [attr.inputmode]="inputmode"
+      [attr.autocomplete]="autocomplete"
+      [formControl]="control"
+      [disabled]="disabled"
+    />
+  </ng-template>
+
+  <div class="error-message" *ngIf="externalError">{{ externalError }}</div>
+  <div class="error-message" *ngFor="let message of visibleMessages">{{ message }}</div>
+
+  <ng-content></ng-content>
+</div>

@@ -1,1 +1,109 @@
-<p>movimientos-form works!</p>
+<div class="form-container">
+	<h2>{{ editMode ? 'Editar' : 'Nuevo' }} Movimiento de Inventario</h2>
+
+	<form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+		<app-form-text-input
+			label="Producto"
+			[control]="form.controls.productoId"
+			type="number"
+			[min]="1"
+			[required]="true"
+			placeholder="ID de producto"
+			[externalError]="productoError"
+			[validationMessages]="validationMessages['productoId']"
+			id="productoId"
+		></app-form-text-input>
+
+		<app-info-card
+			*ngIf="productoSeleccionado as producto"
+			title="Informacion del producto"
+			[items]="[
+				{ label: 'Nombre', value: producto.nombre },
+				{ label: 'Codigo SKU', value: producto.codigoSku },
+				{ label: 'Unidad', value: producto.unidad_medida },
+				{ label: 'Fecha creacion', value: (producto.fecha_creacion | date: 'short') }
+			]"
+		></app-info-card>
+
+		<app-form-text-input
+			label="Ubicacion origen"
+			[control]="form.controls.ubicacionOrigenId"
+			type="text"
+			[required]="true"
+			placeholder="ID de ubicacion origen"
+			[externalError]="ubicacionOrigenError"
+			[validationMessages]="validationMessages['ubicacionOrigenId']"
+			id="ubicacionOrigenId"
+		></app-form-text-input>
+
+		<app-info-card
+			*ngIf="ubicacionOrigenSeleccionada as ubicacionOrigen"
+			title="Ubicacion origen"
+			[items]="[
+				{ label: 'Codigo', value: ubicacionOrigen.codigo },
+				{ label: 'Zona', value: ubicacionOrigen.zona?.nombre || '-' },
+				{ label: 'Capacidad', value: ubicacionOrigen.capacidadMaxima },
+				{ label: 'Ocupado', value: ubicacionOrigen.ocupadoActual }
+			]"
+		></app-info-card>
+
+		<app-form-text-input
+			label="Ubicacion destino"
+			[control]="form.controls.ubicacionDestinoId"
+			type="text"
+			[required]="true"
+			placeholder="ID de ubicacion destino"
+			[externalError]="ubicacionDestinoError"
+			[validationMessages]="validationMessages['ubicacionDestinoId']"
+			id="ubicacionDestinoId"
+		></app-form-text-input>
+
+		<app-info-card
+			*ngIf="ubicacionDestinoSeleccionada as ubicacionDestino"
+			title="Ubicacion destino"
+			[items]="[
+				{ label: 'Codigo', value: ubicacionDestino.codigo },
+				{ label: 'Zona', value: ubicacionDestino.zona?.nombre || '-' },
+				{ label: 'Capacidad', value: ubicacionDestino.capacidadMaxima },
+				{ label: 'Ocupado', value: ubicacionDestino.ocupadoActual }
+			]"
+		></app-info-card>
+
+		<app-form-text-input
+			label="Cantidad"
+			[control]="form.controls.cantidad"
+			type="number"
+			[min]="1"
+			step="0.1"
+			[required]="true"
+			[validationMessages]="validationMessages['cantidad']"
+			id="cantidad"
+		></app-form-text-input>
+
+		<div class="form-group">
+			<label for="estado">
+				Estado <span class="required-indicator" aria-hidden="true">*</span>
+			</label>
+			<select id="estado" formControlName="estado">
+				<option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+			</select>
+		</div>
+
+		<app-form-text-input
+			label="Fecha"
+			[control]="form.controls.fecha"
+			type="date"
+			[required]="true"
+			[max]="maxFecha"
+			[validationMessages]="validationMessages['fecha']"
+			id="fecha"
+		></app-form-text-input>
+
+		<p class="required-note">* Campos obligatorios</p>
+
+		<div class="button-group">
+			<button type="submit">Guardar</button>
+			<button type="button" (click)="cancelar()">Cancelar</button>
+		</div>
+	</form>
+</div>
