@@ -11,10 +11,12 @@ import { MovimientosInventarioService } from '../../../core/services/movimientos
 import { ModalService } from '../../../shared/services/modal.service';
 import { MovimientoInventario } from '../../../core/models/movimiento-inventario/movimiento-inventario.module';
 import { MOVIMIENTO_INVENTARIO_ESTADOS, MovimientoInventarioEstado } from '../../../core/enums/movimiento-inventario-estado.model';
+import { FormTextInputComponent, ValidationMessage } from '../../../shared/components/form-text-input/form-text-input.component';
+import { InfoCardComponent } from '../../../shared/components/info-card/info-card.component';
 
 @Component({
   selector: 'app-movimientos-form',
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormTextInputComponent, InfoCardComponent],
   templateUrl: './movimientos-form.html',
   styleUrl: './movimientos-form.css'
 })
@@ -29,6 +31,20 @@ export class MovimientosForm implements OnInit, OnDestroy {
 
   readonly estados = MOVIMIENTO_INVENTARIO_ESTADOS;
   readonly maxFecha = this.formatDate(new Date());
+  readonly validationMessages: Record<string, ValidationMessage[]> = {
+    productoId: [{ errorKey: 'required', message: 'El producto es requerido' }],
+    ubicacionOrigenId: [{ errorKey: 'required', message: 'La ubicacion de origen es requerida' }],
+    ubicacionDestinoId: [{ errorKey: 'required', message: 'La ubicacion de destino es requerida' }],
+    cantidad: [
+      { errorKey: 'required', message: 'Ingresar una cantidad valida (minimo 1)' },
+      { errorKey: 'min', message: 'Ingresar una cantidad valida (minimo 1)' }
+    ],
+    fecha: [
+      { errorKey: 'required', message: 'Seleccionar una fecha valida' },
+      { errorKey: 'fechaFutura', message: 'No se permiten fechas futuras' },
+      { errorKey: 'fechaInvalida', message: 'Seleccionar una fecha valida' }
+    ]
+  };
   private readonly noFutureDateValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const value = (control.value ?? '').toString();
     if (!value) {

@@ -1,0 +1,61 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.entity-info-card {
+  width: 100%;
+  max-width: var(--form-field-max-width, 640px);
+  margin: 1rem auto 0;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.entity-info-header {
+  background: #e9ecef;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.entity-info-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.entity-info-body {
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.entity-info-body > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.entity-info-body .label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.entity-info-body .value {
+  font-weight: 600;
+  color: #333;
+  word-break: break-word;
+}
+
+@media (min-width: 768px) {
+  .entity-info-body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
