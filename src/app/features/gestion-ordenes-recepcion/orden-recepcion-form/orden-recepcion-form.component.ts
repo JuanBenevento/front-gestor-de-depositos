@@ -139,19 +139,29 @@ export class OrdenRecepcionFormComponent implements OnInit {
   }
 
   seleccionarProducto(index: number, producto: Producto | null) {
-    if (!producto) return;
-    const detalle = this.detalles.at(index);
-    detalle.patchValue({
-      productoSeleccionado: producto,
-      inputProducto: `${producto.nombre} (${producto.codigoSku})`,
-    });
+  if (!producto) return;
+  const detalle = this.detalles.at(index);
 
-    this.inventarioService
-      .obtenerStockPorProductoPorId(producto.idProducto!)
-      .subscribe((stock) => {
-        detalle.patchValue({ stockDisponible: stock });
-      });
-  }
+  const valorActual = detalle.get("inputProducto")?.value;
+
+  if (valorActual === producto.codigoSku) return;
+
+  detalle.patchValue(
+    {
+      productoSeleccionado: producto,
+      inputProducto: producto.codigoSku,
+    },
+    { emitEvent: false }
+  );
+
+  this.inventarioService
+    .obtenerStockPorProductoPorCodigoSku(producto.codigoSku!)
+    .subscribe((stock) => {
+      detalle.patchValue({ stockDisponible: stock }, { emitEvent: false });
+    });
+}
+
+
 
   eliminarDetalle(index: number) {
     this.detalles.removeAt(index);
@@ -208,8 +218,6 @@ export class OrdenRecepcionFormComponent implements OnInit {
       error: (err: any) => console.error("Error al guardar orden:", err),
     });
   }
-
-
 
   cancelar(): void {
     this.router.navigate(["/dashboard/ordenesRecepcion"]);
