@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ZonaService } from '../../../core/services/zona.service';
 import { Zona } from '../../../core/models/zona/zona.model';
 import { ModalService } from '../../../shared/services/modal.service';
+import { CategoriasProducto } from '../../../core/enums/categoriasProductos.model';
 
 @Component({
   selector: 'app-usuario-form',
@@ -17,6 +18,10 @@ export class ZonaFormComponent implements OnInit {
 
   form!: FormGroup;
   editMode = false;
+  saving = false; // Bloqueo de botón
+
+  // Lista de opciones para el checkbox/select múltiple
+  categoriasOpciones = Object.values(CategoriasProducto);
 
   constructor(
     private fb: FormBuilder,
@@ -30,14 +35,16 @@ export class ZonaFormComponent implements OnInit {
     this.form = this.fb.nonNullable.group({
       idZona: [0],
       nombre: ['', Validators.required],
-      descripcion: ['', Validators.required]
+      descripcion: ['', Validators.required],
+      categoriasAdmitidas: [[], Validators.required] 
     });
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.editMode = true;
-      this.service.buscarPorId(+id).subscribe(u => {
-        this.form.patchValue(u);
+      this.service.buscarPorId(+id).subscribe({
+        next: z => this.form.patchValue(z),
+        error: () => this.showModal('Error al cargar la zona', 'Error')
       });
     }
   }
@@ -48,7 +55,7 @@ export class ZonaFormComponent implements OnInit {
       return;
     }
 
-    // Usar value para evitar incluir controles deshabilitados accidentalmente
+    this.saving = true;
     const zona: Zona = this.form.value;
 
     const obs = this.editMode
@@ -56,10 +63,16 @@ export class ZonaFormComponent implements OnInit {
       : this.service.crear(zona);
 
     obs.subscribe({
-      next: () => this.router.navigate(['/dashboard/zonas']),
-      error: err => {
+      next: () => {
+        this.saving = false;
+        this.showModal('Zona guardada correctamente.', 'Éxito', () => {
+             this.router.navigate(['/dashboard/zonas']);
+        });
+      },
+      error: (err) => {
+        this.saving = false;
         console.error('Error al guardar zona', err);
-        this.showModal('Error al guardar', 'Error');
+        this.showModal('Error al guardar la zona.', 'Error');
       }
     });
   }
@@ -68,8 +81,13 @@ export class ZonaFormComponent implements OnInit {
     this.router.navigate(['/../dashboard/zonas']);  
   }
 
-  private showModal(message: string, title = 'Informacion'): void {
-    this.modalService.open({ title, message, confirmText: 'Aceptar' });
-  }
+  private showModal(message: string, title: string, onConfirm?: () => void): void {
+  this.modalService.open({ 
+    title, 
+    message, 
+    confirmText: 'Aceptar', 
+    onConfirm 
+  });
+}
 }
 

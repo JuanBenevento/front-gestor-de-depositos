@@ -1,24 +1,24 @@
 <div class="user-management-container">
-  <h2>Gestion de Ordenes de Despacho</h2>
+  <h2>Gestión de Órdenes de Despacho</h2>
 
   <button class="btn new-btn" [routerLink]="['/dashboard/ordenesDespacho/nuevo']">
-    + Nueva Orden de Despacho
+    + Nueva Orden
   </button>
 
   <div class="search-row">
     <div class="search-group">
       <input
-        type="number"
-        placeholder="ID de la orden"
-        [(ngModel)]="idBuscar"
-        (input)="aplicarFiltros()"
+        type="date"
+        [(ngModel)]="fechaBuscar"
+        (change)="aplicarFiltros()"
+        title="Filtrar por fecha"
       />
     </div>
 
     <div class="search-group">
       <input
         type="text"
-        placeholder="Nombre del cliente"
+        placeholder="Buscar por cliente"
         [(ngModel)]="nombreClienteBuscar"
         (input)="aplicarFiltros()"
       />
@@ -26,17 +26,20 @@
 
     <div class="search-group">
       <input
-        type="date"
-        [(ngModel)]="fechaBuscar"
-        (change)="aplicarFiltros()"
+        type="text"
+        placeholder="Buscar por nombre producto/SKU"
+        [(ngModel)]="productoBuscar"
+        (input)="aplicarFiltros()"
       />
     </div>
 
-    @if (filtrado) {
-      <div class="search-group">
-        <button class="btn secondary-btn" (click)="limpiarFiltros()">Limpiar</button>
-      </div>
-    }
+    <div class="search-group">
+      <select [(ngModel)]="estadoBuscar" (change)="aplicarFiltros()">
+        <option [ngValue]="null">Todos los Estados</option>
+        <option [ngValue]="EstadoDeOrden.PENDIENTE">PENDIENTE</option>
+        <option [ngValue]="EstadoDeOrden.COMPLETADA">COMPLETADA</option>
+      </select>
+    </div>
   </div>
 
   @if (loading) {
@@ -52,8 +55,8 @@
       <thead>
         <tr>
           <th>ID</th>
-          <th>Fecha de despacho</th>
-          <th>Estado de orden</th>
+          <th>Fecha</th>
+          <th>Estado</th>
           <th>Cliente</th>
           <th>Acciones</th>
         </tr>
@@ -63,11 +66,21 @@
           <tr>
             <td>{{ o.idOrdenDespacho }}</td>
             <td>{{ o.fechaDespacho | date: 'dd/MM/yyyy' }}</td>
-            <td>{{ o.estado }}</td>
-            <td>{{ o.cliente.nombre }}</td>
+
+            <td>
+              <span class="badge" 
+                    [class.badge-success]="o.estado === EstadoDeOrden.COMPLETADA"
+                    [class.badge-warning]="o.estado === EstadoDeOrden.PENDIENTE">
+                {{ o.estado }}
+              </span>
+            </td>
+            
+            <td>{{ o.cliente?.nombre }}</td>
 
             <td class="actions">
-              <button [routerLink]="['/dashboard/ordenesDespacho/editar', o.idOrdenDespacho]" class="btn edit-btn">Editar</button>
+              <button [routerLink]="['/dashboard/ordenesDespacho/editar', o.idOrdenDespacho]" class="btn edit-btn">
+                Editar
+              </button>
               <button (click)="eliminar(o.idOrdenDespacho!)" class="btn delete-btn">
                 Eliminar
               </button>
@@ -79,8 +92,6 @@
   }
 
   @if (!ordenesFiltradas.length && !loading) {
-    <p>Sin ordenes de despacho para mostrar.</p>
+    <p>Sin órdenes de despacho para mostrar.</p>
   }
-
-  <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
 </div>

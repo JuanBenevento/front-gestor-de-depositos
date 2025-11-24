@@ -1,0 +1,48 @@
+<nav class="sidebar" [class.open]="isSidebarOpen">
+
+  <button class="close-btn" (click)="closeSidebar.emit()" *ngIf="isSidebarOpen">&times;</button>
+
+  <ul class="nav-links">
+
+    <li>
+      <button class="nav-btn" (click)="navigateTo('/dashboard/depositoLayout')">
+        <span class="icon">🗺️</span> Mapa del Deposito
+      </button>
+    </li>
+
+    <ng-container *ngIf="isAdmin">
+      <li><button class="nav-btn" (click)="navigateTo('/dashboard/usuarios')"><span class="icon">👥</span> Usuarios</button></li>
+      <li><button class="nav-btn" (click)="navigateTo('/dashboard/zonas')"><span class="icon">📍</span> Zonas</button></li>
+      <li><button class="nav-btn" (click)="navigateTo('/dashboard/ubicaciones')"><span class="icon">📦</span> Ubicaciones</button></li>
+      <li><button class="nav-btn" (click)="navigateTo('/dashboard/proveedores')"><span class="icon">🚚</span> Proveedores</button></li>
+      <li><button class="nav-btn" (click)="navigateTo('/dashboard/clientes')"><span class="icon">👤</span> Clientes</button></li>
+    </ng-container>
+
+    <ng-container *ngIf="isOperativo || isAdmin">
+      <li class="dropdown">
+        <button class="nav-btn" (click)="toggleDropdown('ordenes')">
+          <span class="icon">📝</span> Ordenes
+          <span class="arrow">{{ dropdownsOpen['ordenes'] ? '▼' : '►' }}</span>
+        </button>
+
+        <ul class="dropdown-menu" [class.open]="dropdownsOpen['ordenes']">
+          <li>
+            <button class="nav-btn dropdown-item" (click)="navigateTo('/dashboard/ordenesRecepcion')">
+              Recepcion
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn dropdown-item" (click)="navigateTo('/dashboard/ordenesDespacho')">
+              Despacho
+            </button>
+          </li>
+        </ul>
+      </li>
+
+      <li><button class="nav-btn" (click)="navigateTo('/dashboard/productos')"><span class="icon">🏷️</span> Productos</button></li>
+      <li><button class="nav-btn" (click)="navigateTo('/dashboard/inventarios')"><span class="icon">📊</span> Inventarios</button></li>
+      <li><button class="nav-btn" (click)="navigateTo('/dashboard/movimientosInventario')"><span class="icon">🔄</span> Movimientos</button></li>
+    </ng-container>
+
+  </ul>
+</nav>

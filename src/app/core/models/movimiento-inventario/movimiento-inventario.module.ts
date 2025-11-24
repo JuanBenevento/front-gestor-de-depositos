@@ -1,4 +1,5 @@
 import { Producto } from "../Producto/producto.model";
+import { Ubicacion } from "../ubicacion/ubicacion.model";
 
 export interface MovimientoInventario {
   idMovimientoInventario?: number;
@@ -6,10 +7,6 @@ export interface MovimientoInventario {
   cantidad: number;
   fecha: Date;
   estado: string;
-  ubicacionOrigen: {
-    idUbicacion?: number;
-  };
-  ubicacionDestino: {
-    idUbicacion?: number;
-  };
+  ubicacionOrigen: Ubicacion;
+  ubicacionDestino: Ubicacion;
 }

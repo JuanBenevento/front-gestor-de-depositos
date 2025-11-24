@@ -1,9 +1,10 @@
 import { EstadoDeOrden } from "../../enums/estados-de-orden.model";
-import { DetalleRecepcion, DetalleRecepcionDTO } from "./detalle-recepcion.model";
+import { Proveedor } from "../proveedor/proveedor.model";
+import { DetalleRecepcionDTO } from "./detalle-recepcion.model";
 
 export default interface OrdenRecepcion {
   id_orden_recepcion?: number;
-  idProveedor?: number;
+  proveedor?: Proveedor;
   fecha: string;
   estado: EstadoDeOrden;
   detalleRecepcionDTOList: DetalleRecepcionDTO[];

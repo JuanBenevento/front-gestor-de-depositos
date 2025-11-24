@@ -16,9 +16,10 @@ import { ModalService } from '../../../shared/services/modal.service';
 export class ClienteListComponent implements OnInit {
 
   clientes: Cliente[] = [];
+  clientesOriginales: Cliente[] = [];
   loading = true;
   error = '';
-  idBuscar: string = '';  
+  nombreBuscar: string = '';  
   filtrado = false; 
 
   constructor(
@@ -34,11 +35,12 @@ export class ClienteListComponent implements OnInit {
   refresh(): void {
     this.loading = true;
     this.error = '';
-    this.idBuscar = '';
+    this.nombreBuscar = '';
     this.filtrado = false; 
 
     this.clienteService.listar().subscribe({
       next: data => {
+        this.clientesOriginales = data;
         this.clientes = data;
         this.loading = false;
       },
@@ -73,29 +75,29 @@ export class ClienteListComponent implements OnInit {
     });
   }
 
+  aplicarFiltros(): void {
+    const termino = this.nombreBuscar?.toLowerCase().trim();
 
-  volver(): void {
-    this.router.navigate(['/dashboard']);  
+    let clientesFiltrados = this.clientesOriginales;
+
+    if (termino && termino.length > 0) {
+      clientesFiltrados = clientesFiltrados.filter(p => 
+        p.nombre.toLowerCase().includes(termino)
+      );
+      this.filtrado = true;
+    } else {
+      this.filtrado = false;
+    }
+
+    this.clientes = clientesFiltrados;
+    this.error = this.filtrado && this.clientes.length === 0 
+      ? 'No se encontraron clientes con ese nombre.' 
+      : '';
   }
 
-  buscarPorId(): void {
-    const id = +this.idBuscar;         
-    if (!id) { return; }
-
-    this.error = '';
-    this.loading = true;
-    this.clienteService.buscarPorId(id).subscribe({
-      next: cliente => {
-        this.clientes = [cliente];      
-        this.loading = false;
-        this.filtrado = true;
-      },
-      error: () => {
-        this.error = `No se encontro el cliente con ID ${id}.`;
-        this.clientes = [];
-        this.loading = false;
-      }
-    });
+  limpiarFiltros(): void {
+    this.nombreBuscar = '';
+    this.aplicarFiltros(); 
   }
 
   private showModal(message: string, title = 'Informacion'): void {

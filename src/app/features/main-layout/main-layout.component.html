@@ -1,0 +1,30 @@
+<div class="dashboard-wrapper">
+  <div class="main-area" [class.menu-open]="isSidebarOpen" (click)="closeSidebarOnOverlayClick($event)">
+
+    <app-header 
+      [currentDate]="currentDate"
+      [currentTime]="currentTime"
+      (toggleSidebar)="toggleSidebar()"
+      (logoutRequest)="logout()">
+    </app-header>
+
+    <div class="main-content">
+   
+      <app-sidebar
+        [isAdmin]="isAdmin()"
+        [isOperativo]="isOperativo()"
+        [isSidebarOpen]="isSidebarOpen"
+        (closeSidebar)="toggleSidebar()"
+        (navigateRequest)="navigate($event)">
+      </app-sidebar>
+
+      <div class="content-area">
+        <router-outlet></router-outlet>
+      </div>
+
+    </div>
+
+    <app-footer></app-footer>
+
+  </div>
+</div>

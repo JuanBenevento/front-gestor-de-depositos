@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, AbstractControl, ValidationErrors, ValidatorFn, FormsModule } from '@angular/forms';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { UbicacionService } from '../../../core/services/ubicacion.service';
 import { ZonaService } from '../../../core/services/zona.service';
 import { Ubicacion } from '../../../core/models/ubicacion/ubicacion.model';
 import { Zona } from '../../../core/models/zona/zona.model';
-import { FormsModule } from '@angular/forms';
 import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
@@ -16,10 +15,12 @@ import { ModalService } from '../../../shared/services/modal.service';
   templateUrl: './ubicacion-form.component.html'
 })
 export class UbicacionFormComponent implements OnInit {
+  
   form!: FormGroup;
   editMode = false;
   zonas: Zona[] = [];
   loadingZonas = true;
+  saving = false; // Bloqueo de botón para evitar doble envío
 
   constructor(
     private fb: FormBuilder,
@@ -36,12 +37,13 @@ export class UbicacionFormComponent implements OnInit {
         idUbicacion: [0],
         codigo: ['', Validators.required],
         zona: [null, Validators.required],
-        capacidadMaxima: [0, [Validators.required, Validators.min(0)]],
+        capacidadMaxima: [100, [Validators.required, Validators.min(1)]],
         ocupadoActual: [0, [Validators.required, Validators.min(0)]]
       },
       { validators: this.validarOcupacion() } 
     );
 
+    // Cargar lista de zonas para el select
     this.zonaService.listar().subscribe({
       next: data => {
         this.zonas = data;
@@ -50,6 +52,7 @@ export class UbicacionFormComponent implements OnInit {
       error: () => {
         this.zonas = [];
         this.loadingZonas = false;
+        this.showModal('Error al cargar zonas. Verifique su conexión.', 'Error');
       }
     });
 
@@ -61,14 +64,24 @@ export class UbicacionFormComponent implements OnInit {
           this.form.patchValue({
             idUbicacion: u.idUbicacion,
             codigo: u.codigo,
-            zona: u.zona,
+            zona: u.zona, 
             capacidadMaxima: u.capacidadMaxima,
             ocupadoActual: u.ocupadoActual
           });
         },
-  error: () => this.showModal('Error al cargar la ubicacion', 'Error')
+        error: () => this.showModal('Error al cargar la ubicación para editar.', 'Error')
       });
     }
+  }
+
+  // Getter para mostrar info de la zona seleccionada en el HTML
+  get zonaSeleccionada(): Zona | null {
+    return this.form.get('zona')?.value;
+  }
+
+  // Helper para que el select funcione correctamente en modo edición
+  compararZonas(z1: Zona, z2: Zona): boolean {
+    return z1 && z2 ? z1.idZona === z2.idZona : z1 === z2;
   }
 
   validarOcupacion(): ValidatorFn {
@@ -77,10 +90,15 @@ export class UbicacionFormComponent implements OnInit {
       const ocupado = group.get('ocupadoActual')?.value;
 
       if (capacidad != null && ocupado != null && ocupado > capacidad) {
-        group.get('ocupadoActual')?.setErrors({ excedeCapacidad: true });
-        return { excedeCapacidad: true };
+        const error = { excedeCapacidad: true };
+        group.get('ocupadoActual')?.setErrors(error); // Marcar el input específico
+        return error; // Marcar el grupo
       }
-
+      
+      // Limpiar error si se corrige
+      if (group.get('ocupadoActual')?.hasError('excedeCapacidad')) {
+         group.get('ocupadoActual')?.setErrors(null);
+      }
       return null;
     };
   }
@@ -90,47 +108,73 @@ export class UbicacionFormComponent implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
+    
+    this.saving = true;
+    // Usamos getRawValue por si hubiera campos deshabilitados que queremos enviar igual
     const ubicacion: Ubicacion = this.form.getRawValue();
 
+    // Validación previa de duplicados en frontend (Opcional, pero útil UX)
     this.ubicacionService.listar().subscribe({
       next: data => {
         const existe = data.some(u =>
-          u.codigo === ubicacion.codigo &&
+          u.codigo.toLowerCase() === ubicacion.codigo.toLowerCase() &&
           u.zona?.idZona === ubicacion.zona?.idZona &&
           (!this.editMode || u.idUbicacion !== ubicacion.idUbicacion)
         );
 
         if (existe) {
+          this.saving = false;
           this.form.get('codigo')?.setErrors({ duplicado: true });
-          this.form.get('codigo')?.markAsTouched();
-          this.showModal('Ya existe una ubicacion con ese codigo en la zona seleccionada.', 'Error');
+          this.showModal('Ya existe una ubicación con ese código en esta zona.', 'Duplicado');
           return;
         }
 
+        // 💡 CORRECCIÓN APLICADA (Opción 2): Pasamos ID explícito
         const obs = this.editMode
-          ? this.ubicacionService.actualizar(ubicacion.idUbicacion!, ubicacion)
+          ? this.ubicacionService.actualizar(ubicacion.idUbicacion!, ubicacion) 
           : this.ubicacionService.crear(ubicacion);
 
         obs.subscribe({
-          next: () => this.router.navigate(['/dashboard/ubicaciones']),
+          next: () => {
+            this.saving = false;
+            this.showModal('Ubicación guardada correctamente.', 'Éxito', () => {
+               this.router.navigate(['/dashboard/ubicaciones']);
+            });
+          },
           error: err => {
-            console.error(err);
-            this.showModal('Error al guardar la ubicacion.', 'Error');
+            this.saving = false;
+            this.manejarErrores(err);
           }
         });
       },
       error: err => {
-        console.error('Error al validar duplicados', err);
-        this.showModal('No se pudo validar si la ubicacion ya existe. Intente nuevamente.', 'Error');
+        this.saving = false;
+        this.showModal('No se pudo validar si la ubicación ya existe. Intente nuevamente.', 'Error');
       }
     });
+  }
+
+  private manejarErrores(err: any): void {
+    console.error('Error backend:', err);
+    let titulo = 'Error';
+    let mensaje = 'Ocurrió un error inesperado.';
+
+    if (err.status === 400) {
+      titulo = 'Datos Inválidos';
+      mensaje = typeof err.error === 'string' ? err.error : (err.error?.message || 'Verifique los datos.');
+    } else if (err.status === 409) {
+        titulo = 'Conflicto';
+        mensaje = err.error?.message || 'Conflicto al guardar la ubicación.';
+    }
+
+    this.showModal(mensaje, titulo);
   }
 
   cancelar(): void {
     this.router.navigate(['/dashboard/ubicaciones']);
   }
 
-  private showModal(message: string, title = 'Informacion'): void {
-    this.modalService.open({ title, message, confirmText: 'Aceptar' });
+  private showModal(message: string, title: string, onConfirm?: () => void): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar', onConfirm });
   }
 }

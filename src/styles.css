@@ -1,16 +1,50 @@
-/* ============================
-   CONTENEDORES GENERALES
-============================ */
+/* ============================================================
+    1. CONFIGURACIÓN BASE GLOBAL (Full-Screen Layout)
+============================================================ */
+
+/* Asegura que el HTML y el BODY ocupen todo el viewport sin márgenes */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important; /* Previene el scroll global */
+  background: #02050d !important; /* Fondo base para evitar bordes blancos */
+  box-sizing: border-box; 
+  /* Aplicación de fuente global */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #dce8f9;
+}
+
+/* El componente raíz de Angular (:host en el componente principal) */
+:host { 
+  position: fixed;
+  inset: 0;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: #02050d;
+}
+
+
+/* ============================================================
+    2. CONTENEDORES GENERALES — DARK NAVY (Tus estilos originales)
+============================================================ */
 
 .user-management-container,
 .form-container {
   max-width: 900px;
   margin: 40px auto;
   padding: 30px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+
+  background: rgba(10, 20, 40, 0.8);
+  border: 1px solid rgba(0, 170, 255, 0.15);
+  border-radius: 8px;
+
+  box-shadow: 0 0 22px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+
+  color: #dce8f9;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -18,71 +52,80 @@
   max-width: 550px;
 }
 
-/* Títulos */
+/* TITULOS */
 h2 {
   text-align: center;
   margin-bottom: 25px;
-  font-size: 1.7rem;
-  color: #2c2c2c;
-  letter-spacing: 0.5px;
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+
+  color: #e3f3ff;
+  text-shadow: 0 0 8px rgba(0, 153, 255, 0.45);
 }
 
-/* ============================
-   BOTONES
-============================ */
+/* ============================================================
+    3. BOTONES — TONO DARK + NEÓN AZUL (Tus estilos originales)
+============================================================ */
 
 .btn,
 button {
   padding: 10px 14px;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
+
   font-size: 14px;
-  transition: 0.2s ease;
   font-weight: 500;
+
+  transition: 0.15s ease-in-out;
+
+  color: white;
+  background: #0b2344;
+  border: 1px solid rgba(0, 170, 255, 0.35);
 }
 
 .btn:hover:not(:disabled),
 button:hover:not(:disabled) {
   transform: translateY(-1px);
+  background: #103057;
+  border-color: rgba(0, 170, 255, 0.55);
 }
 
 /* Botón Nuevo */
 .new-btn {
-  background-color: #198754;
-  color: white;
+  background-color: #117a39;
+  border: 1px solid #1abf5b;
   margin-bottom: 20px;
-  display: inline-block;
 }
 
 .new-btn:hover {
-  background-color: #157347;
+  background-color: #0f5f2e;
 }
 
-/* Botones secundarios */
+/* Botón secundario */
 .secondary-btn {
-  background-color: #6c757d;
-  color: white;
+  background-color: #3b3f47;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .secondary-btn:hover {
-  background-color: #5a6268;
+  background-color: #2f333a;
 }
 
 /* Botón eliminar */
 .delete-btn {
-  background-color: #dc3545;
-  color: white;
+  background-color: #b82230;
+  border: 1px solid #ff5566;
 }
 
 .delete-btn:hover {
-  background-color: #bb2d3b;
+  background-color: #931b27;
 }
 
 /* Botón editar */
 .edit-btn {
   background-color: #0d6efd;
-  color: white;
+  border: 1px solid #4a97ff;
 }
 
 .edit-btn:hover {
@@ -95,9 +138,9 @@ button:hover:not(:disabled) {
   font-size: 13px;
 }
 
-/* ============================
-   BUSCADOR
-============================ */
+/* ============================================================
+    4. BUSCADOR — DARK + ILUMINACIÓN AZUL (Tus estilos originales)
+============================================================ */
 
 .search-row {
   display: flex;
@@ -115,88 +158,96 @@ button:hover:not(:disabled) {
 
 .search-group input {
   padding: 7px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 4px;
   width: 220px;
   font-size: 14px;
+
+  background: #0d1b2d;
+  border: 1px solid rgba(0, 170, 255, 0.25);
+  color: #dce8f9;
 }
 
 .search-group input:focus {
   outline: none;
-  border-color: #0d6efd;
-  box-shadow: 0 0 4px rgba(13,110,253,0.3);
+  border-color: #00aaff;
+  box-shadow: 0 0 6px rgba(0, 170, 255, 0.45);
 }
 
 .search-group button {
   background-color: #0d6efd;
-  color: white;
+  border: 1px solid #4a97ff;
 }
 
 .search-group button:hover {
   background-color: #0a58ca;
 }
 
-/* ============================
-   ESTADOS
-============================ */
+/* ============================================================
+    5. ESTADOS (Tus estilos originales)
+============================================================ */
 
 .loading {
   text-align: center;
   font-weight: bold;
-  color: #555;
-  margin: 10px 0;
+  color: #a0b8ff;
 }
 
 .error {
-  color: #d9534f;
+  color: #ff6b6b;
   text-align: center;
-  margin: 10px 0;
   font-weight: 500;
 }
 
-/* ============================
-   TABLAS
-============================ */
+/* ============================================================
+    6. TABLAS — ESTILO DARK CORPORATIVO (Tus estilos originales)
+============================================================ */
 
 .user-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 25px;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 6px;
+
+  background: rgba(8, 15, 30, 0.8);
 }
 
 .user-table th,
 .user-table td {
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid rgba(0, 170, 255, 0.12);
+  color: #dce8f9;
 }
 
+/* Encabezado */
 .user-table th {
-  background-color: #343a40;
-  color: white;
-  font-size: 14px;
+  background: #0b1628;
+  color: #e9f2ff;
+  font-size: 13px;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  border-bottom: 2px solid rgba(0, 170, 255, 0.3);
 }
 
+/* Filas pares */
 .user-table tr:nth-child(even) {
-  background-color: #f8f9fa;
+  background: rgba(15, 28, 50, 0.6);
 }
 
+/* Hover */
 .user-table tr:hover {
-  background-color: #eaf1ff;
+  background: rgba(0, 170, 255, 0.14);
 }
 
-/* Acciones en tabla */
+/* Acciones */
 .actions {
   display: flex;
   gap: 6px;
 }
 
-/* ============================
-   FORMULARIOS
-============================ */
+/* ============================================================
+    7. FORMULARIOS — DARK + AZUL NEÓN (Tus estilos originales)
+============================================================ */
 
 .form-group {
   margin-bottom: 18px;
@@ -207,22 +258,26 @@ button:hover:not(:disabled) {
 label {
   margin-bottom: 5px;
   font-weight: 600;
-  color: #555;
+  color: #b8c6dd;
 }
 
 input,
 select {
   padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  border-radius: 4px;
   font-size: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+
+  background: #0d1b2d;
+  border: 1px solid rgba(0, 170, 255, 0.25);
+  color: #e9f4ff;
+
+  transition: 0.2s ease;
 }
 
 input:focus,
 select:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 5px rgba(13,110,253,0.3);
+  border-color: #00aaff;
+  box-shadow: 0 0 6px rgba(0, 170, 255, 0.45);
   outline: none;
 }
 
@@ -232,15 +287,16 @@ select:focus {
   margin-top: 25px;
 }
 
+/* Autocomplete */
 .autocomplete-list {
   position: relative;
   width: 100%;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  background: #0b1628;
+  border: 1px solid rgba(0, 170, 255, 0.25);
+  border-radius: 4px;
+
   max-height: 180px;
   overflow-y: auto;
-  margin-top: 2px;
   z-index: 10;
   list-style: none;
   padding: 0;
@@ -250,82 +306,481 @@ select:focus {
   padding: 8px 10px;
   cursor: pointer;
   transition: background 0.2s;
+  color: #dce8f9;
 }
 
 .autocomplete-list li:hover {
-  background: #e8f0fe;
+  background: rgba(0, 170, 255, 0.18);
 }
 
-/* Estilos para la tarjeta de información del proveedor */
+/* Card proveedor */
 .proveedor-info-card {
   margin-top: 1rem;
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
+  background: rgba(10, 20, 40, 0.7);
+  border: 1px solid rgba(0, 170, 255, 0.2);
   border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 14px rgba(0, 0, 0, 0.4);
 }
-
 .proveedor-info-header {
-  background: #e9ecef;
+  background: rgba(15, 30, 55, 0.8);
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid rgba(0, 170, 255, 0.2);
 }
-
 .proveedor-info-header h4 {
   margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #495057;
+  color: #e3f3ff;
 }
-
 .proveedor-info-body {
   padding: 1rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
 }
-
-.proveedor-info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
 .proveedor-info-item .label {
   font-size: 0.875rem;
-  font-weight: 500;
-  color: #6c757d;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: #8ca3c2;
 }
-
 .proveedor-info-item .value {
   font-weight: 600;
-  color: #333;
-  word-break: break-word;
+  color: #eaf4ff;
 }
 
+.badge {
+  background-color: #004a7c;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: 600;
+  text-transform: capitalize;
+}
 
-/* ============================
-   RESPONSIVE
-============================ */
+.multi-select {
+  height: 120px; /* Altura para mostrar varias opciones */
+  padding: 8px;
+  background-color: #0a1322; /* Acorde a tu tema oscuro */
+  color: white;
+  border: 1px solid #2a3b55;
+}
+.multi-select option {
+  padding: 4px;
+}
+.multi-select option:checked {
+  background-color: #0066cc; /* Color de selección */
+}
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.badge-small {
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ========================================= */
+/* 1. LAYOUT GENERAL                         */
+/* ========================================= */
+.form-container {
+  background-color: #0f172a; /* Slate 900 */
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  max-width: 900px; /* Un poco más ancho para la tabla */
+  margin: 0 auto;
+  color: #e2e8f0; /* Slate 200 */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.form-row-2 {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.form-row-2 .form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 0.9rem;
+  color: #94a3b8; /* Slate 400 */
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+input, select, textarea {
+  background-color: #1e293b; /* Slate 800 */
+  border: 1px solid #334155; /* Slate 700 */
+  color: white;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #3b82f6; /* Blue 500 */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+input.invalid, select.invalid {
+  border-color: #ef4444; /* Red 500 */
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #334155;
+  margin: 25px 0;
+}
+
+/* ========================================= */
+/* 2. SECCIÓN PROVEEDOR                      */
+/* ========================================= */
+
+/* Contenedor relativo para el dropdown */
+.search-container {
+  position: relative;
+}
+
+/* Input con icono de Lupa (Proveedor) */
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon input {
+  width: 100%;
+  padding-right: 50px; /* Espacio para el botón */
+}
+
+/* Botón pequeño dentro del input de proveedor */
+.btn-add-mini {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #3b82f6;
+  color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-add-mini:hover {
+  background-color: #2563eb;
+}
+
+/* Tarjeta de Proveedor Seleccionado */
+.proveedor-card-selected {
+  display: flex;
+  align-items: center;
+  background: rgba(16, 185, 129, 0.1); /* Emerald tint */
+  border: 1px solid #059669;
+  padding: 15px;
+  border-radius: 8px;
+  gap: 15px;
+  margin-top: 5px;
+}
+
+.prov-icon {
+  font-size: 1.8rem;
+}
+
+.prov-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.prov-name {
+  font-weight: bold;
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.prov-meta {
+  font-size: 0.9rem;
+  color: #a7f3d0;
+}
+
+.btn-change {
+  background: transparent;
+  border: 1px solid #059669;
+  color: #059669;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-change:hover {
+  background: #059669;
+  color: white;
+}
+
+/* ========================================= */
+/* 3. TABLA DE DETALLES (GRID)               */
+/* ========================================= */
+.detalles-container {
+  background-color: rgba(30, 41, 59, 0.3);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+}
+
+.section-label {
+  font-size: 1.1rem;
+  color: #e2e8f0;
+  margin-bottom: 15px;
+  display: block;
+}
+
+/* Encabezados de la tabla */
+.table-header {
+  display: grid;
+  grid-template-columns: 4fr 1fr 50px; /* Producto (ancho), Cantidad (angosto), Acción */
+  gap: 15px;
+  padding: 0 5px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Fila de detalle */
+.detalle-row {
+  display: grid;
+  grid-template-columns: 4fr 1fr 50px;
+  gap: 15px;
+  margin-bottom: 12px;
+  align-items: start; /* Alineado arriba para manejar errores de validación */
+}
+
+/* ========================================= */
+/* 4. INPUT GROUP (PRODUCTO + BOTÓN NUEVO)   */
+/* ========================================= */
+.input-group {
+  display: flex;
+  align-items: stretch; /* Asegura misma altura */
+  width: 100%;
+}
+
+.input-group input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  flex: 1; /* Toma todo el espacio disponible */
+}
+
+/* Botón "+" pegado al input */
+.btn-icon-add {
+  background-color: #3b82f6;
+  color: white;
+  border: 1px solid #3b82f6;
+  border-left: none; /* Quitar borde doble */
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  width: 45px; /* Un poco más ancho para click fácil */
+  font-size: 1.4rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  padding-bottom: 3px; /* Ajuste visual del signo + */
+}
+
+.btn-icon-add:hover {
+  background-color: #2563eb;
+}
+
+/* Botón Eliminar Fila (Tacho) */
+.btn-delete-row {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 1.3rem;
+  cursor: pointer;
+  height: 42px; /* Altura aproximada del input para centrar */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.btn-delete-row:hover {
+  transform: scale(1.1);
+  color: #ff8888;
+}
+
+/* Botón Agregar Fila (Debajo de la tabla) */
+.btn-add-row {
+  width: 100%;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px dashed #3b82f6;
+  color: #60a5fa;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-add-row:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+/* ========================================= */
+/* 5. DROPDOWN (LISTA DESPLEGABLE FLOTANTE)  */
+/* ========================================= */
+.custom-dropdown {
+  position: absolute;
+  top: 100%; 
+  left: 0;
+  right: 0;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 0 0 6px 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0; 
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 100; 
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
+}
+
+.custom-dropdown li {
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #334155;
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-dropdown li:last-child {
+  border-bottom: none;
+}
+
+.custom-dropdown li:hover {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.dd-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.dd-subtitle {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.custom-dropdown li:hover .dd-subtitle {
+  color: #e2e8f0;
+}
+
+/* Opción especial "Crear nuevo" */
+.create-option {
+  color: #60a5fa;
+  font-style: italic;
+  background-color: rgba(30, 41, 59, 0.5);
+  border-top: 2px solid #475569;
+}
+
+/* ========================================= */
+/* 6. BOTONES DE ACCIÓN (GUARDAR / CANCELAR) */
+/* ========================================= */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #334155;
+}
+
+.btn-save {
+  background: #2563eb;
+  color: white;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.btn-save:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.btn-save:disabled {
+  background: #475569;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid #475569;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  border-color: #cbd5e1;
+  color: #f1f5f9;
+}
+
+/* ============================================================
+    8. RESPONSIVE (Tus estilos originales + ajuste de margen)
+============================================================ */
 
 @media (max-width: 768px) {
   .user-management-container,
   .form-container {
     padding: 20px;
+    /* Ajuste de margen para móvil: 20px arriba/abajo y 10px a los lados */
+    margin: 20px 10px; 
+    max-width: 95%; /* Asegura que el contenido quepa en el viewport */
   }
-
   .actions {
     flex-direction: column;
   }
-
   .search-row {
     flex-direction: column;
     align-items: stretch;
   }
-
   .search-group input {
     width: 100%;
   }
@@ -335,11 +790,9 @@ select:focus {
   h2 {
     font-size: 1.3rem;
   }
-
   .button-group {
     flex-direction: column;
   }
-
   button {
     width: 100%;
   }

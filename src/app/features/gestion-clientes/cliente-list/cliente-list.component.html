@@ -8,19 +8,11 @@
   <div class="search-row">
     <div class="search-group">
       <input
-        type="number"
-        placeholder="ID de cliente"
-        [(ngModel)]="idBuscar"
-        (keyup.enter)="buscarPorId()"
-      />
-      <button (click)="buscarPorId()">Buscar ID</button>
-    </div>
-
-    @if (filtrado) {
-      <div class="search-group">
-        <button class="btn secondary-btn" (click)="refresh()">Limpiar</button>
-      </div>
-    }
+        type="text"
+        placeholder="Buscar por nombre"  [(ngModel)]="nombreBuscar"
+         (input)="aplicarFiltros()" 
+       />
+     </div>
   </div>
 
   @if (loading) {
@@ -69,6 +61,4 @@
   @if (!clientes.length && !loading) {
     <p>Sin clientes para mostrar.</p>
   }
-
-  <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
 </div>

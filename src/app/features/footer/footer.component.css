@@ -1,0 +1,65 @@
+.app-footer {
+  width: auto;
+  height: 40px; /* Altura fija */
+  background: #071427; /* Fondo oscuro, similar al sidebar */
+  border-top: 1px solid rgba(0, 150, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  font-size: 0.8rem;
+  color: #a4b4c8; /* Color de texto suave */
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.4);
+  
+  /* Asegura que el footer se quede en la parte inferior del main-area */
+  flex-shrink: 0; 
+}
+
+.footer-center {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+/* Indicadores de estado */
+.status-indicator.online {
+  background-color: #00ccff; /* Azul futurista */
+  box-shadow: 0 0 5px #00ccff;
+}
+
+.footer-right a {
+  color: #d2e6ff;
+  text-decoration: none;
+  margin-left: 15px;
+  transition: color 0.2s;
+}
+
+.footer-right a:hover {
+  color: #00ccff;
+}
+
+/* Responsividad para el footer */
+@media (max-width: 900px) {
+  .app-footer {
+    height: auto;
+    flex-direction: column;
+    text-align: center;
+    padding: 8px 10px;
+    gap: 5px;
+  }
+  .footer-center, .footer-right {
+    margin-top: 5px;
+  }
+  .footer-left {
+      /* Ocultar el copyright en pantallas muy pequeñas para ahorrar espacio */
+      display: none; 
+  }
+}

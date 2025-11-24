@@ -2,32 +2,45 @@
   <h2>Gestion de Ordenes de Recepcion</h2>
 
   <button class="btn new-btn" [routerLink]="['/dashboard/ordenesRecepcion/nuevo']">
-    + Nueva Orden de Recepcion
+    + Nueva Orden
   </button>
 
   <div class="search-row">
-    <div class="search-group">
-      <input
-        type="number"
-        placeholder="ID de la orden"
-        [(ngModel)]="idBuscar"
-        (input)="aplicarFiltros()"
-      />
-    </div>
 
     <div class="search-group">
       <input
         type="date"
         [(ngModel)]="fechaBuscar"
         (change)="aplicarFiltros()"
+        title="Filtrar por fecha"
       />
     </div>
 
-    @if (filtrado) {
-      <div class="search-group">
-        <button class="btn secondary-btn" (click)="limpiarFiltros()">Limpiar</button>
-      </div>
-    }
+    <div class="search-group">
+      <input
+        type="text"
+        placeholder="Buscat por proveedor"
+        [(ngModel)]="proveedorBuscar"
+        (input)="aplicarFiltros()"
+      />
+    </div>
+
+    <div class="search-group">
+      <input
+        type="text"
+        placeholder="Buscar por nombre Producto/SKU"
+        [(ngModel)]="productoBuscar"
+        (input)="aplicarFiltros()"
+      />
+    </div>
+
+    <div class="search-group">
+      <select [(ngModel)]="estadoBuscar" (change)="aplicarFiltros()">
+        <option [ngValue]="null">Todos los Estados</option>
+        <option [ngValue]="EstadoDeOrden.PENDIENTE">PENDIENTE</option>
+        <option [ngValue]="EstadoDeOrden.COMPLETADA">COMPLETADA</option>
+      </select>
+    </div>
   </div>
 
   @if (loading) {
@@ -43,8 +56,9 @@
       <thead>
         <tr>
           <th>ID</th>
-          <th>Fecha de recepcion</th>
-          <th>Estado de orden</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Proveedor</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -53,12 +67,19 @@
           <tr>
             <td>{{ o.id_orden_recepcion }}</td>
             <td>{{ o.fecha | date: 'dd/MM/yyyy' }}</td>
-            <td>{{ o.estado }}</td>
+
+            <td>
+              <span class="badge" 
+                    [class.badge-success]="o.estado === EstadoDeOrden.COMPLETADA"
+                    [class.badge-warning]="o.estado === EstadoDeOrden.PENDIENTE">
+                {{ o.estado }}
+              </span>
+            </td>
+            
+            <td>{{ o.proveedor?.nombre || '-' }}</td>
+            
             <td class="actions">
-              <button
-                (click)="verDetalles(o.id_orden_recepcion!)"
-                class="btn edit-btn"
-              >
+              <button (click)="verDetalles(o.id_orden_recepcion!)" class="btn edit-btn">
                 Editar
               </button>
               <button (click)="eliminar(o.id_orden_recepcion!)" class="btn delete-btn">
@@ -72,8 +93,6 @@
   }
 
   @if (!ordenesFiltradas.length && !loading) {
-    <p>Sin ordenes de recepcion para mostrar.</p>
+    <p>No se encontraron órdenes con esos criterios.</p>
   }
-
-  <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
 </div>

@@ -3,91 +3,149 @@
 
   <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
 
-    <div class="form-group">
-      <label>Fecha de despacho</label>
-      <input type="date" formControlName="fechaDespacho">
-    </div>
+    <div class="form-row-2">
+      <div class="form-group reception-date">
+        <label>Fecha de Despacho</label>
+        <input [readonly]="editMode" type="date" formControlName="fechaDespacho" [max]="maxDate"
+               [class.invalid]="form.get('fechaDespacho')?.invalid && form.get('fechaDespacho')?.touched">
+        
+        <div class="error-message" *ngIf="form.get('fechaDespacho')?.touched && form.get('fechaDespacho')?.invalid">
+          <span *ngIf="form.get('fechaDespacho')?.hasError('required')">Requerido.</span>
+          <span *ngIf="form.get('fechaDespacho')?.hasError('fechaFutura')">No puede ser fecha futura.</span>
+        </div>
+      </div>
 
-    <div class="form-group">
-      <label>Estado</label>
-      <select formControlName="estado">
-        <option [ngValue]="EstadoDeOrden.PENDIENTE">PENDIENTE</option>
-        <option [ngValue]="EstadoDeOrden.COMPLETADA">COMPLETADA</option>
-      </select>
-    </div>
-
-    <div formGroupName="cliente">
       <div class="form-group">
-        <label>ID Cliente</label>
-         <input type="number"
-           formControlName="idCliente"
-           placeholder="ID del cliente"
-         />
-      </div>
-
-      <div *ngIf="clienteSeleccionado" class="proveedor-info-card">
-        <div class="proveedor-info-header">
-          <h4>📋 Informacion del cliente</h4>
-        </div>
-        <div class="proveedor-info-body">
-          <div class="proveedor-info-item">
-            <span class="label">ID:</span>
-            <span class="value">{{ clienteSeleccionado.idCliente }}</span>
-          </div>
-          <div class="proveedor-info-item">
-            <span class="label">Nombre:</span>
-            <span class="value">{{ clienteSeleccionado.nombre }}</span>
-          </div>
-          <div class="proveedor-info-item">
-            <span class="label">Teléfono:</span>
-            <span class="value">{{ clienteSeleccionado.telefono }}</span>
-          </div>
-          <div class="proveedor-info-item">
-            <span class="label">Email:</span>
-            <span class="value">{{ clienteSeleccionado.email }}</span>
-          </div>
-        </div>
+        <label>Estado</label>
+        <select formControlName="estado">
+          <option [ngValue]="EstadoDeOrden.PENDIENTE">PENDIENTE</option>
+          <option [ngValue]="EstadoDeOrden.COMPLETADA">COMPLETADA</option>
+        </select>
       </div>
     </div>
 
-    <div class="detalles">
-      <h3>Detalles de despacho</h3>
+    <hr class="divider">
 
-      @for (item of detallesArray; track $index) {
-        <div [formGroup]="item.control" class="detalle">
+    <div class="proveedor-section">
+      <label class="section-label">Cliente *</label>
 
-          <label>Producto</label>
-          <input 
-            type="text" 
-            formControlName="inputProducto"
-            placeholder="Buscar por codigo SKU"
-            [attr.list]="'product-options-' + $index">
-          <datalist id="product-options-{{ $index }}">
-            @for (prod of item.control.value.filteredProducts; track prod.idProducto) {
-              <option 
-                [value]="prod.nombre + ' (' + prod.codigoSku + ')'"
-                (click)="seleccionarProducto(item.index, prod)">
-              </option>
-            }
-          </datalist>
+      <div class="search-container" *ngIf="!clienteSeleccionado && !editMode">
+        <div class="input-with-icon">
+          <span class="search-icon">👤</span>
+          <input type="text" formControlName="inputCliente" placeholder="Buscar Cliente por Nombre o Email..." autocomplete="off"
+                 [class.invalid]="form.get('cliente.idCliente')?.invalid && form.get('inputCliente')?.touched">
+          <button type="button" class="btn-add-mini" (click)="abrirModalCliente()" title="Crear Nuevo Cliente">+</button>
+        </div>
 
-          <div class="stock">Stock disponible: {{ item.control.value.stockDisponible }}</div>
+        <ul class="custom-dropdown" *ngIf="showClienteDropdown && clientesFiltrados.length > 0">
+          <li *ngFor="let cli of clientesFiltrados" (click)="seleccionarCliente(cli)">
+            <div class="dd-title">{{ cli.nombre }}</div>
+            <div class="dd-subtitle">{{ cli.email }}</div>
+          </li>
+        </ul>
+        
+        <div class="error-message" *ngIf="form.get('cliente.idCliente')?.touched && form.get('cliente.idCliente')?.invalid">
+          Debe seleccionar un cliente.
+        </div>
+      </div>
 
-          <div class="form-group">
-            <label>Cantidad</label>
-            <input type="number" formControlName="cantidad" min="1">
+      <div class="proveedor-card-selected" *ngIf="clienteSeleccionado">
+        <div class="prov-icon">🏢</div>
+        <div class="prov-details">
+          <span class="prov-name">{{ clienteSeleccionado.nombre }}</span>
+          <span class="prov-meta">{{ clienteSeleccionado.email }} | {{ clienteSeleccionado.telefono }}</span>
+        </div>
+        <button type="button" class="btn-change" (click)="quitarCliente()" *ngIf="!editMode">Cambiar</button>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="detalles-container">
+      <h3 class="section-label">Productos a Despachar</h3>
+      
+      <div class="table-header">
+        <span class="col-prod">Producto (SKU / Nombre)</span>
+        <span class="col-stock" style="text-align: center;">Stock</span>
+        <span class="col-cant">Cantidad</span>
+        <span class="col-act"></span>
+      </div>
+
+      <div formArrayName="detalles" class="detalles-list">
+        <div *ngFor="let control of detalles.controls; let i = index" [formGroupName]="i" class="detalle-row">
+          
+          <div class="col-prod search-container">
+            <input type="text" formControlName="inputProducto" placeholder="Buscar SKU o Nombre..." autocomplete="off" [readonly]="editMode"
+                   (focus)="asFormGroup(control).patchValue({showDropdown: true})"
+                   (blur)="cerrarDropdownProducto(i)"
+                   [class.invalid]="asFormGroup(control).get('productoSeleccionado')?.invalid && asFormGroup(control).get('inputProducto')?.touched">
+            
+            <ul class="custom-dropdown" *ngIf="asFormGroup(control).get('showDropdown')?.value && asFormGroup(control).get('filteredProducts')?.value?.length">
+              <li *ngFor="let prod of asFormGroup(control).get('filteredProducts')?.value" (mousedown)="seleccionarProducto(i, prod)">
+                <div class="dd-title">{{ prod.nombre }}</div>
+                <div class="dd-subtitle">SKU: {{ prod.codigoSku }}</div>
+              </li>
+            </ul>
           </div>
 
-          <button type="button" (click)="eliminarDetalle($index)">Eliminar</button>
+          <div class="col-stock" style="display: flex; justify-content: center; align-items: center;">
+            <span class="badge-stock" 
+                  [style.background-color]="asFormGroup(control).get('stockDisponible')?.value > 0 ? '#10b981' : '#ef4444'">
+              {{ asFormGroup(control).get('stockDisponible')?.value }}
+            </span>
+          </div>
+
+          <div class="col-cant" style="position: relative;">
+            <input type="number" formControlName="cantidad" min="1" [readonly]="editMode"
+                   [class.invalid]="asFormGroup(control).get('cantidad')?.invalid && asFormGroup(control).get('cantidad')?.touched">
+            
+            <div class="error-floating" *ngIf="asFormGroup(control).get('cantidad')?.hasError('max')">
+              ¡Excede Stock!
+            </div>
+          </div>
+
+          <div class="col-act">
+            <button type="button" class="btn-delete-row" (click)="eliminarDetalle(i)" *ngIf="!editMode">✕</button>
+          </div>
         </div>
-      }
+      </div>
 
-      <button type="button" (click)="agregarDetalle()">Agregar Detalle</button>
+      <button type="button" class="btn-add-row" (click)="agregarDetalle()" *ngIf="!editMode">
+        + Agregar Producto
+      </button>
     </div>
 
-    <div class="button-group">
-      <button type="submit">Guardar</button>
-      <button type="button" (click)="cancelar()">Cancelar</button>
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="cancelar()">Cancelar</button>
+      <button type="submit" class="btn-save" [disabled]="form.invalid || saving">
+        {{ saving ? 'Guardando...' : 'Confirmar Despacho' }}
+      </button>
     </div>
+
   </form>
 </div>
+
+<app-modal 
+  [isOpen]="showClienteModal"
+  title="Nuevo Cliente"
+  confirmText="Crear"
+  cancelText="Cancelar"
+  [canConfirm]="clienteForm?.valid || false"
+  (closed)="cerrarModalCliente()"
+  (confirmed)="confirmarCrearCliente()">
+  
+  <form [formGroup]="clienteForm" *ngIf="clienteForm">
+    <div class="form-group">
+      <label>Nombre *</label>
+      <input type="text" formControlName="nombre" placeholder="Nombre o Razón Social">
+    </div>
+    <div class="form-group">
+      <label>Teléfono *</label>
+      <input type="text" formControlName="telefono" placeholder="+54 11...">
+    </div>
+    <div class="form-group">
+      <label>Email *</label>
+      <input type="email" formControlName="email" placeholder="cliente@empresa.com">
+    </div>
+  </form>
+</app-modal>

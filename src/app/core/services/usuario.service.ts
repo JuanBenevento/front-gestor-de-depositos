@@ -28,8 +28,8 @@ export class UsuarioService {
     return this.http.put<Usuario>(`${this.baseUrl}/modificarUsuario`, usuario);
   }
 
-  eliminar(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/eliminarUsuario?idUsuario=${id}`);
+  eliminar(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/eliminarUsuario?idUsuario=${id}`, { responseType: 'text' });
   }
 
   buscarPorRol(idRol: number): Observable<Usuario[]> {

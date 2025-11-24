@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { OrdenDespachoService } from '../../../core/services/orden-despacho.service';
 import OrdenDespacho from '../../../core/models/orden-despacho/orden-despacho.model';
 import { ModalService } from '../../../shared/services/modal.service';
+import { EstadoDeOrden } from '../../../core/enums/estados-de-orden.model';
 
 @Component({
   selector: 'app-ordenes-despacho-list',
@@ -16,12 +17,18 @@ export class OrdenDespachoListComponent implements OnInit {
 
   ordenes: OrdenDespacho[] = [];
   ordenesFiltradas: OrdenDespacho[] = [];
+  public EstadoDeOrden = EstadoDeOrden;
 
   loading = true;
   error = '';
+  
+  // FILTROS
   idBuscar: string = '';
   nombreClienteBuscar: string = '';
+  productoBuscar: string = '';
   fechaBuscar: string = '';
+  estadoBuscar: EstadoDeOrden | null = null;
+  
   filtrado = false;
 
   constructor(
@@ -37,10 +44,7 @@ export class OrdenDespachoListComponent implements OnInit {
   refresh(): void {
     this.loading = true;
     this.error = '';
-    this.idBuscar = '';
-    this.nombreClienteBuscar = '';
-    this.fechaBuscar = '';
-    this.filtrado = false;
+    this.limpiarVariables();
 
     this.ordenDespachoService.listar().subscribe({
       next: data => {
@@ -55,49 +59,76 @@ export class OrdenDespachoListComponent implements OnInit {
     });
   }
 
-  aplicarFiltros(): void {
-  const idFiltro = (this.idBuscar ?? '').toString().trim();
-  const nombreFiltro = (this.nombreClienteBuscar ?? '').trim().toLowerCase();
-  const fechaFiltro = this.fechaBuscar;
-
-  this.ordenesFiltradas = this.ordenes.filter(o => {
-    const coincideId = idFiltro ? (o.idOrdenDespacho?.toString() || '').includes(idFiltro) : true;
-
-    const coincideNombre = nombreFiltro
-      ? (o.cliente?.nombre || '').toLowerCase().includes(nombreFiltro)
-      : true;
-
-    const coincideFecha = fechaFiltro
-      ? new Date(o.fechaDespacho).toISOString().split('T')[0] === fechaFiltro
-      : true;
-
-    return coincideId && coincideNombre && coincideFecha;
-  });
-
-  this.filtrado = !!(idFiltro || nombreFiltro || fechaFiltro);
-}
-
-  limpiarFiltros(): void {
+  private limpiarVariables() {
     this.idBuscar = '';
     this.nombreClienteBuscar = '';
+    this.productoBuscar = '';
     this.fechaBuscar = '';
-    this.ordenesFiltradas = [...this.ordenes];
+    this.estadoBuscar = null;
     this.filtrado = false;
+  }
+
+  aplicarFiltros(): void {
+    const idFiltro = this.idBuscar.trim();
+    const clienteFiltro = this.nombreClienteBuscar.trim().toLowerCase();
+    const productoFiltro = this.productoBuscar.trim().toLowerCase();
+    const fechaFiltro = this.fechaBuscar;
+    const estadoFiltro = this.estadoBuscar;
+
+    this.ordenesFiltradas = this.ordenes.filter(o => {
+      const matchCliente = clienteFiltro 
+        ? (o.cliente?.nombre || '').toLowerCase().includes(clienteFiltro)
+        : true;
+
+      const matchFecha = fechaFiltro
+        ? new Date(o.fechaDespacho).toISOString().split('T')[0] === fechaFiltro
+        : true;
+
+      const matchEstado = estadoFiltro ? o.estado === estadoFiltro : true;
+
+      const matchProducto = productoFiltro 
+        ? o.detalle_despacho?.some(d => 
+            d.producto?.nombre?.toLowerCase().includes(productoFiltro) || 
+            d.producto?.codigoSku?.toLowerCase().includes(productoFiltro)
+          )
+        : true;
+
+      return matchCliente && matchFecha && matchEstado && matchProducto;
+    });
+
+    this.filtrado = !!(idFiltro || clienteFiltro || productoFiltro || fechaFiltro || estadoFiltro);
+  }
+
+  limpiarFiltros(): void {
+    this.limpiarVariables();
+    this.ordenesFiltradas = [...this.ordenes];
+  }
+
+  eliminar(id: number): void {
+    this.modalService.open({
+      message: '¿Eliminar orden de despacho? Se repondrá el stock.', 
+      title: 'Eliminar', 
+      confirmText: 'Eliminar',
+      showCancelButton: true,
+      onConfirm: () => this.onConfirm(id)
+    });
   }
 
   onConfirm = (id: number) => {
     this.ordenDespachoService.eliminar(id).subscribe({
-      next: () => this.refresh(),
-      error: () => this.showModal('Error al eliminar la orden.', 'Error')
+      next: (res) => {
+        const msg = typeof res === 'string' ? res : 'Orden eliminada y stock repuesto.';
+        this.showModal(msg, 'Éxito');
+        this.refresh();
+      },
+      error: (err) => {
+        console.error(err);
+        let msg = 'Error al eliminar.';
+        if (err.error && typeof err.error === 'string') msg = err.error;
+        else if (err.error?.message) msg = err.error.message;
+        this.showModal(msg, 'Error');
+      }
     });
-  }
-
-  eliminar(id: number): void {
-    this.modalService.open({message: '¿Eliminar orden de despacho?', title: 'Eliminar', onConfirm: () => this.onConfirm(id)});
-  }
-
-  volver(): void {
-    this.router.navigate(['/dashboard']);
   }
 
   private showModal(message: string, title = 'Informacion'): void {

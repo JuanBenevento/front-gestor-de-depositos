@@ -1,0 +1,356 @@
+/* ========================================= */
+/* 1. ESTRUCTURA GENERAL                     */
+/* ========================================= */
+:host {
+  display: block;
+  box-sizing: border-box;
+}
+
+.form-container {
+  background-color: #0f172a; /* Slate 900 */
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  max-width: 900px;
+  margin: 0 auto;
+  color: #e2e8f0; /* Slate 200 */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Fila de dos columnas (Fecha y Estado) */
+.form-row-2 {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.form-row-2 .form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #334155;
+  margin: 25px 0;
+}
+
+/* ========================================= */
+/* 2. INPUTS Y LABELS                        */
+/* ========================================= */
+label {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-bottom: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+input, select {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  color: white;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  outline: none;
+  width: 100%; /* Asegura que llenen el contenedor */
+  box-sizing: border-box; /* Evita desbordes */
+  transition: all 0.2s;
+}
+
+input:focus, select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+input[readonly] {
+  background-color: #0f172a;
+  border-color: #1e293b;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Estilos de Error */
+input.invalid, select.invalid {
+  border-color: #ef4444;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+/* ========================================= */
+/* 3. SECCIÓN CLIENTE (BUSCADOR)             */
+/* ========================================= */
+.proveedor-section {
+  margin-bottom: 20px;
+}
+
+.section-label {
+  font-size: 1.1rem;
+  color: #e2e8f0;
+  margin-bottom: 10px;
+  display: block;
+  border-left: 4px solid #3b82f6;
+  padding-left: 10px;
+}
+
+.search-container {
+  position: relative; /* Clave para el dropdown */
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  z-index: 1;
+}
+
+.input-with-icon input {
+  padding-left: 35px; /* Espacio para el icono */
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.btn-add-mini {
+  background-color: #3b82f6;
+  border: 1px solid #3b82f6;
+  color: white;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  width: 45px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.btn-add-mini:hover { background-color: #2563eb; }
+
+/* Tarjeta Cliente Seleccionado */
+.proveedor-card-selected {
+  display: flex;
+  align-items: center;
+  background: rgba(59, 130, 246, 0.1); /* Azul suave */
+  border: 1px solid #3b82f6;
+  padding: 12px 15px;
+  border-radius: 8px;
+  gap: 15px;
+  margin-top: 5px;
+}
+
+.prov-icon { font-size: 1.5rem; }
+.prov-details { flex: 1; }
+.prov-name { font-weight: bold; color: white; display: block; }
+.prov-meta { font-size: 0.85rem; color: #93c5fd; }
+
+.btn-change {
+  background: transparent;
+  border: 1px solid #3b82f6;
+  color: #3b82f6;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.btn-change:hover { background: #3b82f6; color: white; }
+
+
+/* ========================================= */
+/* 4. GRILLA DE DETALLES (PRODUCTOS)         */
+/* ========================================= */
+.detalles-container {
+  background-color: rgba(30, 41, 59, 0.4); /* Fondo sutil */
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+}
+
+/* 💡 AJUSTE DE COLUMNAS: Producto (Ancho), Stock (Fijo), Cantidad (Fijo), Acción (Fijo) */
+.table-header, .detalle-row {
+  display: grid;
+  grid-template-columns: 4fr 100px 100px 50px; 
+  gap: 15px;
+  align-items: center;
+}
+
+.table-header {
+  padding: 0 10px;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-align: center;
+}
+/* Alinear texto de la primera columna a la izquierda */
+.table-header span:first-child { text-align: left; }
+
+.detalle-row {
+  margin-bottom: 10px;
+  position: relative; /* Para errores flotantes */
+}
+
+/* Columna Producto (Input de búsqueda) */
+.col-prod {
+  position: relative; /* Para el dropdown */
+}
+
+/* Columna Stock (Badge) */
+.col-stock {
+  display: flex;
+  justify-content: center;
+}
+
+.badge-stock {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
+  color: #0f172a; /* Texto oscuro para contraste */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Columna Cantidad */
+.col-cant {
+  position: relative;
+}
+
+.col-cant input {
+  text-align: center;
+}
+
+/* Error flotante (Excede Stock) */
+.error-floating {
+  position: absolute;
+  bottom: -18px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.7rem;
+  color: #ef4444;
+  background-color: rgba(15, 23, 42, 0.9);
+  padding: 2px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* Botón Eliminar Fila */
+.btn-delete-row {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+.btn-delete-row:hover { transform: scale(1.2); color: #ff5555; }
+
+/* Botón Agregar Producto */
+.btn-add-row {
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px dashed #3b82f6;
+  color: #60a5fa;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.btn-add-row:hover { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+
+
+/* ========================================= */
+/* 5. DROPDOWN (AUTOCOMPLETE)                */
+/* ========================================= */
+.custom-dropdown {
+  position: absolute;
+  top: 100%; /* Justo debajo del input */
+  left: 0;
+  right: 0;
+  background-color: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 0 0 6px 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000; /* Muy alto para tapar todo */
+  box-shadow: 0 10px 15px rgba(0,0,0,0.5);
+}
+
+.custom-dropdown li {
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #334155;
+  transition: background 0.2s;
+}
+
+.custom-dropdown li:hover {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.dd-title { font-weight: 600; display: block; }
+.dd-subtitle { font-size: 0.8rem; color: #94a3b8; display: block; }
+.custom-dropdown li:hover .dd-subtitle { color: #e2e8f0; }
+
+
+/* ========================================= */
+/* 6. BOTONES DE ACCIÓN FINALES              */
+/* ========================================= */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #334155;
+}
+
+.btn-save {
+  background-color: #2563eb;
+  color: white;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-save:hover:not(:disabled) { background-color: #1d4ed8; }
+.btn-save:disabled { background-color: #475569; cursor: not-allowed; opacity: 0.7; }
+
+.btn-cancel {
+  background: transparent;
+  border: 1px solid #475569;
+  color: #94a3b8;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-cancel:hover { color: white; border-color: white; }

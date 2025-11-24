@@ -15,17 +15,24 @@ import { ModalService } from '../../../shared/services/modal.service';
 })
 export class UsuarioListComponent implements OnInit {
 
-  usuarios: Usuario[] = [];
+ usuarios: Usuario[] = [];
+  usuariosOriginal: Usuario[] = [];
   loading = true;
   error = '';
-  idBuscar: string = '';
-  rolBuscar = '';      
+  nombreUsuarioBuscar: string = ''; 
+  nombreRolBuscar: string = '';     
   filtrado = false; 
 
-  constructor(
+  private rolMap: { [key: number]: string } = {
+    1: 'ADMIN',
+    2: 'OPERATIVO',
+  };
+  
+    constructor(
     private usuarioService: UsuarioService,
     private router: Router,
     private modalService: ModalService
+
   ) {}
 
   ngOnInit(): void {
@@ -35,12 +42,13 @@ export class UsuarioListComponent implements OnInit {
   refresh(): void {
     this.loading = true;
     this.error = '';
-    this.idBuscar = '';
-    this.rolBuscar = '';
+    this.nombreUsuarioBuscar = ''; 
+    this.nombreRolBuscar = '';     
     this.filtrado = false; 
 
     this.usuarioService.listar().subscribe({
       next: data => {
+        this.usuariosOriginal = data; 
         this.usuarios = data;
         this.loading = false;
       },
@@ -51,6 +59,47 @@ export class UsuarioListComponent implements OnInit {
     });
   }
 
+  limpiarFiltros(): void {
+    this.nombreUsuarioBuscar = '';
+    this.nombreRolBuscar = '';
+    this.aplicarFiltros(); 
+    this.filtrado = false;
+    this.error = '';
+  }
+
+  getRoleName(idRol: number | undefined): string {
+    if (idRol === undefined) {
+      return 'N/A';
+    }
+    return this.rolMap[idRol] || `ID Desconocido (${idRol})`;
+  }
+
+  aplicarFiltros(): void {
+    let usuariosFiltrados = this.usuariosOriginal;
+    
+    const nombreUsuario = this.nombreUsuarioBuscar?.toLowerCase().trim();
+    const nombreRol = this.nombreRolBuscar?.toLowerCase().trim();
+
+    if (nombreUsuario && nombreUsuario.length > 0) {
+      usuariosFiltrados = usuariosFiltrados.filter(u =>
+        u.nombre.toLowerCase().includes(nombreUsuario) ||
+        u.apellido.toLowerCase().includes(nombreUsuario) ||
+        u.email.toLowerCase().includes(nombreUsuario)
+      );
+    }
+
+    if (nombreRol && nombreRol.length > 0) {
+      usuariosFiltrados = usuariosFiltrados.filter(u => {
+        const rolActual = this.getRoleName(u.idRol).toLowerCase(); 
+        return rolActual.includes(nombreRol);
+      });
+    }
+    
+    this.usuarios = usuariosFiltrados;
+    this.filtrado = !!nombreUsuario || !!nombreRol;
+    this.error = this.filtrado && this.usuarios.length === 0 ? 'No se encontraron usuarios con los criterios de búsqueda.' : '';
+  }
+
 
   eliminar(id: number): void {
     this.modalService.open({message: '¿Eliminar usuario?', title: 'Eliminar', onConfirm: () => this.onConfirm(id)});
@@ -58,54 +107,13 @@ export class UsuarioListComponent implements OnInit {
 
   onConfirm = (id: number) => {
     this.usuarioService.eliminar(id).subscribe({
-      next: () => this.refresh(),
-      error: () => this.showModal('Error al eliminar', 'Error')
-    });
-  }
-
-  volver(): void {
-    this.router.navigate(['/dashboard']);  
-  }
-
-  buscarPorId(): void {
-    const id = +this.idBuscar;         
-    if (!id) { return; }
-
-    this.error = '';
-    this.loading = true;
-    this.usuarioService.buscarPorId(id).subscribe({
-      next: usuario => {
-        this.usuarios = [usuario];      
-        this.loading = false;
-        this.filtrado = true;
+      next: (mensajeRespuesta) => {
+        this.showModal(mensajeRespuesta, 'Éxito'); 
+        this.refresh();
       },
-      error: () => {
-        this.error = `No se encontró el usuario con ID ${id}.`;
-        this.usuarios = [];
-        this.loading = false;
-      }
-    });
-  }
-
-  buscarPorRol(): void {
-    const rol = +this.rolBuscar;
-    if (!rol) { return; }
-
-    this.error = '';
-    this.loading = true;
-
-    this.usuarioService.buscarPorRol(rol).subscribe({
-      next: lista => {
-        this.usuarios = lista;
-        this.loading = false;
-        this.filtrado = true;
-        if (!lista.length) {
-          this.error = `No se encontraron usuarios con rol ${rol}.`;
-        }
-      },
-      error: () => {
-        this.error = 'Error al buscar por rol.';
-        this.loading = false;
+      error: (err) => {
+        console.error(err);
+        this.showModal('Error al eliminar el usuario.', 'Error');
       }
     });
   }

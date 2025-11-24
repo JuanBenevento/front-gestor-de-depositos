@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
-import { DetalleRecepcion, DetalleRecepcionDTO } from '../models/orden-recepcion/detalle-recepcion.model';
+import { DetalleRecepcionDTO } from '../models/orden-recepcion/detalle-recepcion.model';
 import { BASE_URL } from '../constants/baseUrl';
 
 @Injectable({
@@ -13,23 +13,23 @@ export class DetalleOrdenRecepcionService {
 
     constructor(private http: HttpClient) {}
 
-  listar(): Observable<DetalleRecepcion[]> {
-    return this.http.get<DetalleRecepcion[]>(`${this.apiUrl}/todos`);
+  listar(): Observable<DetalleRecepcionDTO[]> {
+    return this.http.get<DetalleRecepcionDTO[]>(`${this.apiUrl}/todos`);
   }
 
-  buscarPorId(id: number): Observable<DetalleRecepcion> {
-    return this.http.get<DetalleRecepcion>(`${this.apiUrl}/buscarDetallePorId?id=${id}`);
+  buscarPorId(id: number): Observable<DetalleRecepcionDTO> {
+    return this.http.get<DetalleRecepcionDTO>(`${this.apiUrl}/buscarDetallePorId?id=${id}`);
   }
-  buscarPorIdOrden(id: number): Observable<DetalleRecepcion> {
-    return this.http.get<DetalleRecepcion>(`${this.apiUrl}/buscarDetallesPorIdOrden?idOrden=${id}`);
+  buscarPorIdOrden(id: number): Observable<DetalleRecepcionDTO> {
+    return this.http.get<DetalleRecepcionDTO>(`${this.apiUrl}/buscarDetallesPorIdOrden?idOrden=${id}`);
   }
 
   crear(detalles: DetalleRecepcionDTO): Observable<DetalleRecepcionDTO> {
     return this.http.post<DetalleRecepcionDTO>(`${this.apiUrl}/crearDetallesRecepcion`, detalles);
   }
 
-  editar(id: number, detalle: DetalleRecepcion): Observable<DetalleRecepcion> {
-    return this.http.put<DetalleRecepcion>(`${this.apiUrl}/actualizarDetalle?id=${id}`, detalle);
+  editar(id: number, detalle: DetalleRecepcionDTO): Observable<DetalleRecepcionDTO> {
+    return this.http.put<DetalleRecepcionDTO>(`${this.apiUrl}/actualizarDetalle?id=${id}`, detalle);
   }
 
   eliminar(id: number): Observable<void> {

@@ -16,9 +16,10 @@ import { ModalService } from '../../../shared/services/modal.service';
 })
 export class ZonaListComponent implements OnInit {
   zonas: Zona[] = [];
+  zonasOriginal: Zona[] = [];
   loading = true;
   error = '';
-  idBuscar: string = '';
+  nombreBuscar: string = '';
   filtrado = false;
 
   constructor(
@@ -31,14 +32,16 @@ export class ZonaListComponent implements OnInit {
     this.refresh();
   }
 
-  refresh(): void {
+ refresh(): void {
     this.loading = true;
     this.error = '';
-    this.idBuscar = ''; 
-    this.filtrado = false;  
+    // 🛑 Limpiamos la nueva propiedad
+    this.nombreBuscar = '';
+    this.filtrado = false;  
 
     this.zonaService.listar().subscribe({
       next: data => {
+        this.zonasOriginal = data; // 💡 Guardamos la lista completa
         this.zonas = data;
         this.loading = false;
       },
@@ -70,32 +73,30 @@ export class ZonaListComponent implements OnInit {
     });
   }
 
-  volver(): void {
-    this.router.navigate(['/dashboard']);
+  aplicarFiltroNombre(): void {
+    const nombre = this.nombreBuscar?.toLowerCase().trim();
+
+    // 1. Empezamos con la lista original
+    let zonasFiltradas = this.zonasOriginal;
+
+    // 2. Aplicamos el filtro si hay texto de búsqueda
+    if (nombre && nombre.length > 0) {
+      zonasFiltradas = zonasFiltradas.filter(z => 
+        z.nombre.toLowerCase().includes(nombre)
+      );
+      this.filtrado = true;
+    } else {
+      this.filtrado = false;
+    }
+
+    // 3. Actualizamos la lista mostrada
+    this.zonas = zonasFiltradas;
+    this.error = this.filtrado && this.zonas.length === 0 ? 'No se encontraron zonas con ese nombre.' : '';
   }
 
-  buscarPorId(): void {
-    const id = +this.idBuscar;
-    if (!id) { return; }
-    this.error = '';
-    this.loading = true;
-    this.zonaService.buscarPorId(id).subscribe({
-      next: data => {
-        this.zonas = [data];
-        this.loading = false;
-        this.filtrado = true;
-      },
-      error: () => {
-        this.error = 'Zona no encontrada.';
-        this.loading = false;
-      } 
-    });
-  }
-
-  limpiarFiltro(): void {
-    this.idBuscar = '';
-    this.filtrado = false;
-    this.refresh();
+  limpiarFiltros(): void {
+    this.nombreBuscar = '';
+    this.aplicarFiltroNombre(); // Vuelve a aplicar el filtro con el campo vacío, mostrando la lista original
   }
 
   private showModal(message: string, title = 'Información'): void {

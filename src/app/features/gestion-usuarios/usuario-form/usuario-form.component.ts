@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';  
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { Usuario } from '../../../core/models/usuario/usuario.model';
@@ -17,6 +16,7 @@ export class UsuarioFormComponent implements OnInit {
 
   form!: FormGroup;
   editMode = false;
+  saving = false;
 
   constructor(
     private fb: FormBuilder,
@@ -29,20 +29,30 @@ export class UsuarioFormComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.nonNullable.group({
       idUsuario: [0],
-      nombre: ['', Validators.required],
-      contrasenia: [''],
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      contrasenia: [''], 
       apellido: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       idRol: [1, Validators.required]
     });
 
     const id = this.route.snapshot.paramMap.get('id');
+    
     if (id) {
       this.editMode = true;
-      this.service.buscarPorId(+id).subscribe(u => {
-        this.form.patchValue(u);
+      this.form.controls['contrasenia'].removeValidators(Validators.required);
+      
+      this.service.buscarPorId(+id).subscribe({
+        next: u => {
+          this.form.patchValue(u);
+        },
+        error: () => this.showModal('Error al cargar el usuario para editar.', 'Error')
       });
+    } else {
+      this.form.controls['contrasenia'].addValidators([Validators.required, Validators.minLength(4)]);
     }
+    
+    this.form.controls['contrasenia'].updateValueAndValidity();
   }
 
   guardar(): void {
@@ -51,6 +61,7 @@ export class UsuarioFormComponent implements OnInit {
       return;
     }
 
+    this.saving = true; 
     const user: Usuario = this.form.value;
 
     const obs = this.editMode
@@ -58,26 +69,47 @@ export class UsuarioFormComponent implements OnInit {
       : this.service.crear(user);
 
     obs.subscribe({
-      next: () => this.router.navigate(['/dashboard/usuarios']),
-      error: err => {
-        console.error('Error al guardar usuario', err);
-        if (err && err.status === 401) {
-          this.showModal('No autorizado. La sesion puede haber expirado.', 'Error');
-        } else if (err && err.status === 400) {
-          this.showModal('Datos invalidos. Verifique el formulario.', 'Error');
-        } else {
-          this.showModal('Error al guardar', 'Error');
-        }
+      next: () => {
+        this.saving = false;
+        this.showModal('Operación exitosa.', 'Éxito', () => {
+             this.router.navigate(['/dashboard/usuarios']);
+        });
+      },
+      error: (err) => {
+        this.saving = false; 
+        this.manejarErrores(err);
       }
     });
   }
 
-  cancelar(): void {
-    this.router.navigate(['/../dashboard/usuarios']);  
+  private manejarErrores(err: any): void {
+    console.error('Error:', err);
+    let mensaje = 'Ocurrió un error inesperado.';
+    let titulo = 'Error';
+
+    if (err.status === 400) {
+      titulo = 'Datos Inválidos';
+      if (typeof err.error === 'string') {
+        mensaje = err.error; 
+      } else if (err.error?.message) {
+        mensaje = err.error.message;
+      }
+    } 
+    else if (err.status === 401 || err.status === 403) {
+      mensaje = 'Su sesion ha expirado o no tiene permisos.';
+    }
+    else if (err.status === 500) {
+      mensaje = 'Error interno del servidor.';
+    }
+
+    this.showModal(mensaje, titulo);
   }
 
-  private showModal(message: string, title = 'Informacion'): void {
-    this.modalService.open({ title, message, confirmText: 'Aceptar' });
+  cancelar(): void {
+    this.router.navigate(['/dashboard/usuarios']);  
+  }
+
+  private showModal(message: string, title: string, onConfirm?: () => void): void {
+    this.modalService.open({ title, message, confirmText: 'Aceptar', onConfirm });
   }
 }
-

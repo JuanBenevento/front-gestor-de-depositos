@@ -8,44 +8,27 @@
   <div class="search-row">
     <div class="search-group">
       <input
-        type="number"
-        placeholder="ID de usuario"
-        [(ngModel)]="idBuscar"
-        (keyup.enter)="buscarPorId()"
+        type="text"
+        placeholder="Buscar por el nombre"
+        [(ngModel)]="nombreUsuarioBuscar"
+        (input)="aplicarFiltros()"
       />
-      <button (click)="buscarPorId()">Buscar ID</button>
     </div>
 
     <div class="search-group">
       <input
-        type="number"
-        placeholder="ID de rol"
-        [(ngModel)]="rolBuscar"
-        (keyup.enter)="buscarPorRol()"
+        type="text"
+        placeholder="Buscar por su rol"
+        [(ngModel)]="nombreRolBuscar"
+        (input)="aplicarFiltros()"
       />
-      <button (click)="buscarPorRol()">Buscar Rol</button>
     </div>
-
-    @if (filtrado) {
-      <div class="search-group">
-        <button class="btn secondary-btn" (click)="refresh()">Limpiar</button>
-      </div>
-    }
   </div>
-
-  @if (loading) {
-    <div class="loading">Cargando...</div>
-  }
-
-  @if (error) {
-    <div class="error">{{ error }}</div>
-  }
 
   @if (usuarios.length) {
     <table class="user-table">
       <thead>
         <tr>
-          <th>ID</th>
           <th>Nombre</th>
           <th>Apellido</th>
           <th>Email</th>
@@ -56,11 +39,11 @@
       <tbody>
         @for (u of usuarios; track u.idUsuario) {
           <tr>
-            <td>{{ u.idUsuario }}</td>
             <td>{{ u.nombre }}</td>
             <td>{{ u.apellido }}</td>
             <td>{{ u.email }}</td>
-            <td>{{ u.idRol }}</td>
+            <td>{{ getRoleName(u.idRol) }}</td> 
+            
             <td class="actions">
               <button
                 [routerLink]="['/dashboard/usuarios/editar', u.idUsuario]"
@@ -77,10 +60,4 @@
       </tbody>
     </table>
   }
-
-  @if (!usuarios.length && !loading) {
-    <p>Sin usuarios para mostrar.</p>
-  }
-
-  <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
-</div>
+  </div>

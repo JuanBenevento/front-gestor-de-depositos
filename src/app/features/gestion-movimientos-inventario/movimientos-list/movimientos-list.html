@@ -7,21 +7,25 @@
 
   <div class="search-row">
     <div class="search-group">
-      <input
-        type="number"
-        placeholder="ID del movimiento"
-        [(ngModel)]="idBuscar"
-        (input)="aplicarFiltros()"
-      />
+      <select
+        [(ngModel)]="estadoBuscar"
+        (change)="aplicarFiltros()"
+        class="form-select"
+        aria-label="Filtrar por estado"
+      >
+        <option value="">Filtrar por Estado</option>
+        <option value="Entrada">Entrada</option>
+        <option value="Salida">Salida</option>
+        <option value="Reubicacion">Reubicación</option>
+      </select>
     </div>
 
     <div class="search-group">
-      <input
-        type="text"
-        placeholder="ID del producto"
-        [(ngModel)]="idProductoBuscar"
-        (input)="aplicarFiltros()"
-      />
+     <input
+      type="text"
+      placeholder="Buscar por nombre del producto"
+      [(ngModel)]="nombreBuscar"
+      (input)="aplicarFiltros()"  />
     </div>
 
     <div class="search-group">
@@ -51,31 +55,34 @@
       <table class="user-table">
       <thead>
         <tr>
-          <th>ID</th>
           <th>Fecha de movimiento</th>
           <th>Estado de movimiento</th>
-          <th>ID Producto</th>
+          <th>Producto</th>
           <th>Cantidad</th>
-          <th>ID Ubicacion Origen</th>
-          <th>ID Ubicacion Destino</th>
+          <th>Ubicacion Origen</th>
+          <th>Ubicacion Destino</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         @for (m of movimientos; track m.idMovimientoInventario) {
           <tr>
-            <td>{{ m.idMovimientoInventario }}</td>
             <td>{{ m.fecha | date: 'dd/MM/yyyy' }}</td>
             <td>{{ m.estado }}</td>
-            <td>{{ m.producto.idProducto }}</td>
+            <td>{{ m.producto.nombre }}</td>
             <td>{{ m.cantidad }}</td>
-            <td>{{ m.ubicacionOrigen?.idUbicacion }}</td>
-            <td>{{ m.ubicacionDestino?.idUbicacion }}</td>
+            <td>{{ m.ubicacionOrigen?.codigo }}</td>
+            <td>{{ m.ubicacionDestino?.codigo }}</td>
 
-            <td class="actions">
+            @if (m.estado === 'REUBICACION') {
+              <td class="actions">
                 <button [routerLink]="['/dashboard/movimientosInventario/editar', m.idMovimientoInventario]" class="btn edit-btn">Editar</button>
                 <button (click)="eliminar(m.idMovimientoInventario!)" class="btn delete-btn">Eliminar</button>
             </td>
+            }@else {
+              <p>No se puede editar ni eliminar proviene de una orden.</p>
+            }
+            
           </tr>
         }
       </tbody>
@@ -86,5 +93,4 @@
     <p>Sin movimientos de inventario para mostrar.</p>
   }
 
-  <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
 </div>

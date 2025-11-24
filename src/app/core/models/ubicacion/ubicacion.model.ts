@@ -1,11 +1,9 @@
+import { Zona } from "../zona/zona.model";
+
 export interface Ubicacion {
   idUbicacion?: number;
   codigo: string;
-  zona: {
-    idZona?: number;
-    nombre?: string;
-    descripcion?: string;
-  } | null;
+  zona: Zona;
   capacidadMaxima: number;
   ocupadoActual: number;
 }

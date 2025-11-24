@@ -15,9 +15,10 @@ import { ModalService } from '../../../shared/services/modal.service';
 })
 export class ProveedoresListComponent implements OnInit {
   proveedores: Proveedor[] = [];
+  proveedoresOriginal: Proveedor[] = [];
   loading = true;
   error = '';
-  idBuscar: string = '';
+  nombreBuscar: string = '';
   filtrado = false;
 
   constructor(
@@ -33,11 +34,12 @@ export class ProveedoresListComponent implements OnInit {
   refresh(): void {
     this.loading = true;
     this.error = '';
-    this.idBuscar = ''; 
+    this.nombreBuscar = ''; 
     this.filtrado = false;  
 
     this.service.listar().subscribe({
       next: data => {
+        this.proveedoresOriginal = data;
         this.proveedores = data;
         this.loading = false;
       },
@@ -66,37 +68,36 @@ export class ProveedoresListComponent implements OnInit {
   onConfirm = (id: number) => {
     this.service.eliminar(id).subscribe({
       next: (res) => {
-        this.showModal('El proveedor se eliminó correctamente.', 'Éxito');
+        this.showModal('El proveedor se elimino correctamente.', 'Exito');
         this.refresh();
         } ,
         error: () => this.showModal('Error al eliminar', 'Error')
       });
   }
- 
-  
 
-  buscarPorId(): void {
-    const id  = +this.idBuscar;
-    if (!id) { return; }
-    this.error = '';
-    this.loading = true;
-    this.service.buscarPorId(id).subscribe({
-      next: data => {
-        this.proveedores = [data];
-        this.loading = false;
-        this.filtrado = true;
-      },
-      error: () => {
-        this.error = 'Proveedor no encontrado.';
-        this.loading = false;
-      } 
-    });
+  aplicarFiltros(): void {
+    const termino = this.nombreBuscar?.toLowerCase().trim();
+
+    let proveedoresFiltrados = this.proveedoresOriginal;
+
+    if (termino && termino.length > 0) {
+      proveedoresFiltrados = proveedoresFiltrados.filter(p => 
+        p.nombre.toLowerCase().includes(termino)
+      );
+      this.filtrado = true;
+    } else {
+      this.filtrado = false;
+    }
+
+    this.proveedores = proveedoresFiltrados;
+    this.error = this.filtrado && this.proveedores.length === 0 
+      ? 'No se encontraron proveedores con ese nombre.' 
+      : '';
   }
 
-  limpiarFiltro(): void {
-    this.idBuscar = '';
-    this.filtrado = false;
-    this.refresh();
+  limpiarFiltros(): void {
+    this.nombreBuscar = '';
+    this.aplicarFiltros(); 
   }
 
   private showModal(message: string, title = 'Informacion'): void {

@@ -1,6 +1,21 @@
+/* ======================================= */
+/* CORRECCIÓN ABSOLUTA DEL FONDO           */
+/* ======================================= */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ======================================= */
+/* FONDO OSCURO FUTURISTA FULLSCREEN       */
+/* ======================================= */
 .login-page {
-  height: 100vh;
-  width: 100%;
+  position: fixed;
+  inset: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
   background-image: url('../../../assets/fondo-login.jpg');
   background-size: cover;
   background-position: center;
@@ -9,55 +24,191 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  overflow: hidden;
 }
 
+/* Capa oscura + saturación */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: brightness(0.7);
+  z-index: 1;
+}
+
+/* ======================================= */
+/* HOLOGRAMA DE LUZ CRUZANDO LA PANTALLA   */
+/* ======================================= */
+.holo-light {
+  position: absolute;
+  inset: 0;
+
+  background: radial-gradient(
+    circle at 50% -20%,
+    rgba(0,150,255,0.25),
+    transparent 50%
+  );
+
+  animation: holoMove 10s infinite linear;
+  z-index: 0;
+}
+
+@keyframes holoMove {
+  0%   { transform: translateX(-30%) translateY(0); }
+  50%  { transform: translateX(30%) translateY(10%); }
+  100% { transform: translateX(-30%) translateY(0); }
+}
+
+/* ======================================= */
+/* PARTÍCULAS OSCURO FUTURISTA SIN JS      */
+/* ======================================= */
+.particles span {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background: rgba(0,150,255,0.7);
+  border-radius: 50%;
+  filter: blur(2px);
+  animation: float 13s infinite linear;
+  z-index: 0;
+}
+
+.particles span:nth-child(1) { top: 10%; left: 20%; animation-duration: 14s; }
+.particles span:nth-child(2) { top: 40%; left: 75%; animation-duration: 11s; }
+.particles span:nth-child(3) { top: 80%; left: 25%; animation-duration: 16s; }
+.particles span:nth-child(4) { top: 20%; left: 85%; animation-duration: 9s; }
+.particles span:nth-child(5) { top: 60%; left: 5%; animation-duration: 17s; }
+
+@keyframes float {
+  0% { transform: translateY(0) scale(1); opacity: 0.6; }
+  50% { transform: translateY(-40px) scale(1.4); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 0.6; }
+}
+
+/* ======================================= */
+/* PANEL DE LOGIN OSCURO CORPORATE PREMIUM */
+/* ======================================= */
 .login-container {
-  width: 320px;
-  margin-top: 100px auto;
-  padding: 2rem;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background: #f9f9f9;
+  position: relative;
+  z-index: 2;
+
+  width: 340px;
+  padding: 40px 32px;
+
+  /* Mucho más oscuro y profesional */
+  background: rgba(10, 13, 20, 0.80);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+
+  border: 1px solid rgba(40, 90, 140, 0.35);
+
+  /* Sombra más seria, sin tanto brillo */
+  box-shadow:
+    0 0 20px rgba(0, 120, 255, 0.18),
+    0 18px 50px rgba(0, 0, 0, 0.9);
+
+  border-radius: 0px; /* CUADRADO como pediste */
+  overflow: hidden;
+}
+
+/* Quitamos el borde neon fuerte por un borde más discreto */
+.login-container::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(
+    120deg,
+    rgba(0, 120, 255, 0.25),
+    rgba(0, 60, 180, 0.2),
+    rgba(0, 120, 255, 0.25)
+  );
+  background-size: 260% 260%;
+  animation: panelBorderMotion 8s infinite linear;
+  filter: blur(10px);
+  z-index: -1;
+}
+
+@keyframes panelBorderMotion {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.login-container h2 {
   text-align: center;
+  color: #dce6f7;
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 28px;
+  letter-spacing: 0.5px;
+
+  text-shadow: 0 3px 7px rgba(0,120,255,0.20);
+}
+
+/* ======================================= */
+/* FORMULARIO E INPUTS CORPORATE           */
+/* ======================================= */
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+label {
+  color: #8db7e6;
+  font-size: 0.92rem;
 }
 
 input {
-  width: 100%;
-  padding: 8px;
-  margin: 8px 0;
+  padding: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(0,120,255,0.28);
+  border-radius: 4px; /* Recto pero con mínima suavidad */
+  color: #d6e7ff;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
 }
 
+input:focus {
+  background: rgba(255,255,255,0.08);
+  border-color: #2f9bff;
+  box-shadow: 0 0 10px rgba(0,120,255,0.35);
+}
+
+/* ======================================= */
+/* BOTÓN CORPORATE 3D SUTIL                */
+/* ======================================= */
 button {
-  width: 100%;
-  padding: 10px;
-  background: #2b6cb0;
-  color: white;
+  margin-top: 10px;
+  padding: 14px;
   border: none;
-  border-radius: 5px;
+
+  background: linear-gradient(135deg, #003465, #0052a8);
+  background-size: 200% 200%;
+
+  border-radius: 4px;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
+
+  box-shadow: 0 10px 24px rgba(0,80,160,0.45);
 }
 
 button:hover {
-  background: #1a4f80;
+  background-position: right;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 14px 34px rgba(0,80,160,0.55);
+}
+
+button:active {
+  transform: scale(0.97);
 }
 
 .error {
-  color: red;
-  font-size: 0.9rem;
-}
-
-.register-btn {
-  width: 100%;
-  padding: 10px;
+  color: #ff7a7a;
   margin-top: 10px;
-  background-color: #28a745; /* verde */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.register-btn:hover {
-  background-color: #218838;
 }

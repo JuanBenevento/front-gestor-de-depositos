@@ -8,18 +8,29 @@
   <div class="search-row">
     <div class="search-group">
       <input
-        type="number"
-        placeholder="ID de la ubicación"
-        [(ngModel)]="idBuscar"
-        (keyup.enter)="buscarPorId()"
+        type="text"
+        placeholder="Buscar por codigo"
+        [(ngModel)]="codigoBuscar"
+        (input)="aplicarFiltros()"
       />
-      <button (click)="buscarPorId()">Buscar ID</button>
     </div>
 
     <div class="search-group">
-      <button class="btn secondary-btn" (click)="verReporte()">Ver reporte espacio</button>
+      <input
+        type="text"
+        placeholder="Filtrar por Zona"
+        [(ngModel)]="zonaBuscar"
+        (input)="aplicarFiltros()"
+      />
+    </div>
+    
+    <div class="search-group buttons-right">
+      <button class="btn secondary-btn" (click)="verReporte()" *ngIf="!mostrandoReporte">
+        Ver reporte espacio
+      </button>
+      
       @if (filtrado) {
-        <button class="btn secondary-btn" (click)="limpiarFiltro()">Limpiar</button>
+        <button class="btn secondary-btn" (click)="limpiarFiltros()">Limpiar</button>
       }
     </div>
   </div>
@@ -36,25 +47,35 @@
     <table class="user-table">
       <thead>
         <tr>
-          <th>ID</th>
           <th>Codigo</th>
           <th>Zona</th>
           <th>Capacidad</th>
           <th>Ocupado</th>
-          <th>Acciones</th>
+          <th>Disponible</th> <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         @for (u of ubicaciones; track u.idUbicacion) {
           <tr>
-            <td>{{ u.idUbicacion }}</td>
-            <td>{{ u.codigo }}</td>
-            <td>{{ u.zona?.nombre || (u.zona?.idZona ? 'Zona ' + u.zona?.idZona : '-') }}</td>
+            <td><strong>{{ u.codigo }}</strong></td>
+            
+            <td>{{ u.zona?.nombre || '-' }}</td>
+            
             <td>{{ u.capacidadMaxima }}</td>
-            <td>{{ u.ocupadoActual }}</td>
+            
+            <td>
+              {{ u.ocupadoActual }}
+            </td>
+            
+            <td>{{ u.capacidadMaxima - u.ocupadoActual }}</td>
+
             <td class="actions">
-              <button [routerLink]="['/dashboard/ubicaciones/editar', u.idUbicacion]" class="btn edit-btn">Editar</button>
-              <button (click)="eliminar(u.idUbicacion)" class="btn delete-btn">Eliminar</button>
+              <button [routerLink]="['/dashboard/ubicaciones/editar', u.idUbicacion]" class="btn edit-btn">
+                Editar
+              </button>
+              <button (click)="eliminar(u.idUbicacion)" class="btn delete-btn">
+                Eliminar
+              </button>
             </td>
           </tr>
         }
@@ -63,35 +84,41 @@
   }
 
   @if (mostrandoReporte) {
-    <div>
-      <h3>Reporte - Espacio disponible por ubicacion</h3>
+    <div class="report-container">
+      <h3>📊 Reporte de Disponibilidad</h3>
       <table class="user-table">
         <thead>
           <tr>
-            <th>ID</th><th>Codigo</th><th>Zona</th><th>Disponible</th>
+            <th>Codigo</th>
+            <th>Zona</th>
+            <th>Capacidad Total</th>
+            <th>Ocupado</th>
+            <th>Espacio Libre</th>
           </tr>
         </thead>
         <tbody>
           @for (r of reporte; track r.idUbicacion) {
             <tr>
-              <td>{{ r.idUbicacion }}</td>
               <td>{{ r.codigo }}</td>
               <td>{{ r.zonaNombre }}</td>
-              <td>{{ r.espacioDisponible }}</td>
+              <td>{{ r.capacidadMaxima }}</td>
+              <td>{{ r.ocupadoActual }}</td>
+              <td [class.text-success]="r.espacioDisponible > 0" [class.text-danger]="r.espacioDisponible === 0">
+                {{ r.espacioDisponible }}
+              </td>
             </tr>
           }
         </tbody>
       </table>
 
-      <div style="margin-top: 10px">
-        <button class="btn secondary-btn" (click)="refresh()">Volver al listado</button>
+      <div style="margin-top: 15px">
+        <button class="btn secondary-btn" (click)="volverLista()">← Volver al listado</button>
       </div>
     </div>
   }
 
   @if (!ubicaciones.length && !loading && !mostrandoReporte) {
-    <p>Sin ubicaciones para mostrar.</p>
+    <p>No se encontraron ubicaciones.</p>
   }
 
-  <button (click)="volver()" class="btn secondary-btn small-btn">← Volver</button>
 </div>

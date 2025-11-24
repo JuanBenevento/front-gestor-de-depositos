@@ -14,7 +14,7 @@ import { LoginResponse } from '../../core/models/auth/login-response.model';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  credentials: LoginRequest = { nombre: '', contrasenia: '' };
+  credentials: LoginRequest = { email: '', contrasenia: '' };
   errorMessage = '';
 
   constructor(private authService: AuthService, private router: Router) {}

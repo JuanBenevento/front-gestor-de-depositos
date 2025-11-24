@@ -1,284 +1,292 @@
 import { Component, OnInit } from '@angular/core';
-import { debounceTime, switchMap, of, filter } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { EstadoDeOrden } from '../../../core/enums/estados-de-orden.model';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { debounceTime, switchMap, filter, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+// SERVICIOS
 import { OrdenRecepcionService } from '../../../core/services/orden-recepcion.service';
 import { DetalleOrdenRecepcionService } from '../../../core/services/detalle-orden-recepcion.service';
-import { InventarioService } from '../../../core/services/inventario.service';
 import { ProductoService } from '../../../core/services/producto.service';
 import { ProveedoresService } from '../../../core/services/proveedores.service';
-import { Proveedor } from '../../../core/models/proveedor/proveedor.model';
-import { Producto } from '../../../core/models/Producto/producto.model';
-import OrdenRecepcion from '../../../core/models/orden-recepcion/orden-recepcion.model';
-import { DetalleRecepcion } from '../../../core/models/orden-recepcion/detalle-recepcion.model';
-import { CommonModule } from '@angular/common';
-import { ModalComponent } from '../../../shared/components/modal/modal.component';
-import { OrdenRecepcionCabecera } from '../../../core/models/orden-recepcion/orden-recepcion-cabecera';
+import { InventarioService } from '../../../core/services/inventario.service';
 import { ModalService } from '../../../shared/services/modal.service';
+
+// MODELOS Y ENUMS
+import { EstadoDeOrden } from '../../../core/enums/estados-de-orden.model';
+import { Proveedor } from '../../../core/models/proveedor/proveedor.model';
+import { Producto} from '../../../core/models/Producto/producto.model';
+import OrdenRecepcion from '../../../core/models/orden-recepcion/orden-recepcion.model'; // Usamos tu import default
+import { DetalleRecepcionDTO } from '../../../core/models/orden-recepcion/detalle-recepcion.model';
+
+// COMPONENTES
+import { ModalComponent } from '../../../shared/components/modal/modal.component';
+import { CategoriasProducto } from '../../../core/enums/categoriasProductos.model';
 
 @Component({
   selector: 'app-orden-recepcion-form',
-  imports: [CommonModule, ReactiveFormsModule, ModalComponent],
-  templateUrl: './orden-recepcion-form.component.html',
-  styleUrl: './orden-recepcion-form.component.css'
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, ModalComponent, RouterModule],
+  templateUrl: './orden-recepcion-form.component.html'
 })
 export class OrdenRecepcionFormComponent implements OnInit {
+  
   public EstadoDeOrden = EstadoDeOrden;
   form!: FormGroup;
   editMode = false;
   idOrden = 0;
+  saving = false;
+
+  // FECHA
+  maxDate: string = '';
+
+  // PROVEEDORES
+  proveedores: Proveedor[] = [];
+  proveedoresFiltrados: Proveedor[] = [];
+  proveedorSeleccionado: Proveedor | null = null;
+  showProveedorDropdown = false;
 
   showProductModal = false;
   productForm!: FormGroup;
-  activeDetalleIndex = 0; 
+  activeDetalleIndex = 0;
+  categoriasOpciones = Object.values(CategoriasProducto);
 
   showProveedorModal = false;
   proveedorForm!: FormGroup;
-  
-  proveedorSeleccionado: Proveedor | null = null;
 
   constructor(
     private formFactory: FormBuilder,
     private ordenRecepcionService: OrdenRecepcionService,
     private detalleOrdenRecepcionService: DetalleOrdenRecepcionService,
-    private inventarioService: InventarioService,
     private productoService: ProductoService,
     private proveedoresService: ProveedoresService,
-    private http: HttpClient,
-    private route: ActivatedRoute,
+    private inventarioService: InventarioService,
+    private modalService: ModalService,
     private router: Router,
-    private modalService: ModalService
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.form = this.formFactory.nonNullable.group({
-      idOrdenRecepcion: [0],
-      idProveedor: [null, Validators.required],
-      fecha: [new Date(), Validators.required],
-      estado: [EstadoDeOrden.PENDIENTE, Validators.required],
-      detalles: this.formFactory.array([]),
-    });
+    this.maxDate = new Date().toISOString().split('T')[0];
+    this.initForm();
+    this.cargarProveedores(); 
 
     const id = this.route.snapshot.paramMap.get("id");
     if (id) {
       this.editMode = true;
       this.idOrden = +id;
-      this.ordenRecepcionService.buscarPorId(this.idOrden)
-        .subscribe((response: OrdenRecepcion) => {
-          const dataToPatch = {
-            ...response,
-            fecha: response.fecha
-              ? new Date(response.fecha).toISOString().split("T")[0]
-              : "",
-          };
-          this.form.patchValue(dataToPatch as any);
-      });
-      this.detalleOrdenRecepcionService.buscarPorIdOrden(this.idOrden)
-        .subscribe((response: DetalleRecepcion) => {
-          if(Array.isArray(response)) {
-            this.detalles.clear();
-            response.forEach(det => this.agregarDetalle(det));
-            return;
-          }
-      });
+      this.cargarOrdenExistente(this.idOrden);
     } else {
-      this.agregarDetalle();
+      this.agregarDetalle(); 
     }
 
-    this.form.get('idProveedor')?.valueChanges.pipe(
-      debounceTime(500),
-      filter((id): id is number => !!id && id > 0),
-      switchMap((id: number) => this.buscarProveedorPorId(id))
-    ).subscribe();
+    this.form.get('inputProveedor')?.valueChanges.subscribe(valor => {
+      this.filtrarProveedores(valor);
+    });
+  }
+
+  private initForm() {
+    this.form = this.formFactory.group({
+      idOrdenRecepcion: [0],
+      inputProveedor: [''], 
+      idProveedor: [null, Validators.required], 
+      fecha: [this.maxDate, [Validators.required, this.validarFechaNoFutura()]],
+      estado: [EstadoDeOrden.PENDIENTE, Validators.required],
+      detalles: this.formFactory.array([]),
+    });
+  }
+
+  validarFechaNoFutura(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) return null;
+      const fechaIngresada = new Date(control.value);
+      fechaIngresada.setMinutes(fechaIngresada.getMinutes() + fechaIngresada.getTimezoneOffset());
+      fechaIngresada.setHours(0, 0, 0, 0);
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      return fechaIngresada > hoy ? { fechaFutura: true } : null;
+    };
+  }
+
+  cargarProveedores() {
+    this.proveedoresService.listar().subscribe(data => {
+      this.proveedores = data;
+    });
+  }
+
+  filtrarProveedores(termino: string) {
+    if (!termino) {
+      this.proveedoresFiltrados = [];
+      this.showProveedorDropdown = false;
+      return;
+    }
+    const term = termino.toLowerCase();
+    this.proveedoresFiltrados = this.proveedores.filter(p => 
+      p.nombre.toLowerCase().includes(term) || 
+      p.email.toLowerCase().includes(term)
+    );
+    this.showProveedorDropdown = true;
+  }
+
+  seleccionarProveedor(proveedor: Proveedor) {
+    this.proveedorSeleccionado = proveedor;
+    this.form.patchValue({
+      idProveedor: proveedor.id_proveedor,
+      inputProveedor: '' 
+    });
+    this.showProveedorDropdown = false;
+  }
+
+  quitarProveedor() {
+    this.proveedorSeleccionado = null;
+    this.form.patchValue({ idProveedor: null, inputProveedor: '' });
   }
 
   get detalles(): FormArray {
     return this.form.get("detalles") as FormArray;
   }
 
-  agregarDetalle(detalle?: DetalleRecepcion) {
+  agregarDetalle(dto?: DetalleRecepcionDTO) {
     const grupo = this.formFactory.group({
-      idDetalleRecepcion: [detalle?.idDetalleRecepcion || null],
-      inputProducto: [detalle?.producto?.nombre || "", Validators.required],
-      productoSeleccionado: [detalle?.producto || null],
-      cantidad: [detalle?.cantidad || 1, [Validators.required, Validators.min(1)]],
+      idDetalleRecepcion: [dto?.idDetalleRecepcion || null],
+      inputProducto: [dto?.producto?.nombre || "", Validators.required],
+      productoSeleccionado: [dto?.producto || null, Validators.required],
+      cantidad: [dto?.cantidad || 1, [Validators.required, Validators.min(1)]],
       filteredProducts: [[] as Producto[]],
+      showDropdown: [false]
     });
 
-   grupo
-      .get("inputProducto")
-      ?.valueChanges.pipe(
-        debounceTime(400),
-        filter((valor): valor is string => !!valor && valor.trim() !== ""),
-        switchMap((valor: string) =>
-          this.productoService.buscarPorNombreOCodigo(valor).pipe(
-            switchMap((productos: Producto[]) => {
-              grupo.patchValue(
-                { filteredProducts: productos },
-                { emitEvent: false }
-              );
-
-              const exact = productos.find(
-                (p) =>
-                  valor.toLowerCase() === p.nombre.toLowerCase() ||
-                  valor.toLowerCase() === p.codigoSku.toLowerCase()
-              );
-              if (exact)
-                this.seleccionarProducto(this.detalles.length - 1, exact);
-
-              return of(productos);
-            })
-          )
-        )
-      )
-      .subscribe();
+    grupo.get("inputProducto")?.valueChanges.pipe(
+      debounceTime(300),
+      filter(val => typeof val === 'string'), 
+      switchMap(val => {
+        if (!val || val.length < 2) {
+            grupo.patchValue({ filteredProducts: [], showDropdown: false }, { emitEvent: false });
+            return of([]);
+        }
+        return this.productoService.buscarPorNombreOCodigo(val);
+      })
+    ).subscribe(productos => {
+      grupo.patchValue({ filteredProducts: productos, showDropdown: true }, { emitEvent: false });
+    });
 
     this.detalles.push(grupo);
   }
 
-  seleccionarProducto(index: number, producto: Producto | null) {
-  if (!producto) return;
-  const detalle = this.detalles.at(index);
-
-  const valorActual = detalle.get("inputProducto")?.value;
-
-  if (valorActual === producto.codigoSku) return;
-
-  detalle.patchValue(
-    {
+  seleccionarProducto(index: number, producto: Producto) {
+    const control = this.detalles.at(index);
+    control.patchValue({
       productoSeleccionado: producto,
-      inputProducto: producto.codigoSku,
-    },
-    { emitEvent: false }
-  );
+      inputProducto: `${producto.nombre} (${producto.codigoSku})`,
+      showDropdown: false,
+      filteredProducts: []
+    }, { emitEvent: false }); 
+  }
 
-  this.inventarioService
-    .obtenerStockPorProductoPorCodigoSku(producto.codigoSku!)
-    .subscribe((stock) => {
-      detalle.patchValue({ stockDisponible: stock }, { emitEvent: false });
-    });
-}
-
-
+  cerrarDropdownProducto(index: number) {
+    setTimeout(() => {
+        const control = this.detalles.at(index);
+        control.patchValue({ showDropdown: false });
+    }, 200);
+  }
 
   eliminarDetalle(index: number) {
     this.detalles.removeAt(index);
   }
 
-  get detallesArray() {
-    return this.detalles.controls.map(
-      (control: AbstractControl, index: number) => ({
-        control: control as FormGroup,
-        index,
-      })
-    );
+  cargarOrdenExistente(id: number) {
+    this.ordenRecepcionService.buscarPorId(id).subscribe(orden => {
+      this.proveedorSeleccionado = orden.proveedor || null;
+      this.form.patchValue({
+        idOrdenRecepcion: orden.id_orden_recepcion,
+        fecha: new Date(orden.fecha).toISOString().split('T')[0],
+        estado: orden.estado,
+        idProveedor: orden.proveedor?.id_proveedor
+      });
+
+      if (orden.detalleRecepcionDTOList) {
+        this.detalles.clear();
+        orden.detalleRecepcionDTOList.forEach(d => this.agregarDetalle(d));
+      }
+    });
   }
 
-  guardar(): void {
+  guardar() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.modalService.open({ title: 'Error', message: 'Verifique los campos del formulario.', confirmText: 'Ok' });
       return;
     }
 
+    this.saving = true;
     const formValue = this.form.value;
-
-    for (const det of formValue.detalles) {
-      if (!det.productoSeleccionado) {
-        this.showModal('Hay un detalle sin producto seleccionado.', 'Error');
-        return;
-      }
-    }
-
-    const detallesDTO = formValue.detalles
-      .filter((d: any) => d.productoSeleccionado != null)
-      .map((d: any) => ({
-        idDetalleRecepcion: d.idDetalleRecepcion ?? null,
-        producto: d.productoSeleccionado,
-        cantidad: d.cantidad,
-        codigoSku: d.productoSeleccionado.codigoSku,
-        idOrdenRecepcion: this.idOrden ?? null
-      }));
-
-    const orden: OrdenRecepcion = {
-      id_orden_recepcion: this.idOrden,
-      fecha: formValue.fecha,
-      estado: formValue.estado,
-      idProveedor: formValue.idProveedor,
-      detalleRecepcionDTOList: detallesDTO
+    
+    const ordenModelo: OrdenRecepcion = {
+        id_orden_recepcion: this.idOrden || undefined,
+        proveedor: { id_proveedor: formValue.idProveedor } as Proveedor,
+        fecha: formValue.fecha,
+        estado: formValue.estado,
+        detalleRecepcionDTOList: formValue.detalles.map((d: any) => ({
+            idDetalleRecepcion: d.idDetalleRecepcion,
+            cantidad: d.cantidad,
+            producto: d.productoSeleccionado, 
+            codigoSku: d.productoSeleccionado.codigoSku,
+            idOrdenRecepcion: this.idOrden || undefined
+        }))
     };
-
+    
     const obs = this.editMode
-      ? this.ordenRecepcionService.editar(orden.id_orden_recepcion!, orden.estado!)
-      : this.ordenRecepcionService.crear(orden);
+      ? this.ordenRecepcionService.editar(this.idOrden, ordenModelo.estado) 
+      : this.ordenRecepcionService.crear(ordenModelo as any); 
 
     obs.subscribe({
-      next: () => this.router.navigate(["/dashboard/ordenesRecepcion"]),
-      error: (err: any) => console.error("Error al guardar orden:", err),
-    });
-  }
-
-  cancelar(): void {
-    this.router.navigate(["/dashboard/ordenesRecepcion"]);
-  }
-
-  abrirModalProducto(detalleIndex: number = this.detalles.length - 1) {
-    this.activeDetalleIndex = detalleIndex;
-    this.showProductModal = true;
-    this.productForm = this.formFactory.group({
-      nombre: ['', Validators.required],
-      codigoSku: ['', Validators.required],
-      unidad_medida: ['', Validators.required],
-      descripcion: [''],
-      precio: [0, [Validators.required, Validators.min(0)]],
-    });
-  }
-
-  cerrarModalProducto() {
-    this.showProductModal = false;
-  }
-
-  confirmarCrearProducto() {
-    if (this.productForm.valid) {
-      const nuevoProducto = this.productForm.value;
-      
-      this.productoService.crear(nuevoProducto).subscribe({
-        next: (productoCreado) => {
-          this.cerrarModalProducto();
-          
-          this.buscarYSeleccionarProductoCreado(nuevoProducto.codigoSku);
-        },
-        error: (err) => {
-          console.error('Error al crear producto:', err);
-          this.showModal('Error al crear el producto. Por favor, inténtalo de nuevo.', 'Error');
-        }
-      });
-    } else {
-      this.productForm.markAllAsTouched();
-    }
-  }
-
-  private buscarYSeleccionarProductoCreado(codigoSku: string) {
-
-    this.productoService.buscarPorNombreOCodigo(codigoSku).subscribe({
-      next: (productos: Producto[]) => {
-        const productoEncontrado = productos.find(p => 
-          p.codigoSku.toLowerCase() === codigoSku.toLowerCase()
-        );
-        
-        if (productoEncontrado) {
-
-          this.seleccionarProducto(this.activeDetalleIndex, productoEncontrado);
-          console.log(`Producto ${productoEncontrado.nombre} seleccionado automáticamente`);
-        } else {
-          console.warn('No se pudo encontrar el producto recién creado');
-        }
+      next: () => {
+        this.saving = false;
+        this.modalService.open({ title: 'Éxito', message: 'Orden procesada correctamente.', confirmText: 'Ok', onConfirm: () => this.router.navigate(['/dashboard/ordenesRecepcion']) });
       },
       error: (err) => {
-        console.error('Error al buscar el producto recién creado:', err);
+        this.saving = false;
+        console.error(err);
+        let msg = 'Error desconocido.';
+        if (err.error && typeof err.error === 'string') msg = err.error;
+        else if (err.error?.message) msg = err.error.message;
+        this.modalService.open({ title: 'Error al Guardar', message: msg, confirmText: 'Cerrar' });
       }
     });
+  }
+
+  abrirModalProducto(index: number) {
+      this.activeDetalleIndex = index;
+      this.showProductModal = true;
+      this.productForm = this.formFactory.group({
+          nombre: ['', Validators.required],
+          codigoSku: ['', Validators.required],
+          categoria: [null, Validators.required],
+          unidad_medida: ['', Validators.required],
+          descripcion: ['']
+      });
+  }
+  
+  cerrarModalProducto() { this.showProductModal = false; }
+  
+  confirmarCrearProducto() {
+      if(this.productForm.valid) {
+          this.productoService.crear(this.productForm.value).subscribe({
+              next: (prod) => {
+                  this.seleccionarProducto(this.activeDetalleIndex, prod);
+                  this.cerrarModalProducto();
+                  this.modalService.open({ title: 'Éxito', message: 'Producto creado.', confirmText: 'Ok' });
+              },
+              error: (err) => {
+                  let msg = 'Error al crear.';
+                  if (err.status === 400) msg = typeof err.error === 'string' ? err.error : err.error.message;
+                  this.modalService.open({ title: 'Error Validación', message: msg, confirmText: 'Ok' });
+              }
+          })
+      } else {
+          this.productForm.markAllAsTouched();
+      }
   }
 
   abrirModalProveedor() {
@@ -290,66 +298,28 @@ export class OrdenRecepcionFormComponent implements OnInit {
     });
   }
 
-  cerrarModalProveedor() {
-    this.showProveedorModal = false;
-  }
+  cerrarModalProveedor() { this.showProveedorModal = false; }
 
   confirmarCrearProveedor() {
     if (this.proveedorForm.valid) {
-      const nuevoProveedor = this.proveedorForm.value;
-      
-      this.proveedoresService.crear(nuevoProveedor).subscribe({
-        next: (proveedorCreado) => {
+      this.proveedoresService.crear(this.proveedorForm.value).subscribe({
+        next: (prov) => {
+          this.cargarProveedores();
+          this.seleccionarProveedor(prov);
           this.cerrarModalProveedor();
-          
-          this.buscarYSeleccionarProveedorCreado(proveedorCreado.id_proveedor!);
         },
-        error: (err) => {
-          console.error('Error al crear proveedor:', err);
-          this.showModal('Error al crear el proveedor. Por favor, inténtalo de nuevo.', 'Error');
-        }
+        error: () => this.modalService.open({ title: 'Error', message: 'Error al crear proveedor.', confirmText: 'Ok' })
       });
     } else {
       this.proveedorForm.markAllAsTouched();
     }
   }
 
-  private buscarProveedorPorId(id: number) {
-    return this.proveedoresService.buscarPorId(id).pipe(
-      switchMap((proveedor: Proveedor) => {
-        if (proveedor) {
-          this.proveedorSeleccionado = proveedor;
-          console.log(`Proveedor encontrado: ${proveedor.nombre}`);
-        } else {
-          this.proveedorSeleccionado = null;
-          console.warn(`No se encontró el proveedor con ID: ${id}`);
-        }
-        return of(proveedor);
-      })
-    );
+  asFormGroup(abstractControl: AbstractControl): FormGroup {
+    return abstractControl as FormGroup;
   }
 
-  private buscarYSeleccionarProveedorCreado(idProveedor: number) {
-
-    this.proveedoresService.buscarPorId(idProveedor).subscribe({
-      next: (proveedorEncontrado: Proveedor) => {
-        if (proveedorEncontrado) {
-  
-          this.form.patchValue({
-            idProveedor: proveedorEncontrado.id_proveedor
-          });
-          console.log(`Proveedor ${proveedorEncontrado.nombre} seleccionado automáticamente`);
-        } else {
-          console.warn('No se pudo encontrar el proveedor recién creado');
-        }
-      },
-      error: (err) => {
-        console.error('Error al buscar el proveedor recién creado:', err);
-      }
-    });
-  }
-
-  private showModal(message: string, title = 'Informacion'): void {
-    this.modalService.open({ title, message, confirmText: 'Aceptar' });
+  cancelar() {
+    this.router.navigate(['/dashboard/ordenesRecepcion']);
   }
 }

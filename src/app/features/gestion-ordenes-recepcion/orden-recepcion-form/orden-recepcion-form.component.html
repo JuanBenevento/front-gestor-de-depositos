@@ -1,237 +1,196 @@
 <div class="form-container">
-  <h2>{{ editMode ? 'Editar' : 'Nueva' }} Orden de Recepcion</h2>
+  <h2>{{ editMode ? 'Editar' : 'Nueva' }} Orden de Recepción</h2>
 
   <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
 
-    <div class="form-group reception-date">
-      <label>Fecha de recepcion</label>
-      <input [readonly]="editMode" type="date" formControlName="fecha">
+    <div class="form-row-2">
+      <div class="form-group reception-date">
+        <label>Fecha de recepción</label>
+        <input [readonly]="editMode" type="date" formControlName="fecha" [max]="maxDate"
+               [class.invalid]="form.get('fecha')?.invalid && form.get('fecha')?.touched">
+        <div class="error-message" *ngIf="form.get('fecha')?.touched && form.get('fecha')?.invalid">
+          <span *ngIf="form.get('fecha')?.hasError('fechaFutura')">No puede ser fecha futura.</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Estado</label>
+        <select formControlName="estado">
+          <option [ngValue]="EstadoDeOrden.PENDIENTE">PENDIENTE</option>
+          <option [ngValue]="EstadoDeOrden.COMPLETADA">COMPLETADA</option>
+        </select>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label>Estado</label>
-      <select formControlName="estado">
-        <option [ngValue]="EstadoDeOrden.PENDIENTE">PENDIENTE</option>
-        <option [ngValue]="EstadoDeOrden.COMPLETADA">COMPLETADA</option>
-      </select>
+    <hr class="divider">
+
+    <div class="proveedor-section">
+      <label class="section-label">Proveedor *</label>
+
+      <div class="search-container" *ngIf="!proveedorSeleccionado && !editMode">
+        <div class="input-with-icon">
+          <span class="search-icon">🔍</span>
+          <input type="text" formControlName="inputProveedor" placeholder="Buscar por Nombre o Email..." autocomplete="off"
+                 [class.invalid]="form.get('idProveedor')?.invalid && form.get('inputProveedor')?.touched">
+          <button type="button" class="btn-add-mini" (click)="abrirModalProveedor()" title="Crear Nuevo">+</button>
+        </div>
+
+        <ul class="custom-dropdown" *ngIf="showProveedorDropdown && proveedoresFiltrados.length > 0">
+          <li *ngFor="let prov of proveedoresFiltrados" (click)="seleccionarProveedor(prov)">
+            <div class="dd-title">{{ prov.nombre }}</div>
+            <div class="dd-subtitle">{{ prov.email }}</div>
+          </li>
+        </ul>
+        
+        <div class="error-message" *ngIf="form.get('idProveedor')?.touched && form.get('idProveedor')?.invalid">
+          Requerido.
+        </div>
+      </div>
+
+      <div class="proveedor-card-selected" *ngIf="proveedorSeleccionado">
+        <div class="prov-icon">🏢</div>
+        <div class="prov-details">
+          <span class="prov-name">{{ proveedorSeleccionado.nombre }}</span>
+          <span class="prov-meta">{{ proveedorSeleccionado.email }} | {{ proveedorSeleccionado.telefono }}</span>
+        </div>
+        <button type="button" class="btn-change" (click)="quitarProveedor()" *ngIf="!editMode">Cambiar</button>
+      </div>
     </div>
 
-    <div class="form-group">
-    @if (!editMode) {
-      <label>Proveedor *</label>
-      <div class="proveedor-input-container">
-        <input 
-          type="number" 
-          formControlName="idProveedor"
-          placeholder="Ingrese el ID del proveedor"
-          min="1">
-        <button type="button" (click)="abrirModalProveedor()" class="btn new-btn">Crear Nuevo Proveedor</button>
-      </div>
-      <div class="error-message" *ngIf="form.get('idProveedor')?.touched && form.get('idProveedor')?.invalid">
-        El proveedor es requerido
-      </div>
-    }
+    <hr class="divider">
+
+    <div class="detalles-container">
+      <h3 class="section-label">Detalle de Productos</h3>
       
-      <div class="proveedor-info-card" *ngIf="proveedorSeleccionado">
-        <div class="proveedor-info-header">
-          <h4>📋 Informacion del Proveedor</h4>
-        </div>
-        <div class="proveedor-info-body">
-          <div class="proveedor-info-item">
-            <span class="label">ID:</span>
-            <span class="value">{{ proveedorSeleccionado.id_proveedor }}</span>
+      <div class="table-header">
+        <span class="col-prod">Producto (Nombre / SKU)</span>
+        <span class="col-cant">Cantidad</span>
+        <span class="col-act"></span>
+      </div>
+
+     <div formArrayName="detalles" class="detalles-list">
+        
+        <div *ngFor="let control of detalles.controls; let i = index" [formGroupName]="i" class="detalle-row">
+          
+          <div class="col-prod search-container">
+            
+            <div class="input-group">
+              
+              <input type="text" 
+                     formControlName="inputProducto" 
+                     placeholder="Escriba SKU o Nombre..." 
+                     autocomplete="off" 
+                     (focus)="asFormGroup(control).patchValue({showDropdown: true})"
+                     (blur)="cerrarDropdownProducto(i)"
+                     [class.invalid]="asFormGroup(control).get('productoSeleccionado')?.invalid && asFormGroup(control).get('inputProducto')?.touched">
+              
+              <button type="button" 
+                      class="btn-icon-add" 
+                      (click)="abrirModalProducto(i)" 
+                      title="Crear Nuevo Producto" 
+                      *ngIf="!editMode">
+                +
+              </button>
+            </div>
+            
+            <ul class="custom-dropdown" *ngIf="asFormGroup(control).get('showDropdown')?.value && asFormGroup(control).get('filteredProducts')?.value?.length">
+              <li *ngFor="let prod of asFormGroup(control).get('filteredProducts')?.value" (mousedown)="seleccionarProducto(i, prod)">
+                <div class="dd-title">{{ prod.nombre }}</div>
+                <div class="dd-subtitle">SKU: {{ prod.codigoSku }}</div>
+              </li>
+            </ul>
+
           </div>
-          <div class="proveedor-info-item">
-            <span class="label">Nombre:</span>
-            <span class="value">{{ proveedorSeleccionado.nombre }}</span>
+
+          <div class="col-cant">
+            <input type="number" formControlName="cantidad" min="1">
           </div>
-          <div class="proveedor-info-item">
-            <span class="label">Teléfono:</span>
-            <span class="value">{{ proveedorSeleccionado.telefono }}</span>
+
+          <div class="col-act">
+            <button type="button" class="btn-delete-row" (click)="eliminarDetalle(i)" title="Eliminar fila">✕</button>
           </div>
-          <div class="proveedor-info-item">
-            <span class="label">Email:</span>
-            <span class="value">{{ proveedorSeleccionado.email }}</span>
-          </div>
+
         </div>
       </div>
-    </div>
-    
 
-    <div class="detalles">
-      <h3>Detalles de recepcion</h3>
-
-      @for (item of detallesArray; track $index) {
-        <div [formGroup]="item.control" class="detalle">
-
-          <label>Producto</label>
-          <input 
-            type="text" 
-            formControlName="inputProducto"
-            placeholder="Buscar por codigo SKU"
-            class="product-input"
-            [attr.list]="'product-options-' + $index"
-            [readonly]="editMode"
-            >
-          <datalist id="product-options-{{ $index }}">
-            @for (prod of item.control.value.filteredProducts; track prod.idProducto) {
-              <option 
-                [value]="prod.nombre + ' (' + prod.codigoSku + ')'"
-                (click)="seleccionarProducto(item.index, prod)">
-              </option>
-            }
-          </datalist>
-
-          @if (!editMode) {
-            <button type="button" (click)="abrirModalProducto(item.index)" class="btn new-btn">Crear Nuevo Producto</button>
-          }
-
-          <div class="form-group cantidad-group">
-            <label>Cantidad</label>
-            <input [readonly]="editMode" type="number" formControlName="cantidad" min="1">
-          </div>
-
-          @if (!editMode) {
-            <button type="button" (click)="eliminarDetalle($index)" class="btn-delete">Eliminar</button>
-          }
-        </div>
-      }
-
-      @if (!editMode) {
-        <button type="button" (click)="agregarDetalle()">Agregar Detalle</button>
-      }
+      <button type="button" class="btn-add-row" (click)="agregarDetalle()">
+        + Agregar Producto
+      </button>
     </div>
 
-    <div class="button-group">
-      <button type="submit">Guardar</button>
-      <button type="button" (click)="cancelar()">Cancelar</button>
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="cancelar()">Cancelar</button>
+      <button type="submit" class="btn-save" [disabled]="form.invalid || saving">
+        {{ saving ? 'Guardando...' : 'Confirmar Orden' }}
+      </button>
     </div>
+
   </form>
 </div>
 
 <app-modal 
   [isOpen]="showProductModal"
   title="Crear Nuevo Producto"
-  confirmText="Crear Producto"
+  confirmText="Crear"
   cancelText="Cancelar"
   [canConfirm]="productForm?.valid || false"
   (closed)="cerrarModalProducto()"
   (confirmed)="confirmarCrearProducto()">
   
   <form [formGroup]="productForm" *ngIf="productForm">
-    <div class="form-group">
-      <label for="nombre">Nombre del Producto *</label>
-      <input 
-        id="nombre"
-        type="text" 
-        formControlName="nombre"
-        placeholder="Ingrese el nombre del producto"
-        [class.error]="productForm.get('nombre')?.touched && productForm.get('nombre')?.invalid">
-      <div class="error-message" *ngIf="productForm.get('nombre')?.touched && productForm.get('nombre')?.invalid">
-        El nombre es requerido
-      </div>
-    </div>
     
     <div class="form-group">
-      <label for="codigoSku">Código SKU *</label>
-      <input 
-        id="codigoSku"
-        type="text" 
-        formControlName="codigoSku"
-        placeholder="Ej: PRD001"
-        [class.error]="productForm.get('codigoSku')?.touched && productForm.get('codigoSku')?.invalid">
-      <div class="error-message" *ngIf="productForm.get('codigoSku')?.touched && productForm.get('codigoSku')?.invalid">
-        El código SKU es requerido
-      </div>
+      <label>Nombre *</label>
+      <input type="text" formControlName="nombre" placeholder="Ej: Martillo">
     </div>
 
     <div class="form-group">
-      <label for="unidad_medida">Unidad de medida *</label>
-      <input 
-        id="unidad_medida"
-        type="text" 
-        formControlName="unidad_medida"
-        placeholder="Ingrese la unidad de medida del producto"
-        [class.error]="productForm.get('unidad_medida')?.touched && productForm.get('unidad_medida')?.invalid">
-      <div class="error-message" *ngIf="productForm.get('unidad_medida')?.touched && productForm.get('unidad_medida')?.invalid">
-        La unidad de medida es requerida.
-      </div>
-    </div>
-    
-    <div class="form-group">
-      <label for="descripcion">Descripción</label>
-      <textarea 
-        id="descripcion"
-        formControlName="descripcion"
-        rows="3"
-        placeholder="Descripción opcional del producto"></textarea>
+      <label>SKU *</label>
+      <input type="text" formControlName="codigoSku" placeholder="Ej: HER-001">
     </div>
 
     <div class="form-group">
-      <label for="precio">Precio *</label>
-      <input 
-        id="precio"
-        type="number" 
-        formControlName="precio"
-        min="0"
-        step="0.01"
-        placeholder="0.00"
-        [class.error]="productForm.get('precio')?.touched && productForm.get('precio')?.invalid">
-      <div class="error-message" *ngIf="productForm.get('precio')?.touched && productForm.get('precio')?.invalid">
-        El precio debe ser mayor o igual a 0
-      </div>
+      <label>Categoría *</label>
+      <select formControlName="categoria">
+        <option [ngValue]="null" disabled>Seleccione...</option>
+        <option *ngFor="let cat of categoriasOpciones" [value]="cat">{{ cat }}</option>
+      </select>
     </div>
+
+    <div class="form-group">
+      <label>Unidad *</label>
+      <input type="text" formControlName="unidad_medida" placeholder="Ej: Unidad, Kg, Litro">
+    </div>
+
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea formControlName="descripcion" rows="2"></textarea>
+    </div>
+
   </form>
 </app-modal>
 
+
 <app-modal 
   [isOpen]="showProveedorModal"
-  title="Crear Nuevo Proveedor"
-  confirmText="Crear Proveedor"
+  title="Nuevo Proveedor"
+  confirmText="Crear"
   cancelText="Cancelar"
   [canConfirm]="proveedorForm?.valid || false"
-  (closed)="cerrarModalProveedor()"
+  (closed)="cerrarModalProducto()" 
   (confirmed)="confirmarCrearProveedor()">
-  
   <form [formGroup]="proveedorForm" *ngIf="proveedorForm">
     <div class="form-group">
-      <label for="nombreProveedor">Nombre del Proveedor *</label>
-      <input 
-        id="nombreProveedor"
-        type="text" 
-        formControlName="nombre"
-        placeholder="Ingrese el nombre del proveedor"
-        [class.error]="proveedorForm.get('nombre')?.touched && proveedorForm.get('nombre')?.invalid">
-      <div class="error-message" *ngIf="proveedorForm.get('nombre')?.touched && proveedorForm.get('nombre')?.invalid">
-        El nombre es requerido
-      </div>
+      <label>Nombre *</label>
+      <input type="text" formControlName="nombre" placeholder="Razón Social">
     </div>
-    
     <div class="form-group">
-      <label for="telefonoProveedor">Teléfono *</label>
-      <input 
-        id="telefonoProveedor"
-        type="tel" 
-        formControlName="telefono"
-        placeholder="Ej: +54 11 1234-5678"
-        [class.error]="proveedorForm.get('telefono')?.touched && proveedorForm.get('telefono')?.invalid">
-      <div class="error-message" *ngIf="proveedorForm.get('telefono')?.touched && proveedorForm.get('telefono')?.invalid">
-        El teléfono es requerido
-      </div>
+      <label>Teléfono *</label>
+      <input type="text" formControlName="telefono" placeholder="+54 ...">
     </div>
-    
     <div class="form-group">
-      <label for="emailProveedor">Email *</label>
-      <input 
-        id="emailProveedor"
-        type="email" 
-        formControlName="email"
-        placeholder="proveedor@empresa.com"
-        [class.error]="proveedorForm.get('email')?.touched && proveedorForm.get('email')?.invalid">
-      <div class="error-message" *ngIf="proveedorForm.get('email')?.touched && proveedorForm.get('email')?.invalid">
-        <span *ngIf="proveedorForm.get('email')?.errors?.['required']">El email es requerido</span>
-        <span *ngIf="proveedorForm.get('email')?.errors?.['email']">El formato del email no es válido</span>
-      </div>
+      <label>Email *</label>
+      <input type="email" formControlName="email" placeholder="contacto@empresa.com">
     </div>
   </form>
 </app-modal>

@@ -5,32 +5,49 @@
 
     <div class="form-group">
       <label>Nombre de usuario</label>
-      <input type="text" formControlName="nombre">
-      @if (form.controls['nombre'].invalid && form.controls['nombre'].touched) {
-        <div class="error">Requerido</div>
+      <input type="text" formControlName="nombre" 
+             [class.invalid]="form.controls['nombre'].invalid && form.controls['nombre'].touched">
+      
+      @if (form.controls['nombre'].hasError('required') && form.controls['nombre'].touched) {
+        <div class="error">El nombre es requerido</div>
+      }
+      @if (form.controls['nombre'].hasError('minlength') && form.controls['nombre'].touched) {
+        <div class="error">Mínimo 3 caracteres</div>
       }
     </div>
 
     @if (!editMode) {
       <div class="form-group">
         <label>Contraseña</label>
-        <input type="password" formControlName="contrasenia">
+        <input type="password" formControlName="contrasenia" 
+               [class.invalid]="form.controls['contrasenia'].invalid && form.controls['contrasenia'].touched">
+        
         @if (form.controls['contrasenia'].invalid && form.controls['contrasenia'].touched) {
-          <div class="error">Requerido</div>
+          <div class="error">Requerido (mínimo 4 caracteres)</div>
         }
       </div>
     }
 
     <div class="form-group">
       <label>Apellido</label>
-      <input type="text" formControlName="apellido">
+      <input type="text" formControlName="apellido" 
+             [class.invalid]="form.controls['apellido'].invalid && form.controls['apellido'].touched">
+      
+      @if (form.controls['apellido'].invalid && form.controls['apellido'].touched) {
+        <div class="error">Requerido</div>
+      }
     </div>
 
     <div class="form-group">
       <label>Email</label>
-      <input type="email" formControlName="email">
-      @if (form.controls['email'].invalid && form.controls['email'].touched) {
-        <div class="error">Formato de correo invalido</div>
+      <input type="email" formControlName="email" 
+             [class.invalid]="form.controls['email'].invalid && form.controls['email'].touched">
+      
+      @if (form.controls['email'].hasError('required') && form.controls['email'].touched) {
+        <div class="error">El email es requerido</div>
+      }
+      @if (form.controls['email'].hasError('email') && form.controls['email'].touched) {
+        <div class="error">Formato de correo inválido</div>
       }
     </div>
 
@@ -43,8 +60,13 @@
     </div>
 
     <div class="button-group">
-      <button type="submit" [disabled]="form.invalid">Guardar</button>
-      <button (click)="cancelar()" button class="cancel-btn">Cancelar</button>
+      <button type="submit" [disabled]="form.invalid || saving">
+        {{ saving ? 'Guardando...' : 'Guardar' }}
+      </button>
+      
+      <button type="button" (click)="cancelar()" class="cancel-btn" [disabled]="saving">
+        Cancelar
+      </button>
     </div>
 
   </form>

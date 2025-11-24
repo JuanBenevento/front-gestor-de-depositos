@@ -6,22 +6,34 @@
   </button>
 
   <div class="search-row">
+    <div class="search-group">
+      <input
+        type="text"
+        placeholder="Buscar por nombre de producto"  [(ngModel)]="nombreBuscar"
+         (input)="aplicarFiltros()" 
+       />
+    </div>
 
     <div class="search-group">
       <input
         type="text"
-        placeholder="Buscar SKU o Nombre..."
-        [formControl]="busquedaSKU"
+        placeholder="Buscar por codigo SKU"
+        [(ngModel)]="skuBuscar"
+        (input)="aplicarFiltros()"
       />
     </div>
 
-    <div class="search-group">
-      <select [formControl]="filtroUbicacion">
-        <option [ngValue]="null">Todas las ubicaciones</option>
 
+    <div class="search-group">
+      <select 
+        [(ngModel)]="ubicacionBuscar" 
+        (change)="aplicarFiltros()"
+        class="form-select"
+      >
+        <option [ngValue]="null">Todas las ubicaciones</option>
         @for (u of ubicaciones; track u.idUbicacion) {
           <option [ngValue]="u.idUbicacion">
-            {{ u.codigo }} ({{ u.capacidadMaxima }}u)
+            {{ u.codigo }} - {{ u.zona?.nombre }}
           </option>
         }
       </select>
@@ -41,24 +53,20 @@
     <table class="user-table">
       <thead>
         <tr>
-          <th>ID</th>
           <th>Producto</th>
           <th>SKU</th>
-          <th>Ubicación</th>
+          <th>Ubicacion</th>
           <th>Cantidad</th>
-          <th>Fecha</th>
-          <th></th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         @for (inv of inventariosFiltrados; track inv.id_inventario) {
           <tr>
-            <td>{{ inv.id_inventario }}</td>
             <td>{{ inv.producto.nombre }}</td>
             <td>{{ inv.producto.codigoSku }}</td>
             <td>{{ inv.ubicacion.codigo }}</td>
             <td>{{ inv.cantidad }}</td>
-            <td>{{ inv.fecha_actualizacion | date:'dd/MM/yyyy HH:mm' }}</td>
             <td>
               <div class="actions">
                 <button [routerLink]="['/dashboard/inventarios/editar', inv.id_inventario]" class="btn edit-btn">Editar</button>
@@ -77,7 +85,4 @@
     <p>No hay inventarios para mostrar.</p>
   }
 
-  <button class="btn secondary-btn small-btn" (click)="volver()">
-    ← Volver
-  </button>
 </div>

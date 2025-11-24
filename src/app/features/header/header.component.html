@@ -1,0 +1,25 @@
+<header class="topbar">
+
+  <button class="menu-toggle" (click)="toggleSidebar.emit()">
+    ☰
+  </button>
+
+  <div class="brand app-title">
+    <span class="brand-glow"></span>
+    Gestor de Depositos
+  </div>
+
+  <div class="user-info">
+   
+  </div>
+
+  <div class="datetime">
+    <span>{{ currentDate }}</span>
+    <span class="time">{{ currentTime }}</span>
+  </div>
+
+  <button class="logout-top" (click)="logoutRequest.emit()">
+    Cerrar Sesion
+  </button>
+
+</header>

@@ -1,13 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { DepositoLayoutService } from '../../core/services/deposito-layout.service';
-import { ZonaLayout } from '../../core/models/deposito-layout/zona-layout.model';
-import { UbicacionLayout } from '../../core/models/deposito-layout/ubicacion-layout.model';
-import { ProductoStock } from '../../core/models/deposito-layout/producto-stock.model';
 import { InventarioService } from '../../core/services/inventario.service';
+import { ZonaLayout} from '../../core/models/deposito-layout/zona-layout.model';
+import { UbicacionLayout } from '../../core/models/deposito-layout/ubicacion-layout.model';
 
 @Component({
   selector: 'app-deposito-layout',
@@ -18,31 +17,28 @@ import { InventarioService } from '../../core/services/inventario.service';
 })
 export class DepositoLayoutComponent implements OnInit, OnDestroy {
 
+  @ViewChild('mapContainer') mapContainer!: ElementRef;
+
   layout: ZonaLayout[] = [];
   subs = new Subscription();
 
-  selectedZonaId: number | null = null;
-  selectedUbicacionId: number | null = null;
+  selectedUbicacion: UbicacionLayout | null = null;
+  selectedZona: ZonaLayout | null = null;
 
-  private draggingUbicacionId: number | null = null;
-  private dragOffset = { x: 0, y: 0 };
+  inventarioDetalle: any[] = [];
+  loadingInventario = false;
 
-  private META_KEY = 'mapa-deposito-meta-v1';
-  metaMap: Record<number, { w: number; h: number; color?: string; capacidadMaxima?: number }> = {};
+  gridSize = 20; 
+  scale = 1;     
+  panning = false;
+  panOrigin = { x: 0, y: 0 };
+  translate = { x: 0, y: 0 };
 
-  zonaEdit = { idZona: 0, nombre: '', color: '' };
-  ubicacionEdit = { idUbicacion: 0, codigo: '', w: 140, h: 70, capacidadMaxima: 0 };
+  draggingUbicacion: UbicacionLayout | null = null;
+  dragOffset = { x: 0, y: 0 };
 
-  searchTerm = '';
-  filteredZonas: ZonaLayout[] = [];
-  zonaSearchSelected: ZonaLayout | null = null;
-  ubicacionInventario: UbicacionLayout | null = null;
-
-
-  zonaResizeModal = false;
-  zonaScaleX = 1;
-  zonaScaleY = 1;
-  zonaEditing: ZonaLayout | null = null;
+  private META_KEY = 'mapa-deposito-meta-v2';
+  metaMap: Record<number, { x: number, y: number, w: number; h: number, color?: string }> = {};
 
   constructor(
     private layoutService: DepositoLayoutService,
@@ -56,13 +52,15 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
-    this._removeWindowListeners();
   }
 
-  private _ensureMeta(idUbicacion: number): void {
-    if (!this.metaMap[idUbicacion]) {
-      this.metaMap[idUbicacion] = { w: 140, h: 70 };
-    }
+  loadLayout() {
+    this.subs.add(
+      this.layoutService.getLayout().subscribe(zs => {
+        this.layout = zs;
+        this.aplicarMetaDatos();
+      })
+    );
   }
 
   private loadMeta(): void {
@@ -72,281 +70,151 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
     }
   }
 
-  private saveMeta(): void {
-    try {
-      localStorage.setItem(this.META_KEY, JSON.stringify(this.metaMap));
-    } catch (e) {
-      console.warn('No se pudo guardar metaMap', e);
-    }
-  }
+  private aplicarMetaDatos() {
+    this.layout.forEach(z => {
+      z.color = z.color || '#64748b'; 
 
-  loadLayout() {
-    this.subs.add(
-      this.layoutService.getLayout().subscribe(zs => {
-        this.layout = zs;
-        for (const zona of this.layout) {
-          for (const u of zona.ubicaciones) {
-            const m = this.metaMap[u.idUbicacion];
-            if (m) {
-              (u as any).w = m.w;
-              (u as any).h = m.h;
-              if (m.capacidadMaxima !== undefined) u.capacidadMaxima = m.capacidadMaxima;
-              if (m.color) (zona as any).color = m.color;
-            } else {
-              (u as any).w = (u as any).w ?? 140;
-              (u as any).h = (u as any).h ?? 70;
-            }
-          }
+      z.ubicaciones.forEach(u => {
+        const m = this.metaMap[u.idUbicacion];
+        if (m) {
+          u.x = m.x; 
+          u.y = m.y; 
+          u.w = m.w; 
+          u.h = m.h;
+          if(m.color) z.color = m.color;
+        } else {
+          u.x = u.x || 50; 
+          u.y = u.y || 50; 
+          u.w = 120; 
+          u.h = 60;
         }
-
-        if (this.searchTerm) this.filterZonas();
-      })
-    );
+      });
+    });
   }
 
-  startDrag(u: UbicacionLayout, ev: PointerEvent) {
-    ev.preventDefault();
-    this.draggingUbicacionId = u.idUbicacion;
-
-    this.dragOffset.x = ev.clientX - (u.x || 0);
-    this.dragOffset.y = ev.clientY - (u.y || 0);
-
-    (ev.target as Element).setPointerCapture?.(ev.pointerId);
-    window.addEventListener('pointermove', this._onPointerMove);
-    window.addEventListener('pointerup', this._onPointerUp);
+  private saveMeta(): void {
+    this.layout.forEach(z => {
+      z.ubicaciones.forEach(u => {
+        this.metaMap[u.idUbicacion] = { 
+          x: u.x, 
+          y: u.y, 
+          w: u.w, 
+          h: u.h,
+          color: z.color
+        };
+      });
+    });
+    localStorage.setItem(this.META_KEY, JSON.stringify(this.metaMap));
   }
 
-  private _onPointerMove = (ev: PointerEvent) => {
-    if (this.draggingUbicacionId == null) return;
-    ev.preventDefault();
-    const id = this.draggingUbicacionId;
-    const newX = ev.clientX - this.dragOffset.x;
-    const newY = ev.clientY - this.dragOffset.y;
+  zoomIn() { this.scale = Math.min(this.scale + 0.1, 3); }
+  zoomOut() { this.scale = Math.max(this.scale - 0.1, 0.3); }
+  resetView() { this.scale = 1; this.translate = { x: 0, y: 0 }; }
 
-    for (const zona of this.layout) {
-      const u = zona.ubicaciones.find(x => x.idUbicacion === id);
-      if (u) {
-        u.x = Math.max(4, Math.min(2000, newX));
-        u.y = Math.max(4, Math.min(2000, newY));
-        break;
-      }
+  @HostListener('wheel', ['$event'])
+  onWheel(event: WheelEvent) {
+    if (event.ctrlKey) {
+      event.preventDefault();
+      const delta = event.deltaY > 0 ? -0.1 : 0.1;
+      this.scale = Math.max(0.3, Math.min(3, this.scale + delta));
     }
   }
 
-  private _onPointerUp = (_ev: PointerEvent) => {
-    if (this.draggingUbicacionId == null) return;
-    const id = this.draggingUbicacionId;
-    const u = this._findUbicacionById(id);
-    if (u) {
-      this.layoutService.saveCoordsLocal(id, u.x, u.y);
+  startPan(event: MouseEvent) {
+    if ((event.target as HTMLElement).tagName === 'svg') {
+      this.panning = true;
+      this.panOrigin = { x: event.clientX - this.translate.x, y: event.clientY - this.translate.y };
     }
-    this.draggingUbicacionId = null;
-    this._removeWindowListeners();
   }
 
-  private _removeWindowListeners() {
-    window.removeEventListener('pointermove', this._onPointerMove);
-    window.removeEventListener('pointerup', this._onPointerUp);
+  @HostListener('document:mousemove', ['$event'])
+  onMouseMove(event: MouseEvent) {
+    if (this.panning) {
+      event.preventDefault();
+      this.translate.x = event.clientX - this.panOrigin.x;
+      this.translate.y = event.clientY - this.panOrigin.y;
+    }
+
+    if (this.draggingUbicacion) {
+      event.preventDefault();
+      const deltaX = (event.clientX - this.dragOffset.x) / this.scale;
+      const deltaY = (event.clientY - this.dragOffset.y) / this.scale;
+
+      this.draggingUbicacion.x = Math.round(deltaX / this.gridSize) * this.gridSize;
+      this.draggingUbicacion.y = Math.round(deltaY / this.gridSize) * this.gridSize;
+    }
   }
 
-  private _findUbicacionById(id: number) {
-    for (const zona of this.layout) {
-      const u = zona.ubicaciones.find(x => x.idUbicacion === id);
-      if (u) return u;
+  @HostListener('document:mouseup')
+  onMouseUp() {
+    this.panning = false;
+    if (this.draggingUbicacion) {
+      this.saveMeta();
+      this.draggingUbicacion = null;
     }
-    return null;
+  }
+
+  startDragUbicacion(event: MouseEvent, u: UbicacionLayout) {
+    event.stopPropagation();
+    if (event.button === 0) {
+      this.draggingUbicacion = u;
+      this.dragOffset.x = event.clientX - (u.x * this.scale);
+      this.dragOffset.y = event.clientY - (u.y * this.scale);
+      this.selectUbicacion(u);
+    }
+  }
+
+  selectUbicacion(u: UbicacionLayout) {
+    this.selectedUbicacion = u;
+    this.selectedZona = null;
+    this.cargarInventario(u);
   }
 
   selectZona(z: ZonaLayout) {
-    this.selectedZonaId = z.idZona;
-    this.zonaEdit = { idZona: z.idZona, nombre: z.nombre, color: (z as any).color || '#999999' };
-
-    this.zonaEditing = z;
-    this.zonaScaleX = 1;
-    this.zonaScaleY = 1;
-    this.zonaResizeModal = true;
+    this.selectedZona = z;
+    this.selectedUbicacion = null;
   }
 
-  saveZonaEdits() {
-    if (this.selectedZonaId == null) return;
-    const z = this.layout.find(z => z.idZona === this.selectedZonaId);
-    if (!z) return;
-    z.nombre = this.zonaEdit.nombre;
-    (z as any).color = this.zonaEdit.color;
+  cargarInventario(u: UbicacionLayout) {
+    this.loadingInventario = true;
+    this.inventarioDetalle = [];
+    this.inventarioService.listar().subscribe({
+      next: (inv) => {
+        this.inventarioDetalle = inv
+          .filter(i => i.ubicacion.idUbicacion === u.idUbicacion)
+          .map(i => ({
+            producto: i.producto.nombre,
+            sku: i.producto.codigoSku,
+            cantidad: i.cantidad
+          }));
+        this.loadingInventario = false;
+      },
+      error: () => this.loadingInventario = false
+    });
+  }
 
-    for (const u of z.ubicaciones) {
-      this._ensureMeta(u.idUbicacion);
-      this.metaMap[u.idUbicacion].color = this.zonaEdit.color;
+  getFillColor(u: UbicacionLayout): string {
+    if (this.selectedUbicacion?.idUbicacion === u.idUbicacion) return '#3b82f6'; 
+    if (u.capacidadMaxima <= 0) return '#334155'; 
+    
+    const porcentaje = u.ocupadoActual / u.capacidadMaxima;
+    if (porcentaje >= 1) return '#ef4444';
+    if (porcentaje >= 0.75) return '#f97316'; 
+    if (porcentaje >= 0.50) return '#eab308'; 
+    return '#10b981'; 
+  }
+
+  getOpacity(u: UbicacionLayout): number {
+    if (this.selectedZona && this.selectedZona.ubicaciones.every(uz => uz.idUbicacion !== u.idUbicacion)) {
+      return 0.3;
     }
-    this.saveMeta();
+    return 1;
   }
 
-  exportAll(): void {
-    try {
-      const json = this.layoutService.exportLayoutJSON(this.layout);
-      const blob = new Blob([json], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'deposito-layout.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (e) {
-      console.error('Error al exportar layout', e);
-    }
-  }
-
-  importFile(file?: File | null): void {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const text = String(reader.result || '');
-      const ok = this.layoutService.importLayoutJSON(text);
-      if (ok) {
-        this.loadLayout();
-        alert('Importación completada');
-      } else {
-        alert('Archivo inválido');
-      }
-    };
-    reader.onerror = (e) => {
-      console.error('Error leyendo archivo', e);
-      alert('No se pudo leer el archivo');
-    };
-    reader.readAsText(file);
-  }
-
-  resetLocal(): void {
-    if (!confirm('Eliminar datos locales de layout?')) return;
-    this.layoutService.clearLocalLayout();
-    try { localStorage.removeItem(this.META_KEY); } catch {}
-    this.metaMap = {};
-    this.loadLayout();
-  }
-
-  addUbicacionToZona(): void {
-    if (this.selectedZonaId == null) {
-      alert('Seleccione una zona primero');
-      return;
-    }
-    const z = this.layout.find(x => x.idZona === this.selectedZonaId);
-    if (!z) return;
-    const newId = Date.now(); 
-    const nueva: UbicacionLayout = {
-      idUbicacion: newId,
-      codigo: 'U' + newId,
-      capacidadMaxima: 0,
-      ocupadoActual: 0,
-      productos: [],
-      x: 40,
-      y: 40,
-      w: 140,
-      h: 70
-    } as any;
-    z.ubicaciones.push(nueva);
-    this._ensureMeta(nueva.idUbicacion);
-    this.saveMeta();
-  }
-
-  selectUbicacion(u: UbicacionLayout): void {
-    this.selectedUbicacionId = u.idUbicacion;
-    this.ubicacionEdit = {
-      idUbicacion: u.idUbicacion || 0,
-      codigo: u.codigo || '',
-      w: (u as any).w || 140,
-      h: (u as any).h || 70,
-      capacidadMaxima: u.capacidadMaxima || 0
-    };
-
-    this.ubicacionInventario = null;
-  }
-
-  removeUbicacion(u: UbicacionLayout): void {
-    for (const z of this.layout) {
-      const idx = z.ubicaciones.findIndex(x => x.idUbicacion === u.idUbicacion);
-      if (idx >= 0) {
-        z.ubicaciones.splice(idx, 1);
-        delete this.metaMap[u.idUbicacion];
-        this.saveMeta();
-        break;
-      }
+  updateDimension(dimension: 'w'|'h', value: number) {
+    if (this.selectedUbicacion) {
+      this.selectedUbicacion[dimension] = value;
+      this.saveMeta();
     }
   }
-
-  saveUbicacionEdits(): void {
-    if (this.selectedUbicacionId == null) return;
-    const u = this._findUbicacionById(this.selectedUbicacionId);
-    if (!u) return;
-    u.codigo = this.ubicacionEdit.codigo;
-    (u as any).w = this.ubicacionEdit.w;
-    (u as any).h = this.ubicacionEdit.h;
-    u.capacidadMaxima = this.ubicacionEdit.capacidadMaxima;
-
-    this._ensureMeta(u.idUbicacion);
-    this.metaMap[u.idUbicacion].w = (u as any).w;
-    this.metaMap[u.idUbicacion].h = (u as any).h;
-    this.metaMap[u.idUbicacion].capacidadMaxima = u.capacidadMaxima;
-    this.saveMeta();
-  }
-
-
-  filterZonas() {
-    const term = this.searchTerm.toLowerCase().trim();
-    if (!term) {
-      this.filteredZonas = [];
-      this.zonaSearchSelected = null;
-      return;
-    }
-    this.filteredZonas = this.layout.filter(z => (z.nombre || '').toLowerCase().includes(term));
-  }
-
-  selectZonaFromSearch(z: ZonaLayout) {
-    this.zonaSearchSelected = z;
-    this.ubicacionInventario = null;
-  }
-
-  showInventario(u: UbicacionLayout) {
-    this.subs.add(
-      this.inventarioService.listar().subscribe({
-        next: (inventarios) => {
-          const productosEnUbicacion = inventarios.filter(inv => inv.ubicacion.idUbicacion === u.idUbicacion);
-
-          this.ubicacionInventario = {
-            ...u,
-            productos: productosEnUbicacion.map(inv => ({
-              sku: inv.producto.codigoSku || 'SIN_SKU',
-              nombre: inv.producto.nombre || 'Producto sin nombre',
-              cantidad: inv.cantidad
-            }))
-          };
-        },
-        error: (err) => {
-          console.error('Error cargando inventario', err);
-          this.ubicacionInventario = null;
-        }
-      })
-    );
-  }
-
-
-  applyZonaScale() {
-    if (!this.zonaEditing) return;
-    for (const u of this.zonaEditing.ubicaciones) {
-
-      (u as any).w = Math.max(20, Math.round(((u as any).w || 140) * this.zonaScaleX));
-      (u as any).h = Math.max(10, Math.round(((u as any).h || 70) * this.zonaScaleY));
-
-      this._ensureMeta(u.idUbicacion);
-      this.metaMap[u.idUbicacion].w = (u as any).w;
-      this.metaMap[u.idUbicacion].h = (u as any).h;
-    }
-    this.saveMeta();
-    this.closeResizeModal();
-  }
-
-  closeResizeModal() {
-    this.zonaResizeModal = false;
-    this.zonaEditing = null;
-  }
-
 }

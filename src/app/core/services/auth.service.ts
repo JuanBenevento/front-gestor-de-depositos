@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { LoginRequest } from '../models/auth/login-request.model';
 import { LoginResponse } from '../models/auth/login-response.model';
+import { UsuarioService } from './usuario.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -13,7 +14,6 @@ export class AuthService {
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, credentials).pipe(
       tap(response => {
-        // Normalizamos el rol antes de guardarlo
         const rol = response.rol?.replace('ROLE_', '').toUpperCase() || '';
         localStorage.setItem('token', response.token);
         localStorage.setItem('role', rol);

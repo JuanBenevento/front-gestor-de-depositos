@@ -1,24 +1,50 @@
 <div class="form-container">
-  <h2>{{ editMode ? 'Editar' : 'Nuevo' }} Zona</h2>
+  <h2>{{ editMode ? 'Editar' : 'Nueva' }} Zona</h2>
 
   <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
 
     <div class="form-group">
       <label>Nombre de zona</label>
-      <input type="text" formControlName="nombre">
-      @if (form.controls['nombre'].invalid && form.controls['nombre'].touched) {
+      <input type="text" formControlName="nombre"
+             [class.invalid]="form.controls['nombre'].invalid && form.controls['nombre'].touched">
+      
+      @if (form.controls['nombre'].hasError('required') && form.controls['nombre'].touched) {
         <div class="error">Requerido</div>
       }
     </div>
 
     <div class="form-group">
-      <label>Descripcion</label>
-      <input type="text" formControlName="descripcion">
+      <label>Descripción</label>
+      <input type="text" formControlName="descripcion"
+             [class.invalid]="form.controls['descripcion'].invalid && form.controls['descripcion'].touched">
+             
+      @if (form.controls['descripcion'].hasError('required') && form.controls['descripcion'].touched) {
+        <div class="error">Requerido</div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>Categorías Admitidas (Ctrl + Click para seleccionar varias)</label>
+      <select multiple formControlName="categoriasAdmitidas" class="multi-select"
+              [class.invalid]="form.controls['categoriasAdmitidas'].invalid && form.controls['categoriasAdmitidas'].touched">
+        @for (cat of categoriasOpciones; track cat) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
+      
+      @if (form.controls['categoriasAdmitidas'].hasError('required') && form.controls['categoriasAdmitidas'].touched) {
+        <div class="error">Debe seleccionar al menos una categoría</div>
+      }
     </div>
 
     <div class="button-group">
-      <button type="submit" [disabled]="form.invalid">Guardar</button>
-      <button type="button" (click)="cancelar()" class="cancel-btn">Cancelar</button>
+      <button type="submit" [disabled]="form.invalid || saving">
+        {{ saving ? 'Guardando...' : 'Guardar' }}
+      </button>
+      
+      <button type="button" (click)="cancelar()" class="cancel-btn" [disabled]="saving">
+        Cancelar
+      </button>
     </div>
 
   </form>

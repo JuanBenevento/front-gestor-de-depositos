@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { debounceTime, switchMap, startWith } from 'rxjs/operators';
-
 import { InventarioService } from '../../../core/services/inventario.service';
 import { UbicacionService } from '../../../core/services/ubicacion.service';
 import { Inventario } from '../../../core/models/inventario/inventario.model';
@@ -22,7 +20,9 @@ export class InventarioListComponent implements OnInit {
 
   ubicaciones: any[] = [];
   filtroUbicacion = new FormControl(null);
-  busquedaSKU = new FormControl('');
+  nombreBuscar: string = '';
+  skuBuscar: string = '';
+  ubicacionBuscar: number | null = null;
 
   loading = true;
   error = '';
@@ -38,21 +38,6 @@ export class InventarioListComponent implements OnInit {
     this.cargarUbicaciones();
     this.cargarInventarios();
 
-    // BUSQUEDA + FILTRO DE UBICACIÓN
-    this.busquedaSKU.valueChanges
-      .pipe(
-        startWith(''),
-        debounceTime(300),
-        switchMap(() => this.service.listar())
-      )
-      .subscribe({
-        next: data => this.aplicarFiltros(data),
-        error: () => this.error = 'Error cargando inventarios'
-      });
-
-    this.filtroUbicacion.valueChanges.subscribe(() => {
-      this.aplicarFiltros(this.inventarios);
-    });
   }
 
   cargarUbicaciones() {
@@ -60,10 +45,12 @@ export class InventarioListComponent implements OnInit {
   }
 
   cargarInventarios() {
+    this.loading = true;
     this.service.listar().subscribe({
       next: data => {
-        this.inventarios = data;
-        this.aplicarFiltros(data);
+        this.inventarios = data;         
+        this.inventariosFiltrados = data; 
+        this.aplicarFiltros();            
         this.loading = false;
       },
       error: () => {
@@ -73,22 +60,31 @@ export class InventarioListComponent implements OnInit {
     });
   }
 
-  aplicarFiltros(data: Inventario[]) {
-    const sku = this.busquedaSKU.value?.trim().toLowerCase() || '';
-    const ubicacionId = this.filtroUbicacion.value;
+  aplicarFiltros() {
+    let filtrado = this.inventarios;
+    const nombre = this.nombreBuscar?.toLowerCase().trim();
+    const sku = this.skuBuscar?.toLowerCase().trim();
+    const idUbicacion = this.ubicacionBuscar;
 
-    this.inventariosFiltrados = data.filter(inv => {
-      const coincideSKU = sku
-        ? inv.ubicacion.codigo?.toLowerCase().includes(sku) ||
-          inv.producto.nombre?.toLowerCase().includes(sku)
-        : true;
+    if (nombre) {
+      filtrado = filtrado.filter(inv => 
+        inv.producto?.nombre?.toLowerCase().includes(nombre)
+      );
+    }
 
-      const coincideUbicacion = ubicacionId
-        ? inv.ubicacion.idUbicacion === ubicacionId
-        : true;
+    if (sku) {
+      filtrado = filtrado.filter(inv => 
+        inv.producto?.codigoSku?.toLowerCase().includes(sku)
+      );
+    }
 
-      return coincideSKU && coincideUbicacion;
-    });
+    if (idUbicacion) {
+      filtrado = filtrado.filter(inv => 
+        inv.ubicacion?.idUbicacion === idUbicacion
+      );
+    }
+
+    this.inventariosFiltrados = filtrado;
   }
 
   eliminar(id: number) {
@@ -120,7 +116,4 @@ export class InventarioListComponent implements OnInit {
     });
   }
 
-  volver() {
-    this.router.navigate(['/dashboard']);
-  }
 }

@@ -1,0 +1,107 @@
+/* ======================================= */
+/* TOPBAR NAV SUPERIOR (Desktop)           */
+/* ======================================= */
+.topbar {
+  width: auto; 
+  height: 60px;
+  background: rgba(7, 15, 28, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-bottom: 1px solid rgba(0, 150, 255, 0.22);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+  
+  position: sticky; 
+  top: 0;
+  z-index: 100;
+  gap: 20px;
+}
+
+/* Título de la App (se oculta en Sidebar) */
+.app-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #00ccff;
+    text-shadow: 0 0 8px rgba(0, 200, 255, 0.5);
+    margin-right: auto; /* Empuja los demás elementos a la derecha */
+}
+
+
+/* Información de Usuario y Rol */
+.user-info {
+  font-size: 0.95rem;
+  color: #a4b4c8;
+  margin-right: 20px;
+}
+
+/* Hora + fecha */
+.datetime {
+  display: flex;
+  gap: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #e5f3ff;
+}
+
+/* BOTÓN SALIR */
+.logout-top {
+  background: rgba(255, 60, 60, 0.75);
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: 0.25s ease;
+  font-weight: 600;
+}
+
+.logout-top:hover {
+  background: rgba(255, 80, 80, 0.9);
+  transform: translateY(-2px);
+}
+
+/* Botón Hamburguesa (solo móvil) */
+.menu-toggle {
+  display: none; /* Oculto por defecto en desktop */
+  font-size: 30px;
+  padding: 5px 10px;
+  cursor: pointer;
+  user-select: none;
+  color: #d8f1ff;
+  background: none;
+  border: none;
+  text-shadow: 0 0 6px #00ccff;
+}
+
+/* ======================================= */
+/* RESPONSIVIDAD HEADER (Móvil)            */
+/* ======================================= */
+@media (max-width: 900px) {
+  .topbar {
+    height: 55px;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    gap: 10px;
+    
+    justify-content: space-between; 
+    
+    background: #071427cc !important; 
+    backdrop-filter: blur(4px);
+  }
+  
+  .menu-toggle {
+    display: block; /* Muestra la hamburguesa en móvil */
+  }
+
+  /* Oculta los elementos que consumen mucho espacio en pantallas pequeñas */
+  .user-info, .datetime, .app-title {
+    display: none; 
+  }
+
+  .logout-top {
+    font-size: 0.85rem !important;
+    padding: 5px 10px !important;
+  }
+}

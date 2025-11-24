@@ -1,49 +1,91 @@
 <div class="form-container">
-  <h2>{{ editMode ? 'Editar' : 'Nueva' }} Ubicacion</h2>
+  <h2>{{ editMode ? 'Editar' : 'Nueva' }} Ubicación</h2>
 
   <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
     <div class="form-group">
-      <label>Codigo</label>
-      <input type="text" formControlName="codigo" />
-      @if (form.controls['codigo'].invalid && form.controls['codigo'].touched) {
-        <div class="error">Requerido</div>
+      <label>Código de Ubicación</label>
+      <input type="text" formControlName="codigo" placeholder="Ej: A-01-01"
+             [class.invalid]="form.controls['codigo'].invalid && form.controls['codigo'].touched" />
+      
+      @if (form.controls['codigo'].hasError('required') && form.controls['codigo'].touched) {
+        <div class="error">El código es requerido</div>
+      }
+      @if (form.controls['codigo'].hasError('duplicado')) {
+        <div class="error">Este código ya existe en la zona seleccionada</div>
       }
     </div>
 
     <div class="form-group">
       <label>Zona</label>
-      <select formControlName="zona" [disabled]="loadingZonas">
-        <option [ngValue]="null">-- Seleccione zona --</option>
+      
+      <select formControlName="zona" [compareWith]="compararZonas" [disabled]="loadingZonas"
+              [class.invalid]="form.controls['zona'].invalid && form.controls['zona'].touched">
+        <option [ngValue]="null" disabled>-- Seleccione una Zona --</option>
         @for (z of zonas; track z.idZona) {
-          <option [ngValue]="z">{{ z.idZona }} - {{ z.nombre }}</option>
+          <option [ngValue]="z">{{ z.nombre }}</option>
         }
       </select>
-      @if (form.controls['zona'].invalid && form.controls['zona'].touched) {
+
+      @if (loadingZonas) {
+        <small class="loading-text">Cargando zonas...</small>
+      }
+
+      @if (form.controls['zona'].hasError('required') && form.controls['zona'].touched) {
+        <div class="error">La zona es requerida</div>
+      }
+
+      @if (zonaSeleccionada && zonaSeleccionada.categoriasAdmitidas?.length) {
+        <div class="info-categorias">
+          <span class="info-label">Esta zona almacena:</span>
+          <div class="tags-container">
+            @for (cat of zonaSeleccionada.categoriasAdmitidas; track cat) {
+              <span class="badge">{{ cat }}</span>
+            }
+          </div>
+        </div>
+      } @else if (zonaSeleccionada && (!zonaSeleccionada.categoriasAdmitidas || zonaSeleccionada.categoriasAdmitidas.length === 0)) {
+        <div class="info-warning">
+           Esta zona no tiene categorías asignadas. No podrá recibir mercadería.
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>Capacidad Máxima</label>
+      <input type="number" formControlName="capacidadMaxima" min="1"
+             [class.invalid]="form.controls['capacidadMaxima'].invalid && form.controls['capacidadMaxima'].touched" />
+      
+      @if (form.controls['capacidadMaxima'].hasError('required') && form.controls['capacidadMaxima'].touched) {
         <div class="error">Requerido</div>
       }
-    </div>
-
-    <div class="form-group">
-      <label>Capacidad maxima</label>
-      <input type="number" formControlName="capacidadMaxima" min="0" />
-      @if (form.controls['capacidadMaxima'].invalid && form.controls['capacidadMaxima'].touched) {
-        <div class="error">Valor invalido</div>
+      @if (form.controls['capacidadMaxima'].hasError('min') && form.controls['capacidadMaxima'].touched) {
+        <div class="error">La capacidad debe ser mayor a 0</div>
       }
     </div>
 
     <div class="form-group">
-      <label>Ocupado actual</label>
-      <input type="number" formControlName="ocupadoActual" min="0" />
-      @if (form.controls['ocupadoActual'].hasError('excedeCapacidad') && form.controls['ocupadoActual'].touched) {
-        <div class="error">No puede superar la capacidad maxima</div>
-      } @else if (form.controls['ocupadoActual'].invalid && form.controls['ocupadoActual'].touched) {
-        <div class="error">Valor invalido</div>
+      <label>Ocupación Actual</label>
+      <input type="number" formControlName="ocupadoActual" min="0"
+             [class.invalid]="form.controls['ocupadoActual'].invalid && form.controls['ocupadoActual'].touched" />
+      
+      @if (form.controls['ocupadoActual'].hasError('required') && form.controls['ocupadoActual'].touched) {
+        <div class="error">Requerido</div>
+      }
+      @if (form.controls['ocupadoActual'].hasError('excedeCapacidad')) {
+        <div class="error">La ocupación no puede ser mayor que la capacidad máxima</div>
       }
     </div>
 
     <div class="button-group">
-      <button type="submit" [disabled]="form.invalid">Guardar</button>
-      <button type="button" (click)="cancelar()" class="cancel-btn">Cancelar</button>
+      <button type="submit" [disabled]="form.invalid || saving">
+        {{ saving ? 'Guardando...' : 'Guardar' }}
+      </button>
+      
+      <button type="button" (click)="cancelar()" class="cancel-btn" [disabled]="saving">
+        Cancelar
+      </button>
     </div>
+
   </form>
 </div>
