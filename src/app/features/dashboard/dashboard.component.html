@@ -22,27 +22,127 @@
     <div class="brand desktop-brand">Gestor de Depositos</div>
 
     <ul class="nav-links">
-      <li><button class="nav-btn" (click)="navigate('/dashboard')">Inicio</button></li>
+      <li>
+        <button
+          class="nav-btn"
+          (click)="navigate('/dashboard')"
+          [class.active]="isActive('/dashboard', true)"
+        >
+          Inicio
+        </button>
+      </li>
 
       @if (isAdmin()) {
-        <li><button class="nav-btn" (click)="navigate('/dashboard/usuarios')">Usuarios</button></li>
-        <li><button class="nav-btn" (click)="navigate('/dashboard/zonas')">Zonas</button></li>
-        <li><button class="nav-btn" (click)="navigate('/dashboard/ubicaciones')">Ubicaciones</button></li>
-        <li><button class="nav-btn" (click)="navigate('/dashboard/proveedores')">Proveedores</button></li>
-        <li><button class="nav-btn" (click)="navigate('/dashboard/clientes')">Clientes</button></li>
+        <li>
+          <button
+            class="nav-btn"
+            (click)="navigate('/dashboard/usuarios')"
+            [class.active]="isActive('/dashboard/usuarios')"
+          >
+            Usuarios
+          </button>
+        </li>
+        <li>
+          <button
+            class="nav-btn"
+            (click)="navigate('/dashboard/zonas')"
+            [class.active]="isActive('/dashboard/zonas')"
+          >
+            Zonas
+          </button>
+        </li>
+        <li>
+          <button
+            class="nav-btn"
+            (click)="navigate('/dashboard/ubicaciones')"
+            [class.active]="isActive('/dashboard/ubicaciones')"
+          >
+            Ubicaciones
+          </button>
+        </li>
+        <li>
+          <button
+            class="nav-btn"
+            (click)="navigate('/dashboard/proveedores')"
+            [class.active]="isActive('/dashboard/proveedores')"
+          >
+            Proveedores
+          </button>
+        </li>
+        <li>
+          <button
+            class="nav-btn"
+            (click)="navigate('/dashboard/clientes')"
+            [class.active]="isActive('/dashboard/clientes')"
+          >
+            Clientes
+          </button>
+        </li>
       }
 
       @if (isOperativo() || isAdmin()) {
         <li class="dropdown">
-          <button class="nav-btn" (click)="toggleDropdown($event)">Ordenes ▾</button>
-          <ul class="dropdown-menu" [class.open]="dropdownsOpen['Ordenes ▾']">
-            <li><button class="nav-btn dropdown-item" (click)="navigate('/dashboard/ordenesRecepcion')">Recepción</button></li>
-            <li><button class="nav-btn dropdown-item" (click)="navigate('/dashboard/ordenesDespacho')">Despacho</button></li>
+          <button
+            class="nav-btn"
+            (click)="toggleDropdown($event)"
+            [class.active]="isAnyActive(['/dashboard/ordenesRecepcion', '/dashboard/ordenesDespacho'])"
+          >
+            Ordenes ▾
+          </button>
+          <ul
+            class="dropdown-menu"
+            [class.open]="
+              dropdownsOpen['Ordenes ▾'] ||
+              isAnyActive(['/dashboard/ordenesRecepcion', '/dashboard/ordenesDespacho'])
+            "
+          >
+            <li>
+              <button
+                class="nav-btn dropdown-item"
+                (click)="navigate('/dashboard/ordenesRecepcion')"
+                [class.active]="isActive('/dashboard/ordenesRecepcion')"
+              >
+                Recepción
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-btn dropdown-item"
+                (click)="navigate('/dashboard/ordenesDespacho')"
+                [class.active]="isActive('/dashboard/ordenesDespacho')"
+              >
+                Despacho
+              </button>
+            </li>
           </ul>
         </li>
-        <li><button class="nav-btn" (click)="navigate('/dashboard/productos')">Productos</button></li>
-        <li><button class="nav-btn" (click)="navigate('/dashboard/inventarios')">Inventarios</button></li>
-        <li><button class="nav-btn" (click)="navigate('/dashboard/movimientosInventario')">Movimiento Inventario</button></li>
+        <li>
+          <button
+            class="nav-btn"
+            (click)="navigate('/dashboard/productos')"
+            [class.active]="isActive('/dashboard/productos')"
+          >
+            Productos
+          </button>
+        </li>
+        <li>
+          <button
+            class="nav-btn"
+            (click)="navigate('/dashboard/inventarios')"
+            [class.active]="isActive('/dashboard/inventarios')"
+          >
+            Inventarios
+          </button>
+        </li>
+        <li>
+          <button
+            class="nav-btn"
+            (click)="navigate('/dashboard/movimientosInventario')"
+            [class.active]="isActive('/dashboard/movimientosInventario')"
+          >
+            Movimiento Inventario
+          </button>
+        </li>
       }
 
       <li class="logout-li">

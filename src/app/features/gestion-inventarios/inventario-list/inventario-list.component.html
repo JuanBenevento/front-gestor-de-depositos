@@ -38,7 +38,8 @@
   }
 
   @if (inventariosFiltrados.length > 0) {
-    <table class="user-table">
+    <div class="table-wrapper">
+      <table class="user-table">
       <thead>
         <tr>
           <th>ID</th>
@@ -70,7 +71,8 @@
           </tr>
         }
       </tbody>
-    </table>
+      </table>
+    </div>
   }
 
   @if (!loading && inventariosFiltrados.length === 0) {

@@ -1,8 +1,15 @@
 .table-wrapper {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 0.5rem;
+  padding: 0.25rem 0.25rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+  margin: 1rem 0;
 }
 
 .table-wrapper::-webkit-scrollbar {
@@ -26,7 +33,6 @@
   border-radius: var(--radius-sm);
   overflow: hidden;
   background-color: var(--color-surface);
-  box-shadow: var(--shadow-xs);
 }
 
 .data-table th,

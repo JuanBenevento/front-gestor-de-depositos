@@ -46,4 +46,13 @@ export class DashboardComponent {
     const target = (event.target as HTMLElement).innerText;
     this.dropdownsOpen[target] = !this.dropdownsOpen[target];
   }
+
+  isActive(path: string, exact = false): boolean {
+    const current = this.router.url;
+    return exact ? current === path : current.startsWith(path);
+  }
+
+  isAnyActive(paths: string[]): boolean {
+    return paths.some((path) => this.isActive(path));
+  }
 }

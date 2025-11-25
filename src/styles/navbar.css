@@ -138,6 +138,13 @@
   transform: translateY(-1px);
 }
 
+.nav-btn.active,
+.dropdown-item.active {
+  background-color: var(--color-primary);
+  color: #fff;
+  box-shadow: var(--shadow-xs);
+}
+
 .dropdown {
   display: flex;
   flex-direction: column;

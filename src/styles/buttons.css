@@ -115,6 +115,18 @@ button.full-width,
   margin-top: 1.5rem;
 }
 
+.list-container .new-btn,
+.user-management-container > .new-btn,
+.list-container > .new-btn,
+.user-management-container > button.new-btn {
+  margin-bottom: 1rem;
+}
+
+.user-management-container .secondary-btn.small-btn,
+.list-container .secondary-btn.small-btn {
+  margin-top: 1rem;
+}
+
 @media (min-width: 768px) {
   .button-group {
     flex-direction: row;

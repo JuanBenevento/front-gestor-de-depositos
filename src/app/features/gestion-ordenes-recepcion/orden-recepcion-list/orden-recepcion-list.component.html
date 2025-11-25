@@ -39,7 +39,8 @@
   }
 
   @if (ordenesFiltradas.length) {
-    <table class="user-table">
+    <div class="table-wrapper">
+      <table class="user-table">
       <thead>
         <tr>
           <th>ID</th>
@@ -68,7 +69,8 @@
           </tr>
         }
       </tbody>
-    </table>
+      </table>
+    </div>
   }
 
   @if (!ordenesFiltradas.length && !loading) {
