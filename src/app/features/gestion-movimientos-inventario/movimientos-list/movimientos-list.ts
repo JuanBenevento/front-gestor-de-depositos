@@ -5,9 +5,15 @@ import { MovimientoInventario } from '../../../core/models/movimiento-inventario
 
 @Component({
   selector: 'app-movimientos-list',
+<<<<<<< Updated upstream
   imports: [],
   templateUrl: './movimientos-list.html',
   styleUrl: './movimientos-list.css'
+=======
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
+  templateUrl: './movimientos-list.html'
+>>>>>>> Stashed changes
 })
 export class MovimientosList implements OnInit {
 

@@ -10,8 +10,7 @@ import { LoginResponse } from '../../core/models/auth/login-response.model';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  templateUrl: './login.component.html'
 })
 export class LoginComponent {
   credentials: LoginRequest = { nombre: '', contrasenia: '' };
