@@ -35,13 +35,12 @@ export class ZonaListComponent implements OnInit {
  refresh(): void {
     this.loading = true;
     this.error = '';
-    // 🛑 Limpiamos la nueva propiedad
     this.nombreBuscar = '';
     this.filtrado = false;  
 
     this.zonaService.listar().subscribe({
       next: data => {
-        this.zonasOriginal = data; // 💡 Guardamos la lista completa
+        this.zonasOriginal = data; 
         this.zonas = data;
         this.loading = false;
       },
@@ -76,10 +75,7 @@ export class ZonaListComponent implements OnInit {
   aplicarFiltroNombre(): void {
     const nombre = this.nombreBuscar?.toLowerCase().trim();
 
-    // 1. Empezamos con la lista original
     let zonasFiltradas = this.zonasOriginal;
-
-    // 2. Aplicamos el filtro si hay texto de búsqueda
     if (nombre && nombre.length > 0) {
       zonasFiltradas = zonasFiltradas.filter(z => 
         z.nombre.toLowerCase().includes(nombre)
@@ -89,14 +85,13 @@ export class ZonaListComponent implements OnInit {
       this.filtrado = false;
     }
 
-    // 3. Actualizamos la lista mostrada
     this.zonas = zonasFiltradas;
     this.error = this.filtrado && this.zonas.length === 0 ? 'No se encontraron zonas con ese nombre.' : '';
   }
 
   limpiarFiltros(): void {
     this.nombreBuscar = '';
-    this.aplicarFiltroNombre(); // Vuelve a aplicar el filtro con el campo vacío, mostrando la lista original
+    this.aplicarFiltroNombre(); 
   }
 
   private showModal(message: string, title = 'Información'): void {

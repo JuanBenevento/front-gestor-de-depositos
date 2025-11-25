@@ -28,7 +28,8 @@ import { CategoriasProducto } from '../../../core/enums/categoriasProductos.mode
   selector: 'app-orden-recepcion-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ModalComponent, RouterModule],
-  templateUrl: './orden-recepcion-form.component.html'
+  templateUrl: './orden-recepcion-form.component.html',
+  styleUrl: './orden-recepcion-form.component.css'
 })
 export class OrdenRecepcionFormComponent implements OnInit {
   

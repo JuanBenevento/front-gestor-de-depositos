@@ -1,0 +1,381 @@
+/* ========================================= */
+/* 1. LAYOUT GENERAL                         */
+/* ========================================= */
+.form-container {
+  background-color: #0f172a; /* Slate 900 */
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  max-width: 900px; /* Un poco más ancho para la tabla */
+  margin: 0 auto;
+  color: #e2e8f0; /* Slate 200 */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.form-row-2 {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.form-row-2 .form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 0.9rem;
+  color: #94a3b8; /* Slate 400 */
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+input, select, textarea {
+  background-color: #1e293b; /* Slate 800 */
+  border: 1px solid #334155; /* Slate 700 */
+  color: white;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #3b82f6; /* Blue 500 */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+input.invalid, select.invalid {
+  border-color: #ef4444; /* Red 500 */
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #334155;
+  margin: 25px 0;
+}
+
+/* ========================================= */
+/* 2. SECCIÓN PROVEEDOR                      */
+/* ========================================= */
+
+/* Contenedor relativo para el dropdown */
+.search-container {
+  position: relative;
+}
+
+/* Input con icono de Lupa (Proveedor) */
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon input {
+  width: 100%;
+  padding-right: 50px; /* Espacio para el botón */
+}
+
+/* Botón pequeño dentro del input de proveedor */
+.btn-add-mini {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #3b82f6;
+  color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-add-mini:hover {
+  background-color: #2563eb;
+}
+
+/* Tarjeta de Proveedor Seleccionado */
+.proveedor-card-selected {
+  display: flex;
+  align-items: center;
+  background: rgba(16, 185, 129, 0.1); /* Emerald tint */
+  border: 1px solid #059669;
+  padding: 15px;
+  border-radius: 8px;
+  gap: 15px;
+  margin-top: 5px;
+}
+
+.prov-icon {
+  font-size: 1.8rem;
+}
+
+.prov-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.prov-name {
+  font-weight: bold;
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.prov-meta {
+  font-size: 0.9rem;
+  color: #a7f3d0;
+}
+
+.btn-change {
+  background: transparent;
+  border: 1px solid #059669;
+  color: #059669;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-change:hover {
+  background: #059669;
+  color: white;
+}
+
+/* ========================================= */
+/* 3. TABLA DE DETALLES (GRID)               */
+/* ========================================= */
+.detalles-container {
+  background-color: rgba(30, 41, 59, 0.3);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+}
+
+.section-label {
+  font-size: 1.1rem;
+  color: #e2e8f0;
+  margin-bottom: 15px;
+  display: block;
+}
+
+/* Encabezados de la tabla */
+.table-header {
+  display: grid;
+  grid-template-columns: 4fr 1fr 50px; /* Producto (ancho), Cantidad (angosto), Acción */
+  gap: 15px;
+  padding: 0 5px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Fila de detalle */
+.detalle-row {
+  display: grid;
+  grid-template-columns: 4fr 1fr 50px;
+  gap: 15px;
+  margin-bottom: 12px;
+  align-items: start; /* Alineado arriba para manejar errores de validación */
+}
+
+/* ========================================= */
+/* 4. INPUT GROUP (PRODUCTO + BOTÓN NUEVO)   */
+/* ========================================= */
+.input-group {
+  display: flex;
+  align-items: stretch; /* Asegura misma altura */
+  width: 100%;
+}
+
+.input-group input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  flex: 1; /* Toma todo el espacio disponible */
+}
+
+/* Botón "+" pegado al input */
+.btn-icon-add {
+  background-color: #3b82f6;
+  color: white;
+  border: 1px solid #3b82f6;
+  border-left: none; /* Quitar borde doble */
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  width: 45px; /* Un poco más ancho para click fácil */
+  font-size: 1.4rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  padding-bottom: 3px; /* Ajuste visual del signo + */
+}
+
+.btn-icon-add:hover {
+  background-color: #2563eb;
+}
+
+/* Botón Eliminar Fila (Tacho) */
+.btn-delete-row {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 1.3rem;
+  cursor: pointer;
+  height: 42px; /* Altura aproximada del input para centrar */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.btn-delete-row:hover {
+  transform: scale(1.1);
+  color: #ff8888;
+}
+
+/* Botón Agregar Fila (Debajo de la tabla) */
+.btn-add-row {
+  width: 100%;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px dashed #3b82f6;
+  color: #60a5fa;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-add-row:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+/* ========================================= */
+/* 5. DROPDOWN (LISTA DESPLEGABLE FLOTANTE)  */
+/* ========================================= */
+.custom-dropdown {
+  position: absolute;
+  top: 100%; 
+  left: 0;
+  right: 0;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 0 0 6px 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0; 
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 100; 
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
+}
+
+.custom-dropdown li {
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #334155;
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-dropdown li:last-child {
+  border-bottom: none;
+}
+
+.custom-dropdown li:hover {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.dd-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.dd-subtitle {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.custom-dropdown li:hover .dd-subtitle {
+  color: #e2e8f0;
+}
+
+/* Opción especial "Crear nuevo" */
+.create-option {
+  color: #60a5fa;
+  font-style: italic;
+  background-color: rgba(30, 41, 59, 0.5);
+  border-top: 2px solid #475569;
+}
+
+/* ========================================= */
+/* 6. BOTONES DE ACCIÓN (GUARDAR / CANCELAR) */
+/* ========================================= */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #334155;
+}
+
+.btn-save {
+  background: #2563eb;
+  color: white;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.btn-save:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.btn-save:disabled {
+  background: #475569;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid #475569;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  border-color: #cbd5e1;
+  color: #f1f5f9;
+}

@@ -4,7 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { UbicacionService } from '../../../core/services/ubicacion.service';
 import { Ubicacion } from '../../../core/models/ubicacion/ubicacion.model';
-import { ReporteUbicacion } from '../../../core/models/ubicacion/reporte-ubicacion.model'; // Asegúrate de tener este modelo o usa any temporalmente
+import { ReporteUbicacion } from '../../../core/models/ubicacion/reporte-ubicacion.model'; 
 import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
@@ -20,14 +20,12 @@ export class UbicacionListComponent implements OnInit {
   
   loading = true;
   error = '';
-  
-  // Filtros
+
   codigoBuscar: string = '';
   zonaBuscar: string = '';
   filtrado = false;
 
-  // Reporte
-  reporte: any[] = []; // Puedes usar ReporteUbicacion[] si tienes la interfaz
+  reporte: any[] = []; 
   mostrandoReporte = false;
 
   constructor(
@@ -74,7 +72,6 @@ export class UbicacionListComponent implements OnInit {
     }
 
     if (zona) {
-      // 💡 Verificación segura: u.zona puede ser null, usamos ?.
       lista = lista.filter(u => 
         u.zona?.nombre?.toLowerCase().includes(zona)
       );
@@ -103,7 +100,6 @@ export class UbicacionListComponent implements OnInit {
   onConfirm = (id: number) => {
     this.ubicacionService.eliminar(id).subscribe({
       next: (res) => {
-        // Si el back devuelve texto, lo mostramos.
         const msg = typeof res === 'string' ? res : 'Ubicación eliminada correctamente.';
         this.showModal(msg, 'Éxito');
         this.refresh();
@@ -112,10 +108,8 @@ export class UbicacionListComponent implements OnInit {
         console.error(err);
         let msg = 'Error al eliminar la ubicación.';
         
-        // Intentamos extraer el mensaje claro del backend
         if (err.error) {
             if (typeof err.error === 'string') {
-                // A veces viene un JSON stringificado o texto plano
                 try {
                     const parsed = JSON.parse(err.error);
                     msg = parsed.error || parsed.message || err.error;
@@ -132,14 +126,12 @@ export class UbicacionListComponent implements OnInit {
   }
 
   verReporte(): void {
-    // Calculamos el reporte en base a los datos actuales (o podrías llamar al endpoint específico del back)
     this.reporte = this.ubicacionesOriginal.map(u => ({
       idUbicacion: u.idUbicacion,
       codigo: u.codigo,
       zonaNombre: u.zona?.nombre || 'Sin Zona',
       capacidadMaxima: u.capacidadMaxima,
       ocupadoActual: u.ocupadoActual,
-      // Cálculo simple de disponibilidad
       espacioDisponible: u.capacidadMaxima - u.ocupadoActual
     }));
     this.mostrandoReporte = true;

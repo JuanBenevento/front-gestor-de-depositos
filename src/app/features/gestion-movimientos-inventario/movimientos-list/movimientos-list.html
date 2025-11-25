@@ -23,7 +23,7 @@
     <div class="search-group">
      <input
       type="text"
-      placeholder="Buscar por nombre del producto"
+      placeholder="Buscar por producto"
       [(ngModel)]="nombreBuscar"
       (input)="aplicarFiltros()"  />
     </div>
@@ -79,7 +79,7 @@
                 <button (click)="eliminar(m.idMovimientoInventario!)" class="btn delete-btn">Eliminar</button>
             </td>
             }@else {
-              <p>No se puede editar ni eliminar proviene de una orden.</p>
+              <p>Acciones no permitidas.</p>
             }
             
           </tr>

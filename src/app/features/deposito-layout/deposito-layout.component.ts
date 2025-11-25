@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 
 import { DepositoLayoutService } from '../../core/services/deposito-layout.service';
 import { InventarioService } from '../../core/services/inventario.service';
-import { ZonaLayout} from '../../core/models/deposito-layout/zona-layout.model';
+import { ZonaLayout } from '../../core/models/deposito-layout/zona-layout.model';
 import { UbicacionLayout } from '../../core/models/deposito-layout/ubicacion-layout.model';
 
 @Component({
@@ -28,8 +28,8 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
   inventarioDetalle: any[] = [];
   loadingInventario = false;
 
-  gridSize = 20; 
-  scale = 1;     
+  gridSize = 20;
+  scale = 1;    
   panning = false;
   panOrigin = { x: 0, y: 0 };
   translate = { x: 0, y: 0 };
@@ -77,16 +77,11 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
       z.ubicaciones.forEach(u => {
         const m = this.metaMap[u.idUbicacion];
         if (m) {
-          u.x = m.x; 
-          u.y = m.y; 
-          u.w = m.w; 
-          u.h = m.h;
-          if(m.color) z.color = m.color;
+          u.x = m.x; u.y = m.y; u.w = m.w; u.h = m.h;
+          if(m.color) z.color = m.color; 
         } else {
-          u.x = u.x || 50; 
-          u.y = u.y || 50; 
-          u.w = 120; 
-          u.h = 60;
+          u.x = u.x || 50; u.y = u.y || 50; 
+          u.w = 120; u.h = 60;
         }
       });
     });
@@ -96,24 +91,20 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
     this.layout.forEach(z => {
       z.ubicaciones.forEach(u => {
         this.metaMap[u.idUbicacion] = { 
-          x: u.x, 
-          y: u.y, 
-          w: u.w, 
-          h: u.h,
-          color: z.color
+          x: u.x, y: u.y, w: u.w, h: u.h, color: z.color
         };
       });
     });
     localStorage.setItem(this.META_KEY, JSON.stringify(this.metaMap));
   }
-
+  
   zoomIn() { this.scale = Math.min(this.scale + 0.1, 3); }
   zoomOut() { this.scale = Math.max(this.scale - 0.1, 0.3); }
   resetView() { this.scale = 1; this.translate = { x: 0, y: 0 }; }
 
   @HostListener('wheel', ['$event'])
   onWheel(event: WheelEvent) {
-    if (event.ctrlKey) {
+    if (event.ctrlKey) { 
       event.preventDefault();
       const delta = event.deltaY > 0 ? -0.1 : 0.1;
       this.scale = Math.max(0.3, Math.min(3, this.scale + delta));
@@ -134,12 +125,10 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
       this.translate.x = event.clientX - this.panOrigin.x;
       this.translate.y = event.clientY - this.panOrigin.y;
     }
-
     if (this.draggingUbicacion) {
       event.preventDefault();
       const deltaX = (event.clientX - this.dragOffset.x) / this.scale;
       const deltaY = (event.clientY - this.dragOffset.y) / this.scale;
-
       this.draggingUbicacion.x = Math.round(deltaX / this.gridSize) * this.gridSize;
       this.draggingUbicacion.y = Math.round(deltaY / this.gridSize) * this.gridSize;
     }
@@ -149,13 +138,14 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
   onMouseUp() {
     this.panning = false;
     if (this.draggingUbicacion) {
-      this.saveMeta();
+      this.saveMeta(); 
       this.draggingUbicacion = null;
     }
   }
 
+
   startDragUbicacion(event: MouseEvent, u: UbicacionLayout) {
-    event.stopPropagation();
+    event.stopPropagation(); 
     if (event.button === 0) {
       this.draggingUbicacion = u;
       this.dragOffset.x = event.clientX - (u.x * this.scale);
@@ -194,10 +184,12 @@ export class DepositoLayoutComponent implements OnInit, OnDestroy {
   }
 
   getFillColor(u: UbicacionLayout): string {
-    if (this.selectedUbicacion?.idUbicacion === u.idUbicacion) return '#3b82f6'; 
+    if (this.selectedUbicacion?.idUbicacion === u.idUbicacion) return '#3b82f6';
+    
     if (u.capacidadMaxima <= 0) return '#334155'; 
     
     const porcentaje = u.ocupadoActual / u.capacidadMaxima;
+    
     if (porcentaje >= 1) return '#ef4444';
     if (porcentaje >= 0.75) return '#f97316'; 
     if (porcentaje >= 0.50) return '#eab308'; 

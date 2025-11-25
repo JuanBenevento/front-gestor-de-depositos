@@ -18,7 +18,7 @@
   </div>
 
   <div class="workspace">
-
+    
     <div class="map-viewport" #mapContainer (mousedown)="startPan($event)">
       <svg width="100%" height="100%">
         
@@ -29,10 +29,11 @@
         </defs>
 
         <g [style.transform]="'translate(' + translate.x + 'px, ' + translate.y + 'px) scale(' + scale + ')'">
-          
+
           <rect x="-5000" y="-5000" width="10000" height="10000" fill="url(#grid)" />
 
           <g *ngFor="let zona of layout">
+
             <g *ngFor="let u of zona.ubicaciones" 
                [style.opacity]="getOpacity(u)"
                (mousedown)="startDragUbicacion($event, u)">
@@ -67,20 +68,21 @@
     </div>
 
     <aside class="inspector-panel">
-      
+
       <div class="empty-state" *ngIf="!selectedUbicacion && !selectedZona">
-        <h3>🗺️ Depósito</h3>
-        <p>Seleccione una ubicación para ver su inventario.</p>
+        <h3>Mapa del Depósito</h3>
+        <p>Seleccione una ubicación para ver detalles o arrástrela para reorganizar.</p>
         
         <div class="zones-list">
-          <h4>Zonas</h4>
+          <h4>Zonas Disponibles</h4>
           <ul>
             <li *ngFor="let z of layout" (click)="selectZona(z)">
-              {{ z.nombre }} <span class="badge">{{ z.ubicaciones.length }}</span>
+              {{ z.nombre }} <small>({{ z.ubicaciones.length }} racks)</small>
             </li>
           </ul>
         </div>
       </div>
+
 
       <div class="details-state" *ngIf="selectedZona">
         <div class="panel-header">
@@ -90,12 +92,6 @@
         <div class="panel-body">
           <label>Descripción</label>
           <p class="info-text">{{ selectedZona.descripcion }}</p>
-          
-          <label>Categorías Admitidas</label>
-          <div class="tags">
-            <span class="badge" *ngFor="let cat of selectedZona.categoriasAdmitidas">{{ cat }}</span>
-            <span *ngIf="!selectedZona.categoriasAdmitidas?.length" class="no-data">Sin categorías asignadas</span>
-          </div>
         </div>
       </div>
 
@@ -119,6 +115,7 @@
 
           <hr class="divider">
 
+          <!-- Métricas -->
           <div class="metrics">
             <div class="metric">
               <span class="value">{{ selectedUbicacion.ocupadoActual }}</span>
@@ -136,21 +133,21 @@
 
           <hr class="divider">
 
-          <h4>📦 Inventario</h4>
+          <h4>📦 Inventario Actual</h4>
           <div class="inventory-list" *ngIf="!loadingInventario && inventarioDetalle.length > 0">
             <div class="inv-item" *ngFor="let item of inventarioDetalle">
               <div class="inv-name">{{ item.producto }}</div>
               <div class="inv-sku">{{ item.sku }}</div>
-              <div class="inv-qty">x {{ item.cantidad }}</div>
+              <div class="inv-qty">Cant: {{ item.cantidad }}</div>
             </div>
           </div>
           
           <div class="empty-inv" *ngIf="!loadingInventario && inventarioDetalle.length === 0">
-            Vacío
+            Esta ubicación está vacía.
           </div>
           
           <div class="loading-inv" *ngIf="loadingInventario">
-            Cargando...
+            Cargando productos...
           </div>
 
         </div>
