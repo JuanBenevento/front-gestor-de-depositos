@@ -26,8 +26,8 @@ export class OrdenRecepcionService {
     return this.http.post<OrdenRecepcion>(`${this.apiUrl}/crearOrdenRecepcion`, detalle);
   }
 
-  editar(id: number, estado: string): Observable<OrdenRecepcion> {
-    return this.http.put<OrdenRecepcion>(`${this.apiUrl}/actualizarEstadoOrden?idOrden=${id}&estado=${estado}`, {});
+  editar(id: number, orden: OrdenRecepcion): Observable<OrdenRecepcion> {
+    return this.http.put<OrdenRecepcion>(`${this.apiUrl}/actualizarOrdenCompleta?id=${id}`, orden);
   }
 
   eliminar(id: number): Observable<string> {

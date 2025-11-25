@@ -9,9 +9,19 @@
     <div class="search-group">
       <input type="text" placeholder="Buscar por codigo SKU" [(ngModel)]="skuBuscar" (input)="aplicarFiltros()" />
     </div>
+
     <div class="search-group">
       <input type="text" placeholder="Buscar por nombre" [(ngModel)]="nombreBuscar" (input)="aplicarFiltros()" />
     </div>
+  </div>
+
+    <div class="search-group">
+      <select [(ngModel)]="categoriaBuscar" (change)="aplicarFiltros()">
+        <option [ngValue]="null">Todas las Categorías</option>
+        @for (cat of categoriasOpciones; track cat) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
   </div>
 
   @if (loading) { <div class="loading">Cargando...</div> }

@@ -1,339 +1,283 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Observable, Subject, catchError, debounceTime, distinctUntilChanged, of, switchMap, take, takeUntil, tap } from 'rxjs';
-import { Producto } from '../../../core/models/Producto/producto.model';
-import { Ubicacion } from '../../../core/models/ubicacion/ubicacion.model';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
+import { debounceTime, switchMap, filter, map } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+// SERVICIOS
+import { MovimientosInventarioService } from '../../../core/services/movimientos-inventario.service';
 import { ProductoService } from '../../../core/services/producto.service';
 import { UbicacionService } from '../../../core/services/ubicacion.service';
-import { MovimientosInventarioService } from '../../../core/services/movimientos-inventario.service';
+import { InventarioService } from '../../../core/services/inventario.service';
 import { ModalService } from '../../../shared/services/modal.service';
-import { MovimientoInventario } from '../../../core/models/movimiento-inventario/movimiento-inventario.module';
-import { MOVIMIENTO_INVENTARIO_ESTADOS, MovimientoInventarioEstado } from '../../../core/enums/movimiento-inventario-estado.model';
-import { FormTextInputComponent, ValidationMessage } from '../../../shared/components/form-text-input/form-text-input.component';
-import { InfoCardComponent } from '../../../shared/components/info-card/info-card.component';
+
+// MODELOS
+import { Producto } from '../../../core/models/Producto/producto.model';
+import { Ubicacion } from '../../../core/models/ubicacion/ubicacion.model';
+import { MovimientoInventarioEstado, MOVIMIENTO_INVENTARIO_ESTADOS } from '../../../core/enums/movimiento-inventario-estado.model';
+
+// COMPONENTES
+import { ModalComponent } from '../../../shared/components/modal/modal.component';
 
 @Component({
   selector: 'app-movimientos-form',
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormTextInputComponent, InfoCardComponent],
-  templateUrl: './movimientos-form.html'
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  templateUrl: './movimientos-form.html',
+  styleUrl: './movimiento-form.css' 
 })
-export class MovimientosForm implements OnInit, OnDestroy {
-  private readonly fb: FormBuilder = inject(FormBuilder);
-  private readonly productoService: ProductoService = inject(ProductoService);
-  private readonly ubicacionService: UbicacionService = inject(UbicacionService);
-  private readonly movimientosService: MovimientosInventarioService = inject(MovimientosInventarioService);
-  private readonly modalService: ModalService = inject(ModalService);
-  private readonly router: Router = inject(Router);
-  private readonly route: ActivatedRoute = inject(ActivatedRoute);
+export class MovimientosForm implements OnInit {
 
-  readonly estados = MOVIMIENTO_INVENTARIO_ESTADOS;
-  readonly maxFecha = this.formatDate(new Date());
-  readonly validationMessages: Record<string, ValidationMessage[]> = {
-    productoId: [{ errorKey: 'required', message: 'El producto es requerido' }],
-    ubicacionOrigenId: [{ errorKey: 'required', message: 'La ubicacion de origen es requerida' }],
-    ubicacionDestinoId: [{ errorKey: 'required', message: 'La ubicacion de destino es requerida' }],
-    cantidad: [
-      { errorKey: 'required', message: 'Ingresar una cantidad valida (minimo 1)' },
-      { errorKey: 'min', message: 'Ingresar una cantidad valida (minimo 1)' }
-    ],
-    fecha: [
-      { errorKey: 'required', message: 'Seleccionar una fecha valida' },
-      { errorKey: 'fechaFutura', message: 'No se permiten fechas futuras' },
-      { errorKey: 'fechaInvalida', message: 'Seleccionar una fecha valida' }
-    ]
-  };
-  private readonly noFutureDateValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    const value = (control.value ?? '').toString();
-    if (!value) {
-      return null;
-    }
-
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-      return { fechaInvalida: true };
-    }
-
-    return value > this.maxFecha ? { fechaFutura: true } : null;
-  };
-
-  form = this.fb.nonNullable.group({
-    idMovimientoInventario: [0],
-    productoId: ['', [Validators.required]],
-    ubicacionOrigenId: ['', [Validators.required]],
-    ubicacionDestinoId: ['', [Validators.required]],
-    cantidad: [1, [Validators.required, Validators.min(1)]],
-    estado: [MovimientoInventarioEstado.REUBICACION, Validators.required],
-    fecha: ['', [Validators.required, this.noFutureDateValidator]]
-  });
-
-  productoSeleccionado: Producto | null = null;
-  ubicacionOrigenSeleccionada: Ubicacion | null = null;
-  ubicacionDestinoSeleccionada: Ubicacion | null = null;
-
-  productoError = '';
-  ubicacionOrigenError = '';
-  ubicacionDestinoError = '';
-
+  form!: FormGroup;
   editMode = false;
-  private movimientoId = 0;
-  private readonly destroy$ = new Subject<void>();
+  saving = false;
+  maxDate: string = '';
+  
+  estados = MOVIMIENTO_INVENTARIO_ESTADOS;
+
+  // AUTOCOMPLETE LISTS
+  productosFiltrados: Producto[] = [];
+  ubicacionesOrigenFiltradas: Ubicacion[] = [];
+  ubicacionesDestinoFiltradas: Ubicacion[] = [];
+
+  // DROPDOWNS STATES
+  showProdDropdown = false;
+  showOrigDropdown = false;
+  showDestDropdown = false;
+
+  // SELECCIONES
+  productoSeleccionado: Producto | null = null;
+  ubicacionOrigen: Ubicacion | null = null;
+  ubicacionDestino: Ubicacion | null = null;
+
+  // DATOS DE INVENTARIO
+  stockEnOrigen = 0;
+  capacidadEnDestino = 0;
+  ocupadoEnDestino = 0;
+
+  constructor(
+    private fb: FormBuilder,
+    private movimientosService: MovimientosInventarioService,
+    private productoService: ProductoService,
+    private ubicacionService: UbicacionService,
+    private inventarioService: InventarioService,
+    private modalService: ModalService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-    this.form.patchValue({ fecha: this.maxFecha });
-    this.setupProductoLookup();
-    this.setupUbicacionLookup('ubicacionOrigenId');
-    this.setupUbicacionLookup('ubicacionDestinoId');
-    this.setupFechaLookup();
-    this.tryLoadMovimiento();
+    this.maxDate = new Date().toISOString().split('T')[0];
+    this.initForm();
+    this.setupListeners();
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  private initForm() {
+    this.form = this.fb.group({
+      idMovimientoInventario: [0],
+      
+      // Producto
+      inputProducto: ['', Validators.required],
+      
+      // Ubicaciones (Inputs de texto para búsqueda)
+      inputOrigen: ['', Validators.required],
+      inputDestino: ['', Validators.required],
+
+      cantidad: [1, [Validators.required, Validators.min(1)]],
+      estado: [MovimientoInventarioEstado.REUBICACION, Validators.required],
+      fecha: [this.maxDate, [Validators.required, this.validarFechaNoFutura()]]
+    });
   }
 
-  guardar(): void {
-    const fechaControl = this.form.get('fecha');
-    if (fechaControl?.value && fechaControl.value > this.maxFecha) {
-      fechaControl.setErrors({ ...(fechaControl.errors ?? {}), fechaFutura: true });
-      fechaControl.markAsTouched();
+  // --- LISTENERS & BÚSQUEDAS ---
+
+  setupListeners() {
+    // 1. Producto
+    this.form.get('inputProducto')?.valueChanges.pipe(
+      debounceTime(300),
+      filter(val => typeof val === 'string'),
+      switchMap(val => {
+        if (!val || val.length < 2) {
+            this.showProdDropdown = false;
+            return of([]);
+        }
+        return this.productoService.buscarPorNombreOCodigo(val);
+      })
+    ).subscribe(data => {
+      this.productosFiltrados = data;
+      this.showProdDropdown = true;
+    });
+
+    // 2. Origen (Traer ubicaciones que tengan este producto si ya se seleccionó, sino todas)
+    this.form.get('inputOrigen')?.valueChanges.pipe(
+      debounceTime(300),
+      switchMap(val => {
+         if(!val) { this.showOrigDropdown = false; return of([]); }
+         // Aquí podríamos optimizar buscando solo donde haya stock, por ahora buscamos por código
+         return this.ubicacionService.listar().pipe(
+             map(ubs => ubs.filter(u => u.codigo.toLowerCase().includes(val.toLowerCase())))
+         );
+      })
+    ).subscribe(data => {
+      this.ubicacionesOrigenFiltradas = data;
+      this.showOrigDropdown = true;
+    });
+
+    // 3. Destino
+    this.form.get('inputDestino')?.valueChanges.pipe(
+      debounceTime(300),
+      switchMap(val => {
+         if(!val) { this.showDestDropdown = false; return of([]); }
+         return this.ubicacionService.listar().pipe(
+             map(ubs => ubs.filter(u => u.codigo.toLowerCase().includes(val.toLowerCase())))
+         );
+      })
+    ).subscribe(data => {
+      this.ubicacionesDestinoFiltradas = data;
+      this.showDestDropdown = true;
+    });
+  }
+
+  // --- SELECCIONES ---
+
+  seleccionarProducto(p: Producto) {
+    this.productoSeleccionado = p;
+    this.form.patchValue({ inputProducto: `${p.nombre} (${p.codigoSku})` });
+    this.showProdDropdown = false;
+    
+    // Resetear ubicaciones si cambian producto
+    this.resetUbicaciones();
+  }
+
+  seleccionarOrigen(u: Ubicacion) {
+    this.ubicacionOrigen = u;
+    this.form.patchValue({ inputOrigen: u.codigo });
+    this.showOrigDropdown = false;
+    this.verificarStockOrigen();
+  }
+
+  seleccionarDestino(u: Ubicacion) {
+    this.ubicacionDestino = u;
+    this.form.patchValue({ inputDestino: u.codigo });
+    this.showDestDropdown = false;
+    this.verificarCapacidadDestino();
+  }
+
+  // --- VALIDACIONES DE NEGOCIO ---
+
+  verificarStockOrigen() {
+    if (this.productoSeleccionado && this.ubicacionOrigen) {
+      // Buscamos inventario específico
+      this.inventarioService.listar().subscribe(invs => {
+         const item = invs.find(i => 
+             i.producto.idProducto === this.productoSeleccionado?.idProducto && 
+             i.ubicacion.idUbicacion === this.ubicacionOrigen?.idUbicacion
+         );
+         this.stockEnOrigen = item ? item.cantidad : 0;
+         
+         // Validar maximo en el input
+         this.form.get('cantidad')?.setValidators([
+             Validators.required, 
+             Validators.min(1), 
+             Validators.max(this.stockEnOrigen)
+         ]);
+         this.form.get('cantidad')?.updateValueAndValidity();
+      });
     }
+  }
 
-    if (this.form.invalid || !this.productoSeleccionado || !this.ubicacionOrigenSeleccionada || !this.ubicacionDestinoSeleccionada) {
+  verificarCapacidadDestino() {
+    if (this.ubicacionDestino) {
+        this.capacidadEnDestino = this.ubicacionDestino.capacidadMaxima;
+        this.ocupadoEnDestino = this.ubicacionDestino.ocupadoActual;
+    }
+  }
+
+  // 💡 VALIDACIÓN DE CATEGORÍA
+  esCategoriaValida(): boolean {
+    if (!this.productoSeleccionado || !this.ubicacionDestino) return true; // No validar si falta data
+    
+    const zona = this.ubicacionDestino.zona;
+    const catProducto = this.productoSeleccionado.categoria;
+
+    // Si la zona no tiene lista de categorías o la categoría del producto no está en la lista
+    if (zona.categoriasAdmitidas && !zona.categoriasAdmitidas.includes(catProducto)) {
+        return false;
+    }
+    return true;
+  }
+
+  resetUbicaciones() {
+      this.ubicacionOrigen = null;
+      this.ubicacionDestino = null;
+      this.stockEnOrigen = 0;
+      this.form.patchValue({ inputOrigen: '', inputDestino: '', cantidad: 1 });
+  }
+
+  // --- UTILS ---
+  validarFechaNoFutura(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) return null;
+      const fecha = new Date(control.value);
+      fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
+      fecha.setHours(0,0,0,0);
+      return fecha > new Date() ? { fechaFutura: true } : null;
+    };
+  }
+
+  cerrarDropdowns() {
+      setTimeout(() => {
+        this.showProdDropdown = false;
+        this.showOrigDropdown = false;
+        this.showDestDropdown = false;
+      }, 200);
+  }
+
+  // --- GUARDAR ---
+
+  guardar() {
+    if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.showModal('Revisar los datos del formulario antes de continuar.', 'Datos incompletos');
+      this.modalService.open({ title: 'Datos Incompletos', message: 'Verifique los campos requeridos.', confirmText: 'Ok' });
       return;
     }
 
-    const raw = this.form.getRawValue();
+    if (!this.esCategoriaValida()) {
+       this.modalService.open({ 
+           title: 'Error de Categoría', 
+           message: `La zona '${this.ubicacionDestino?.zona.nombre}' no admite productos de categoría '${this.productoSeleccionado?.categoria}'.`, 
+           confirmText: 'Entendido' 
+       });
+       return;
+    }
+
+    this.saving = true;
+    const raw = this.form.value;
+
     const payload = {
       producto: this.productoSeleccionado,
-      ubicacionOrigen: { idUbicacion: Number(raw.ubicacionOrigenId) },
-      ubicacionDestino: { idUbicacion: Number(raw.ubicacionDestinoId) },
+      ubicacionOrigen: this.ubicacionOrigen,
+      ubicacionDestino: this.ubicacionDestino,
       cantidad: Number(raw.cantidad),
       estado: raw.estado,
-      fecha: raw.fecha ? new Date(raw.fecha) : null
+      fecha: new Date(raw.fecha)
     };
 
-    const request$ = this.editMode
-      ? this.movimientosService.actualizar({
-          ...payload,
-          idMovimientoInventario: this.movimientoId
-        })
-      : this.movimientosService.crear(payload);
-
-    request$.subscribe({
+    this.movimientosService.crear(payload).subscribe({
       next: () => {
-        this.showModal('Movimiento de inventario guardado correctamente.', 'Operacion exitosa', () => {
-          this.router.navigate(['/dashboard/movimientosInventario']);
-        });
+        this.saving = false;
+        this.modalService.open({ title: 'Éxito', message: 'Movimiento registrado.', confirmText: 'Ok', onConfirm: () => this.cancelar() });
       },
-      error: () => {
-        this.showModal('Ocurrio un error al guardar el movimiento. Intente nuevamente.', 'Error');
+      error: (err) => {
+        this.saving = false;
+        console.error(err);
+        this.modalService.open({ title: 'Error', message: 'No se pudo registrar el movimiento.', confirmText: 'Ok' });
       }
     });
   }
 
-  cancelar(): void {
+  cancelar() {
     this.router.navigate(['/dashboard/movimientosInventario']);
   }
-
-  private tryLoadMovimiento(): void {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (!idParam) return;
-
-    const id = Number(idParam);
-    if (!id) return;
-
-    this.editMode = true;
-    this.movimientoId = id;
-    this.movimientosService.buscarPorId(id).subscribe({
-      next: movimiento => this.patchFormForEdit(movimiento),
-      error: () => this.showModal('No se pudo cargar el movimiento solicitado.', 'Error', () => this.cancelar())
-    });
-  }
-
-  private patchFormForEdit(movimiento: MovimientoInventario): void {
-    const fecha = movimiento.fecha ? this.formatDate(new Date(movimiento.fecha)) : '';
-  const origenId = this.extractUbicacionId(movimiento.ubicacionOrigen);
-  const destinoId = this.extractUbicacionId(movimiento.ubicacionDestino);
-  const productoId = movimiento.producto?.idProducto ?? (movimiento.producto as any)?.id ?? null;
-
-    this.form.patchValue({
-      idMovimientoInventario: movimiento.idMovimientoInventario ?? 0,
-      productoId: productoId ? productoId.toString() : '',
-      ubicacionOrigenId: origenId,
-      ubicacionDestinoId: destinoId,
-      cantidad: movimiento.cantidad,
-        estado: this.estados.includes(movimiento.estado as MovimientoInventarioEstado)
-          ? (movimiento.estado as MovimientoInventarioEstado)
-          : MovimientoInventarioEstado.REUBICACION,
-      fecha
-    }, { emitEvent: false });
-    this.form.get('fecha')?.updateValueAndValidity();
-
-    this.productoSeleccionado = movimiento.producto ?? null;
-    if (productoId) {
-      this.form.get('productoId')?.setValue(productoId.toString(), { emitEvent: false });
-    }
-
-    if (origenId) {
-      this.lookupUbicacion(origenId)
-        .pipe(take(1))
-        .subscribe({
-          next: (ubicacion: Ubicacion) => (this.ubicacionOrigenSeleccionada = ubicacion),
-          error: () => {
-            this.ubicacionOrigenSeleccionada = null;
-            this.ubicacionOrigenError = 'Ubicacion no encontrada';
-          }
-        });
-    }
-    if (destinoId) {
-      this.lookupUbicacion(destinoId)
-        .pipe(take(1))
-        .subscribe({
-          next: (ubicacion: Ubicacion) => (this.ubicacionDestinoSeleccionada = ubicacion),
-          error: () => {
-            this.ubicacionDestinoSeleccionada = null;
-            this.ubicacionDestinoError = 'Ubicacion no encontrada';
-          }
-        });
-    }
-  }
-
-  private setupProductoLookup(): void {
-  const control = this.form.get('productoId');
-    if (!control) return;
-
-    control.valueChanges.pipe(
-      debounceTime(400),
-      distinctUntilChanged(),
-      tap(() => {
-        this.productoError = '';
-      }),
-      switchMap(value => {
-        const id = Number(value);
-        if (!id) {
-          this.productoSeleccionado = null;
-          if (value) {
-            this.productoError = 'Ingrese un ID valido';
-          }
-          return of(null as Producto | null);
-        }
-        return this.productoService.buscarPorId(id).pipe(
-          tap(producto => {
-            this.productoSeleccionado = producto;
-          }),
-          catchError(() => {
-            this.productoSeleccionado = null;
-            this.productoError = 'Producto no encontrado';
-            return of(null as Producto | null);
-          })
-        );
-      }),
-      takeUntil(this.destroy$)
-    ).subscribe();
-  }
-
-  private setupUbicacionLookup(controlName: 'ubicacionOrigenId' | 'ubicacionDestinoId'): void {
-    const control = this.form.get(controlName);
-    if (!control) return;
-
-    control.valueChanges.pipe(
-      debounceTime(400),
-      distinctUntilChanged(),
-      tap(() => {
-        if (controlName === 'ubicacionOrigenId') {
-          this.ubicacionOrigenError = '';
-        } else {
-          this.ubicacionDestinoError = '';
-        }
-      }),
-      switchMap(value => {
-        const id = Number(value);
-        if (!id) {
-          if (controlName === 'ubicacionOrigenId') {
-            this.ubicacionOrigenSeleccionada = null;
-          } else {
-            this.ubicacionDestinoSeleccionada = null;
-          }
-          if (value) {
-            if (controlName === 'ubicacionOrigenId') {
-              this.ubicacionOrigenError = 'Ingrese un ID valido';
-            } else {
-              this.ubicacionDestinoError = 'Ingrese un ID valido';
-            }
-          }
-          return of(null as Ubicacion | null);
-        }
-        return this.lookupUbicacion(value).pipe(
-          tap(ubicacion => {
-            if (ubicacion) {
-              if (controlName === 'ubicacionOrigenId') {
-                this.ubicacionOrigenSeleccionada = ubicacion;
-              } else {
-                this.ubicacionDestinoSeleccionada = ubicacion;
-              }
-            }
-          }),
-          catchError(() => {
-            if (controlName === 'ubicacionOrigenId') {
-              this.ubicacionOrigenSeleccionada = null;
-              this.ubicacionOrigenError = 'Ubicacion no encontrada';
-            } else {
-              this.ubicacionDestinoSeleccionada = null;
-              this.ubicacionDestinoError = 'Ubicacion no encontrada';
-            }
-            return of(null as Ubicacion | null);
-          })
-        );
-      }),
-      takeUntil(this.destroy$)
-    ).subscribe();
-  }
-
-  private setupFechaLookup(): void {
-    const control = this.form.get('fecha');
-    if (!control) return;
-
-    control.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(value => {
-        if (!value) {
-          return;
-        }
-
-        if (value > this.maxFecha) {
-          control.setErrors({ ...(control.errors ?? {}), fechaFutura: true });
-        } else if (control.errors?.['fechaFutura']) {
-          const cleanedErrors = { ...(control.errors ?? {}) } as Record<string, unknown>;
-          delete cleanedErrors['fechaFutura'];
-          control.setErrors(Object.keys(cleanedErrors).length ? cleanedErrors : null);
-        }
-      });
-  }
-
-  private lookupUbicacion(value: string | number): Observable<Ubicacion> {
-    const id = Number(value);
-    return this.ubicacionService.buscarPorId(id);
-  }
-
-  private extractUbicacionId(ubicacion: { idUbicacion?: number; id_ubicacion?: number } | undefined | null): string {
-    if (!ubicacion) return '';
-    const id = ubicacion.id_ubicacion ?? ubicacion.idUbicacion;
-    return id ? id.toString() : '';
-  }
-
-  private formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
-    const day = `${date.getDate()}`.padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  private showModal(message: string, title: string, onConfirm?: () => void): void {
-    this.modalService.open({ title, message, confirmText: 'Aceptar', onConfirm });
-  }
-
 }

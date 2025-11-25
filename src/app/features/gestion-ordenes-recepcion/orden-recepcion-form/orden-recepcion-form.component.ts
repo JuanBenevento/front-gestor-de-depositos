@@ -215,35 +215,40 @@ export class OrdenRecepcionFormComponent implements OnInit {
   guardar() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.modalService.open({ title: 'Error', message: 'Verifique los campos del formulario.', confirmText: 'Ok' });
+      this.modalService.open({ title: 'Error', message: 'Verifique los campos.', confirmText: 'Ok' });
       return;
     }
 
     this.saving = true;
     const formValue = this.form.value;
     
-    const ordenModelo: OrdenRecepcion = {
+    // Construcción del objeto OrdenRecepcion (DTO para backend)
+    const dtoBackend: OrdenRecepcion = {
         id_orden_recepcion: this.idOrden || undefined,
-        proveedor: { id_proveedor: formValue.idProveedor } as Proveedor,
+        proveedor: { id_proveedor: formValue.idProveedor } as any, // Solo necesitamos ID
         fecha: formValue.fecha,
         estado: formValue.estado,
         detalleRecepcionDTOList: formValue.detalles.map((d: any) => ({
-            idDetalleRecepcion: d.idDetalleRecepcion,
+            idDetalleRecepcion: d.idDetalleRecepcion, // Enviamos ID si existe (aunque el back lo borrará y recreará)
             cantidad: d.cantidad,
-            producto: d.productoSeleccionado, 
-            codigoSku: d.productoSeleccionado.codigoSku,
-            idOrdenRecepcion: this.idOrden || undefined
+            producto: d.productoSeleccionado,
+            codigoSku: d.productoSeleccionado.codigoSku
         }))
     };
-    
+
     const obs = this.editMode
-      ? this.ordenRecepcionService.editar(this.idOrden, ordenModelo.estado) 
-      : this.ordenRecepcionService.crear(ordenModelo as any); 
+      ? this.ordenRecepcionService.editar(this.idOrden, dtoBackend) // 💡 Ahora pasamos todo el objeto
+      : this.ordenRecepcionService.crear(dtoBackend); 
 
     obs.subscribe({
       next: () => {
         this.saving = false;
-        this.modalService.open({ title: 'Éxito', message: 'Orden procesada correctamente.', confirmText: 'Ok', onConfirm: () => this.router.navigate(['/dashboard/ordenesRecepcion']) });
+        this.modalService.open({ 
+            title: 'Éxito', 
+            message: this.editMode ? 'Orden actualizada y stock ajustado.' : 'Orden creada.', 
+            confirmText: 'Ok', 
+            onConfirm: () => this.router.navigate(['/dashboard/ordenesRecepcion']) 
+        });
       },
       error: (err) => {
         this.saving = false;
@@ -251,6 +256,7 @@ export class OrdenRecepcionFormComponent implements OnInit {
         let msg = 'Error desconocido.';
         if (err.error && typeof err.error === 'string') msg = err.error;
         else if (err.error?.message) msg = err.error.message;
+        
         this.modalService.open({ title: 'Error al Guardar', message: msg, confirmText: 'Cerrar' });
       }
     });

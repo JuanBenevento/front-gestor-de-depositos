@@ -1,0 +1,146 @@
+/* Reutilizamos estilos base oscuros */
+.form-container {
+  background-color: #0f172a;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  max-width: 600px;
+  margin: 0 auto;
+  color: #e2e8f0;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+input, select {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: #3b82f6;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+/* DROPDOWN AUTOCOMPLETE */
+.search-container { position: relative; }
+
+.custom-dropdown {
+  position: absolute;
+  top: 75px; /* Ajustar segun altura input label */
+  left: 0; right: 0;
+  background: #1e293b;
+  border: 1px solid #475569;
+  list-style: none;
+  padding: 0; margin: 0;
+  max-height: 200px; overflow-y: auto;
+  z-index: 100;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.custom-dropdown li {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #334155;
+}
+.custom-dropdown li:hover { background: #3b82f6; color: white; }
+
+.dd-title { font-weight: bold; display: block; }
+.dd-subtitle { font-size: 0.8rem; color: #94a3b8; }
+.custom-dropdown li:hover .dd-subtitle { color: #e2e8f0; }
+
+/* BADGE CATEGORIA */
+.info-badge {
+  margin-top: 8px;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 8px;
+  border-radius: 6px;
+  border-left: 3px solid #3b82f6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.badge-cat {
+  background: #3b82f6;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* INFO TEXT */
+.info-text {
+  font-size: 0.85rem;
+  color: #f59e0b; /* Amber warning */
+  margin-top: 5px;
+}
+
+/* BARRA CAPACIDAD */
+.capacity-bar {
+  margin-top: 8px;
+}
+.progress {
+  background: #334155;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.bar {
+  background: #10b981; /* Verde */
+  height: 100%;
+  transition: width 0.3s;
+}
+
+/* BOTONES */
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+}
+button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  flex: 1;
+}
+button[type="submit"] {
+  background: #2563eb;
+  color: white;
+}
+button[type="submit"]:disabled {
+  background: #475569;
+  cursor: not-allowed;
+}
+.cancel-btn {
+  background: transparent;
+  border: 1px solid #475569;
+  color: #94a3b8;
+}
+.cancel-btn:hover {
+  border-color: white;
+  color: white;
+}

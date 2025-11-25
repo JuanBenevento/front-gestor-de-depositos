@@ -27,7 +27,6 @@
     <table class="user-table">
       <thead>
         <tr>
-          <th>ID</th>
           <th>Nombre</th>
           <th>Telefono</th>
           <th>Email</th>
@@ -37,7 +36,6 @@
       <tbody>
         @for (c of clientes; track c.idCliente) {
           <tr>
-            <td>{{ c.idCliente }}</td>
             <td>{{ c.nombre }}</td>
             <td>{{ c.telefono }}</td>
             <td>{{ c.email }}</td>

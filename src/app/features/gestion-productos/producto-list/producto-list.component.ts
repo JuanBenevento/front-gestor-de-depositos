@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ProductoService } from '../../../core/services/producto.service';
 import { Producto } from '../../../core/models/Producto/producto.model';
 import { ModalService } from '../../../shared/services/modal.service';
+import { CategoriasProducto } from '../../../core/enums/categoriasProductos.model';
 
 @Component({
   selector: 'app-producto-list',
@@ -21,7 +22,10 @@ export class ProductoListComponent implements OnInit {
 
   skuBuscar: string = '';
   nombreBuscar: string = '';
+  categoriaBuscar: string | null = null;
   filtrado = false;
+
+  categoriasOpciones = Object.values(CategoriasProducto);
 
   constructor(
     private productoService: ProductoService,
@@ -38,6 +42,7 @@ export class ProductoListComponent implements OnInit {
     this.error = '';
     this.skuBuscar = '';
     this.nombreBuscar = '';
+    this.categoriaBuscar = null;
     this.filtrado = false;
 
     this.productoService.listar().subscribe({
@@ -82,6 +87,7 @@ export class ProductoListComponent implements OnInit {
   aplicarFiltros(): void {
     const sku = this.skuBuscar?.toLowerCase().trim();
     const nombre = this.nombreBuscar?.toLowerCase().trim();
+    const categoria = this.categoriaBuscar;
 
     let lista = this.productos;
 
@@ -93,14 +99,19 @@ export class ProductoListComponent implements OnInit {
       lista = lista.filter(p => p.nombre?.toLowerCase().includes(nombre));
     }
 
+    if (categoria) {
+      lista = lista.filter(p => p.categoria === categoria);
+    }
+
     this.productosFiltrados = lista;
 
-    this.filtrado = !!sku || !!nombre; 
+    this.filtrado = !!sku || !!nombre || !!categoria; 
   }
 
   limpiarFiltros(): void {
     this.skuBuscar = '';
     this.nombreBuscar = '';
+    this.categoriaBuscar = null
     this.aplicarFiltros(); 
   }
 

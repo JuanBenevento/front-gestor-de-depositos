@@ -1,72 +1,89 @@
 <div class="form-container">
-  <h2>{{ editMode ? "Editar Inventario" : "Nuevo Inventario" }}</h2>
+  <h2>{{ editMode ? "Editar Inventario" : "Nuevo Ajuste de Inventario" }}</h2>
 
   <form [formGroup]="form" (ngSubmit)="guardar()">
 
-    <!-- AUTOCOMPLETE PRODUCTO -->
-    <div class="form-group">
+    <!-- 1. SELECCIÓN DE PRODUCTO (Autocomplete) -->
+    <div class="form-group search-container">
       <label for="productoInput">Producto</label>
-
       <input
         id="productoInput"
         type="text"
         formControlName="productoInput"
         placeholder="Buscar por nombre o código SKU..."
         autocomplete="off"
+        [class.invalid]="form.get('producto.idProducto')?.invalid && form.get('productoInput')?.touched"
       />
 
-      <!-- LISTA DE RESULTADOS -->
-      <ul class="autocomplete-list" *ngIf="productosFiltrados.length > 0">
-        <li
-          *ngFor="let p of productosFiltrados"
-          (click)="seleccionarProducto(p)"
-        >
-          {{ p.nombre }} ({{ p.codigoSku }})
+      <!-- Lista desplegable -->
+      <ul class="custom-dropdown" *ngIf="productosAutocomplete.length > 0">
+        <li *ngFor="let p of productosAutocomplete" (click)="seleccionarProducto(p)">
+          <span class="dd-title">{{ p.nombre }}</span>
+          <span class="dd-subtitle">SKU: {{ p.codigoSku }} | Cat: {{ p.categoria }}</span>
         </li>
       </ul>
 
-      <!-- ERROR -->
-      <div class="error" *ngIf="form.get('producto.idProducto')?.invalid && form.get('producto.idProducto')?.touched">
-        Debe seleccionar un producto válido.
+      <!-- Badge de Info del Producto Seleccionado -->
+      <div class="info-badge" *ngIf="productoSeleccionado">
+        <span class="label">Categoría:</span>
+        <span class="value badge-cat">{{ productoSeleccionado.categoria }}</span>
+      </div>
+
+      <div class="error-message" *ngIf="form.get('producto.idProducto')?.invalid && form.get('productoInput')?.touched">
+        Debe seleccionar un producto.
       </div>
     </div>
 
-    <!-- UBICACIÓN -->
+    <!-- 2. SELECCIÓN DE UBICACIÓN (Filtrada) -->
     <div class="form-group" formGroupName="ubicacion">
       <label for="ubicacion">Ubicación</label>
+      
+      <select id="ubicacion" formControlName="idUbicacion" 
+              [class.invalid]="form.get('ubicacion.idUbicacion')?.invalid && form.get('ubicacion.idUbicacion')?.touched">
+        <option [ngValue]="null" disabled>
+          {{ productoSeleccionado ? '-- Seleccione Ubicación --' : '-- Primero seleccione un producto --' }}
+        </option>
 
-      <select id="ubicacion" formControlName="idUbicacion">
-        <option [ngValue]="null">Seleccione una ubicación...</option>
-
-        <option *ngFor="let u of ubicaciones" [ngValue]="u.idUbicacion">
-          {{ u.codigo }} — Cap: {{ u.capacidadMaxima }} / Ocupado: {{ u.ocupadoActual }}
+        <option *ngFor="let u of ubicacionesFiltradas" [ngValue]="u.idUbicacion">
+          {{ u.codigo }} (Zona: {{ u.zona.nombre }}) - Disp: {{ u.capacidadMaxima - u.ocupadoActual }}
         </option>
       </select>
 
-      <div class="info" *ngIf="capacidadDisponible > 0">
-        Capacidad disponible: <strong>{{ capacidadDisponible }}</strong>
+      <div class="info-text" *ngIf="productoSeleccionado && ubicacionesFiltradas.length === 0">
+        ⚠️ No hay ubicaciones habilitadas para la categoría <strong>{{ productoSeleccionado.categoria }}</strong>.
+      </div>
+
+      <div class="error-message" *ngIf="form.get('ubicacion.idUbicacion')?.invalid && form.get('ubicacion.idUbicacion')?.touched">
+        Requerido.
       </div>
     </div>
 
-    <!-- CANTIDAD -->
+    <!-- 3. CANTIDAD -->
     <div class="form-group">
       <label for="cantidad">Cantidad</label>
-
       <input
         id="cantidad"
         type="number"
         formControlName="cantidad"
         min="1"
+        [class.invalid]="form.get('cantidad')?.invalid && form.get('cantidad')?.touched"
       />
 
-      <div class="error" *ngIf="form.get('cantidad')?.hasError('capacidad')">
-        La cantidad excede la capacidad disponible.
+      <div class="capacity-bar" *ngIf="form.get('ubicacion.idUbicacion')?.value">
+        <small>Capacidad disponible: {{ capacidadDisponible }}</small>
+        <div class="progress">
+          <div class="bar" [style.width.%]="(ocupadoActual / capacidadMaxima) * 100"></div>
+        </div>
+      </div>
+
+      <div class="error-message" *ngIf="form.get('cantidad')?.hasError('capacidad')">
+        La cantidad excede el espacio disponible ({{ capacidadDisponible }}).
       </div>
     </div>
 
     <!-- BOTONES -->
     <div class="button-group">
-      <button type="submit">Guardar</button>
+      <button type="submit" [disabled]="form.invalid">Guardar</button>
       <button type="button" class="cancel-btn" (click)="cancelar()">Cancelar</button>
     </div>
 

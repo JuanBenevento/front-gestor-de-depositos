@@ -76,7 +76,6 @@
 
             @if (m.estado === 'REUBICACION') {
               <td class="actions">
-                <button [routerLink]="['/dashboard/movimientosInventario/editar', m.idMovimientoInventario]" class="btn edit-btn">Editar</button>
                 <button (click)="eliminar(m.idMovimientoInventario!)" class="btn delete-btn">Eliminar</button>
             </td>
             }@else {

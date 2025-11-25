@@ -17,14 +17,12 @@ import { Producto } from '../../../core/models/Producto/producto.model';
 export class MovimientosList implements OnInit {
 
   movimientos: MovimientoInventario[] = [];
-  movimientosOriginal: MovimientoInventario[] = []; // 💡 NUEVO: Guardar la lista original sin filtrar
+  movimientosOriginal: MovimientoInventario[] = []; 
   loading = true;
   error = '';
   estadoBuscar: string = '';
   filtrado = false;
   fechaBuscar: string = '';
-  // productos: Producto[] = []; // Ya no se necesitan si filtramos directamente los movimientos
-  // productosFiltrados: Producto[] = []; // Ya no se necesitan
   nombreBuscar: string = '';
 
   constructor(
@@ -41,9 +39,9 @@ ngOnInit(): void {
     this.loading = true;
     this.service.listar().subscribe({
       next: (data: MovimientoInventario[]) => {
-        this.movimientosOriginal = data; // 💡 Guardar la data original
-        this.movimientos = data;        // Mostrar la data inicial
-        this.aplicarFiltros();          // Re-aplicar filtros si hay alguno pendiente
+        this.movimientosOriginal = data; 
+        this.movimientos = data;        
+        this.aplicarFiltros();       
         this.loading = false;
       },
       error: (err) => {
@@ -84,44 +82,37 @@ ngOnInit(): void {
 
   limpiarFiltros(): void {
     this.estadoBuscar = '';
-    this.nombreBuscar = ''; // 💡 Limpiar también el campo nombre
-    this.fechaBuscar = '';  // 💡 Limpiar también el campo fecha
+    this.nombreBuscar = ''; 
+    this.fechaBuscar = '';  
     this.filtrado = false;
-    this.aplicarFiltros(); // 💡 Llamar a aplicarFiltros para resetear la lista
+    this.aplicarFiltros(); 
   }
 
   aplicarFiltros(): void {
-    // 1. Empezar con la lista original de movimientos
     let movimientosFiltrados = this.movimientosOriginal;
 
     this.filtrado = !!this.estadoBuscar || !!this.nombreBuscar || !!this.fechaBuscar;
 
-    // 1. Filtrar por Estado de Movimiento (si estadoBuscar tiene valor)
     if (this.estadoBuscar) {
       const estadoBuscado = this.estadoBuscar.toLowerCase().trim();
       movimientosFiltrados = movimientosFiltrados.filter(m => 
-        m.estado?.toLowerCase() === estadoBuscado // 💡 CLAVE: Comparación directa por estado
+        m.estado?.toLowerCase() === estadoBuscado 
       );
     }
 
-    // 3. Filtrar por Nombre de Producto (si nombreBuscar tiene valor)
     if (this.nombreBuscar) {
       const nombreBuscado = this.nombreBuscar.toLowerCase().trim();
       movimientosFiltrados = movimientosFiltrados.filter(m =>
-        m.producto?.nombre?.toLowerCase().includes(nombreBuscado) // 💡 CLAVE: Filtra por la propiedad anidada 'producto.nombre'
+        m.producto?.nombre?.toLowerCase().includes(nombreBuscado) 
       );
     }
     
-    // 4. Filtrar por Fecha (si fechaBuscar tiene valor)
     if (this.fechaBuscar) {
-      // Necesitarás una lógica más robusta para comparar fechas,
-      // pero el filtrado básico por string de fecha (YYYY-MM-DD) es:
       movimientosFiltrados = movimientosFiltrados.filter(m => 
         m.fecha && new Date(m.fecha).toISOString().substring(0, 10) === this.fechaBuscar
       );
     }
 
-    // 5. Asignar la lista filtrada a la propiedad que se muestra en la tabla
     this.movimientos = movimientosFiltrados;
   }
 }

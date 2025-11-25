@@ -25,7 +25,7 @@ export class OrdenDespachoService {
   }
 
   actualizar(id: number, orden: OrdenDespacho): Observable<OrdenDespacho> {
-    return this.http.put<OrdenDespacho>(`${this.apiUrl}/actualizar/${id}`, orden);
+    return this.http.put<OrdenDespacho>(`${this.apiUrl}/actualizarOrdenCompleta?id=${id}`, orden);
   }
 
   eliminar(id: number): Observable<string> {

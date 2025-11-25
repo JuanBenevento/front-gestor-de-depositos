@@ -55,7 +55,6 @@
     <table class="user-table">
       <thead>
         <tr>
-          <th>ID</th>
           <th>Fecha</th>
           <th>Estado</th>
           <th>Proveedor</th>
@@ -65,9 +64,7 @@
       <tbody>
         @for (o of ordenesFiltradas; track o.id_orden_recepcion) {
           <tr>
-            <td>{{ o.id_orden_recepcion }}</td>
             <td>{{ o.fecha | date: 'dd/MM/yyyy' }}</td>
-
             <td>
               <span class="badge" 
                     [class.badge-success]="o.estado === EstadoDeOrden.COMPLETADA"
