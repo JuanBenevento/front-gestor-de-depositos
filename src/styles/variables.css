@@ -1,0 +1,158 @@
+/* ============================================================
+   VARIABLES CSS - Colores, Sombras, Radios, Espaciado
+============================================================ */
+
+:root {
+  /* Fuente */
+  --font-family-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+  /* Colores de fondo */
+  --color-bg-body: #02050d;
+  --color-bg-container: rgba(10, 20, 40, 0.8);
+  --color-surface: #0b1628;
+  --color-surface-dark: #0d1b2d;
+  --color-surface-darker: rgba(8, 15, 30, 0.8);
+  --color-surface-muted: rgba(15, 30, 55, 0.6);
+  --color-surface-hover: rgba(0, 170, 255, 0.14);
+
+  /* Bordes */
+  --color-border: rgba(0, 170, 255, 0.15);
+  --color-border-light: rgba(0, 170, 255, 0.12);
+  --color-border-medium: rgba(0, 170, 255, 0.25);
+  --color-border-strong: rgba(0, 170, 255, 0.3);
+  --color-border-neutral: #334155;
+
+  /* Tipografía */
+  --color-text-primary: #dce8f9;
+  --color-text-secondary: #b8c6dd;
+  --color-text-light: #e3f3ff;
+  --color-text-lighter: #e9f2ff;
+  --color-text-muted: #94a3b8;
+
+  /* Paleta principal */
+  --color-primary: #0d6efd;
+  --color-primary-hover: #0a58ca;
+  --color-primary-light: #4a97ff;
+  --color-primary-dark: #0a3fa6;
+  --color-primary-blue: #00aaff;
+  --color-primary-tint: #3b82f6;
+
+  /* Estados */
+  --color-success: #117a39;
+  --color-success-hover: #0f5f2e;
+  --color-success-border: #1abf5b;
+
+  --color-danger: #b82230;
+  --color-danger-hover: #931b27;
+  --color-danger-border: #ff5566;
+  --color-danger-light: #ef4444;
+
+  --color-secondary: #3b3f47;
+  --color-secondary-hover: #2f333a;
+  --color-secondary-border: rgba(255, 255, 255, 0.15);
+
+  --color-info: #a0b8ff;
+  --color-warning: #f0ad4e;
+
+  /* Border radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 18px;
+
+  /* Sombras */
+  --shadow-base: 0 0 22px rgba(0, 0, 0, 0.6);
+  --shadow-xs: 0 2px 6px rgba(15, 23, 42, 0.08);
+  --shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 12px 32px rgba(15, 23, 42, 0.12);
+  --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.16);
+  --shadow-focus: 0 0 6px rgba(0, 170, 255, 0.45);
+  --shadow-focus-primary: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  --shadow-text: 0 0 8px rgba(0, 153, 255, 0.45);
+
+  /* Espaciado */
+  --spacing-xs: 0.35rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 0.75rem;
+  --spacing-lg: 1rem;
+  --spacing-xl: 1.5rem;
+  --spacing-2xl: 2rem;
+
+  /* Transiciones */
+  --transition-fast: 0.15s ease-in-out;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+
+  /* Backdrop */
+  --backdrop-blur: blur(6px);
+}
+
+/* Reset y configuración base */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--color-bg-body);
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+:host {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: var(--color-bg-body);
+}
+
+/* Tipografía base */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0 var(--spacing-xl);
+  font-weight: 600;
+  color: var(--color-text-light);
+}
+
+h2 {
+  font-size: 1.8rem;
+  text-align: center;
+  letter-spacing: 1px;
+  text-shadow: var(--shadow-text);
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+h4 {
+  margin: 0;
+  color: var(--color-text-light);
+}
+
+p {
+  margin: 0 0 var(--spacing-md);
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+label {
+  display: inline-block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}

@@ -1,0 +1,224 @@
+/* ============================================================
+   LAYOUT - Contenedores principales y estructura
+============================================================ */
+
+/* Contenedores principales */
+.user-management-container,
+.form-container,
+.list-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: var(--spacing-2xl);
+  background: var(--color-bg-container);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-base);
+  backdrop-filter: var(--backdrop-blur);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-base);
+}
+
+.form-container {
+  max-width: 550px;
+}
+
+.login-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: var(--spacing-2xl);
+  background: var(--color-bg-container);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+/* Buscador */
+.search-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: var(--spacing-lg);
+  align-items: center;
+}
+
+.search-group {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.search-group input,
+.search-group select {
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  width: 220px;
+  font-size: 14px;
+  background: var(--color-surface-dark);
+  border: 1px solid var(--color-border-medium);
+  color: var(--color-text-primary);
+}
+
+.search-group input:focus,
+.search-group select:focus {
+  outline: none;
+  border-color: var(--color-primary-blue);
+  box-shadow: var(--shadow-focus);
+}
+
+.search-group button {
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-primary-light);
+}
+
+.search-group button:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* Table filter / List header */
+.table-filter,
+.list-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Page section */
+main,
+.page-section {
+  width: 100%;
+  padding: var(--spacing-md);
+}
+
+/* Helpers */
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: var(--spacing-xs); }
+.mb-2 { margin-bottom: var(--spacing-sm); }
+.mb-3 { margin-bottom: var(--spacing-md); }
+.mb-4 { margin-bottom: var(--spacing-lg); }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: var(--spacing-xs); }
+.mt-2 { margin-top: var(--spacing-sm); }
+.mt-3 { margin-top: var(--spacing-md); }
+.mt-4 { margin-top: var(--spacing-lg); }
+
+/* Grid helpers */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+}
+
+/* Flex helpers */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gap-1 { gap: var(--spacing-xs); }
+.gap-2 { gap: var(--spacing-sm); }
+.gap-3 { gap: var(--spacing-md); }
+.gap-4 { gap: var(--spacing-lg); }
+
+/* Responsive */
+@media (min-width: 640px) {
+  .search-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .search-group {
+    flex: 1 1 calc(50% - 0.75rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .user-management-container,
+  .form-container,
+  .list-container {
+    padding: 2.5rem;
+    margin: 2.5rem auto;
+  }
+
+  .table-filter,
+  .list-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-management-container,
+  .form-container,
+  .list-container {
+    padding: var(--spacing-lg);
+    margin: var(--spacing-lg) var(--spacing-sm);
+    max-width: 95%;
+  }
+  
+  .search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-group {
+    width: 100%;
+  }
+  
+  .search-group input,
+  .search-group select {
+    width: 100%;
+  }
+  
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  h2 {
+    font-size: 1.3rem;
+  }
+  
+  .user-management-container,
+  .form-container,
+  .list-container {
+    margin: var(--spacing-lg) 0.5rem;
+    padding: var(--spacing-md);
+  }
+}

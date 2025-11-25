@@ -1,0 +1,319 @@
+/* ============================================================
+   FORMULARIOS - Inputs, Selects, Textareas, Form Groups
+============================================================ */
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row-2 {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.form-row-2 .form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Inputs, selects, textareas */
+input,
+select,
+textarea {
+  padding: 8px var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  background: var(--color-surface-dark);
+  border: 1px solid var(--color-border-medium);
+  color: #e9f4ff;
+  transition: var(--transition-base);
+  outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-primary-blue);
+  box-shadow: var(--shadow-focus);
+}
+
+input.error,
+select.error,
+textarea.error,
+input.invalid,
+select.invalid,
+textarea.invalid {
+  border-color: var(--color-danger-light);
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background-color: #1a1a2e;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Multi-select */
+.multi-select {
+  height: 120px;
+  padding: 8px;
+  background-color: #0a1322;
+  color: white;
+  border: 1px solid #2a3b55;
+}
+
+.multi-select option {
+  padding: 4px;
+}
+
+.multi-select option:checked {
+  background-color: #0066cc;
+}
+
+/* Input con icono (search container) */
+.search-container {
+  position: relative;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon input {
+  width: 100%;
+  padding-right: 50px;
+}
+
+/* Input group (input + botón) */
+.input-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.input-group input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  flex: 1;
+}
+
+/* Mensajes de error */
+.error-message {
+  color: var(--color-danger-light);
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+/* Indicadores requeridos */
+.required-indicator {
+  color: var(--color-danger);
+}
+
+.required-note {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* Autocomplete */
+.autocomplete-list {
+  position: relative;
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-sm);
+  max-height: 180px;
+  overflow-y: auto;
+  z-index: 10;
+  list-style: none;
+  padding: 0;
+  margin-top: 0.25rem;
+}
+
+.autocomplete-list li {
+  padding: 8px var(--spacing-sm);
+  cursor: pointer;
+  transition: var(--transition-base);
+  color: var(--color-text-primary);
+}
+
+.autocomplete-list li:hover {
+  background: var(--color-surface-hover);
+}
+
+/* Dropdown custom */
+.custom-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
+}
+
+.custom-dropdown li {
+  padding: var(--spacing-sm) var(--spacing-md);
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border-neutral);
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-dropdown li:last-child {
+  border-bottom: none;
+}
+
+.custom-dropdown li:hover {
+  background-color: var(--color-primary-tint);
+  color: white;
+}
+
+.dd-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.dd-subtitle {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.custom-dropdown li:hover .dd-subtitle {
+  color: #e2e8f0;
+}
+
+.create-option {
+  color: #60a5fa;
+  font-style: italic;
+  background-color: rgba(30, 41, 59, 0.5);
+  border-top: 2px solid #475569;
+}
+
+/* Card de proveedor seleccionado */
+.proveedor-card-selected {
+  display: flex;
+  align-items: center;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid #059669;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  gap: var(--spacing-md);
+  margin-top: 5px;
+}
+
+.prov-icon {
+  font-size: 1.8rem;
+}
+
+.prov-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.prov-name {
+  font-weight: bold;
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.prov-meta {
+  font-size: 0.9rem;
+  color: #a7f3d0;
+}
+
+/* Info cards (proveedor, entidad) */
+.proveedor-info-card,
+.entity-info-card {
+  margin-top: 1rem;
+  background: var(--color-bg-container);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.proveedor-info-header,
+.entity-info-header {
+  background: rgba(15, 30, 55, 0.8);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.proveedor-info-body,
+.entity-info-body {
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.proveedor-info-item .label,
+.entity-info-item .label {
+  font-size: 0.875rem;
+  color: #8ca3c2;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.proveedor-info-item .value,
+.entity-info-item .value {
+  font-weight: 600;
+  color: #eaf4ff;
+}
+
+/* Divider */
+.divider {
+  border: 0;
+  border-top: 1px solid var(--color-border-neutral);
+  margin: var(--spacing-xl) 0;
+}
+
+/* Inline group */
+.inline-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .form-row-2 {
+    gap: var(--spacing-xl);
+  }
+
+  .inline-group {
+    flex-direction: row;
+  }
+
+  .proveedor-info-body,
+  .entity-info-body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .form-row-2 {
+    flex-direction: column;
+  }
+}

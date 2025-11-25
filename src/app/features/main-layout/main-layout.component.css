@@ -27,18 +27,17 @@
 .main-content {
   flex: 1;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: stretch;
   overflow: hidden;
 }
 
-/* SIDEBAR - Desktop */
+/* SIDEBAR - contenedor host */
 app-sidebar {
-  flex: 0 0 250px;
-  max-width: 250px;
-  min-width: 250px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  flex: 0 0 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
   z-index: 10;
 }
 
@@ -50,27 +49,45 @@ app-sidebar {
   min-width: 0;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg) var(--spacing-md) calc(var(--spacing-2xl) + var(--spacing-sm));
+}
+
+.content-area > * {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
 }
 
 /* RESPONSIVE - MÓVIL */
 @media (max-width: 900px) {
+  .content-area {
+    padding: var(--spacing-lg) var(--spacing-md) calc(var(--spacing-2xl) + var(--spacing-md));
+  }
+
+  .content-area > * {
+    max-width: 100%;
+  }
+}
+
+/* RESPONSIVE - Desktop */
+@media (min-width: 901px) {
   .main-content {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  app-sidebar {
+    flex: 0 0 250px;
+    max-width: 250px;
+    min-width: 250px;
+    height: 100%;
+    display: flex;
     flex-direction: column;
   }
 
   .content-area {
-    flex: 1;
-    margin-top: 0;
-    min-height: calc(100vh - 60px);
-  }
-
-  /* Overlay cuando sidebar abierto */
-  .main-area.menu-open::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 3500;
-    cursor: pointer;
+    padding: var(--spacing-2xl) var(--spacing-2xl) calc(var(--spacing-2xl) + var(--spacing-lg));
   }
 }

@@ -25,7 +25,13 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles/variables.css",
+              "src/styles/layout.css",
+              "src/styles/navbar.css",
+              "src/styles/buttons.css",
+              "src/styles/form.css",
+              "src/styles/table.css",
+              "src/styles/utilities.css"
             ]
           },
           "configurations": {
@@ -82,7 +88,13 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles/variables.css",
+              "src/styles/layout.css",
+              "src/styles/navbar.css",
+              "src/styles/buttons.css",
+              "src/styles/form.css",
+              "src/styles/table.css",
+              "src/styles/utilities.css"
             ]
           }
         }

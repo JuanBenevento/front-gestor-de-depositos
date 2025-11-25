@@ -1,0 +1,252 @@
+/* ============================================================
+   BOTONES - Todos los estilos de botones del sistema
+============================================================ */
+
+.btn,
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm) 1rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+}
+
+.btn:not(:disabled):hover,
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-xs);
+}
+
+.btn:disabled,
+button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Variantes principales */
+.new-btn,
+.btn-create-info {
+  background-color: var(--color-success);
+  border: 1px solid var(--color-success-border);
+  margin-bottom: var(--spacing-lg);
+}
+
+.new-btn:hover,
+.btn-create-info:hover {
+  background-color: var(--color-success-hover);
+}
+
+.secondary-btn,
+.btn--secondary {
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-secondary-border);
+}
+
+.secondary-btn:hover,
+.btn--secondary:hover {
+  background-color: var(--color-secondary-hover);
+}
+
+.edit-btn,
+.btn--primary {
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-primary-light);
+}
+
+.edit-btn:hover,
+.btn--primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.delete-btn,
+.btn-delete,
+.btn--danger {
+  background-color: var(--color-danger);
+  border: 1px solid var(--color-danger-border);
+}
+
+.delete-btn:hover,
+.btn-delete:hover,
+.btn--danger:hover {
+  background-color: var(--color-danger-hover);
+}
+
+.logout-btn {
+  background-color: var(--color-danger);
+  border: none;
+}
+
+.logout-btn:hover {
+  background-color: var(--color-danger-hover);
+}
+
+/* Botones de formulario */
+.btn-save {
+  background: #2563eb;
+  padding: var(--spacing-sm) var(--spacing-2xl);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+}
+
+.btn-save:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.btn-save:disabled {
+  background: #475569;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-neutral);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+}
+
+.btn-cancel:hover {
+  border-color: #cbd5e1;
+  color: #f1f5f9;
+}
+
+/* Botones utilitarios */
+.small-btn,
+.btn--sm {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.85rem;
+  margin-top: 1rem;
+}
+
+.full-width-btn,
+button.full-width,
+.register-btn {
+  width: 100%;
+}
+
+.btn-add-mini {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--color-primary-tint);
+  color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-add-mini:hover {
+  background-color: #2563eb;
+}
+
+.btn-icon-add {
+  background-color: var(--color-primary-tint);
+  color: white;
+  border: 1px solid var(--color-primary-tint);
+  border-left: none;
+  border-top-right-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
+  width: 45px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-base);
+  padding-bottom: 3px;
+}
+
+.btn-icon-add:hover {
+  background-color: #2563eb;
+}
+
+.btn-delete-row {
+  background: none;
+  border: none;
+  color: var(--color-danger-light);
+  font-size: 1.3rem;
+  cursor: pointer;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-base), color var(--transition-base);
+}
+
+.btn-delete-row:hover {
+  transform: scale(1.1);
+  color: #ff8888;
+}
+
+.btn-add-row {
+  width: 100%;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px dashed var(--color-primary-tint);
+  color: #60a5fa;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  margin-top: var(--spacing-sm);
+  font-weight: 600;
+  transition: var(--transition-base);
+}
+
+.btn-add-row:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+/* Grupos de botones */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: var(--spacing-xl);
+}
+
+.button-group .btn,
+.button-group button {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-2xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border-neutral);
+}
+
+@media (min-width: 768px) {
+  .button-group {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .button-group .btn,
+  .button-group button {
+    width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  button,
+  .btn {
+    width: 100%;
+  }
+}

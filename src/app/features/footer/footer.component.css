@@ -1,12 +1,13 @@
 .app-footer {
   width: auto;
-  height: 40px; /* Altura fija */
+  min-height: 40px;
+  height: auto;
   background: #071427; /* Fondo oscuro, similar al sidebar */
   border-top: 1px solid rgba(0, 150, 255, 0.22);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: var(--spacing-xs) 20px var(--spacing-sm);
   font-size: 0.8rem;
   color: #a4b4c8; /* Color de texto suave */
   box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.4);
@@ -52,7 +53,7 @@
     height: auto;
     flex-direction: column;
     text-align: center;
-    padding: 8px 10px;
+    padding: var(--spacing-sm) 10px calc(var(--spacing-md) + var(--spacing-sm));
     gap: 5px;
   }
   .footer-center, .footer-right {
