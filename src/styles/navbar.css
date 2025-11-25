@@ -32,18 +32,20 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
   flex-direction: column;
+  gap: 5px;
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  padding: 0;
 }
 
 .burger-btn span {
   display: block;
-  width: 20px;
+  width: 22px;
   height: 2px;
   background-color: var(--color-text-primary);
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform-origin: center;
 }
 
 .burger-btn.open {
@@ -52,15 +54,16 @@
 }
 
 .burger-btn.open span:nth-child(1) {
-  transform: translateY(6px) rotate(45deg);
+  transform: translateY(7px) rotate(45deg);
 }
 
 .burger-btn.open span:nth-child(2) {
   opacity: 0;
+  transform: scaleX(0);
 }
 
 .burger-btn.open span:nth-child(3) {
-  transform: translateY(-6px) rotate(-45deg);
+  transform: translateY(-7px) rotate(-45deg);
 }
 
 .menu-overlay {
@@ -97,6 +100,7 @@
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-primary);
+  margin-bottom: 1rem;
 }
 
 .desktop-brand {
@@ -115,6 +119,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex: 1;
 }
 
 .nav-btn,
@@ -162,8 +167,29 @@
   display: flex;
 }
 
-.logout-btn {
+.logout-li {
   margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  background-color: var(--color-danger, #ef4444);
+  color: #fff;
+  font-size: 0.95rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  font-weight: 500;
+}
+
+.logout-btn:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
 }
 
 .main-content {
