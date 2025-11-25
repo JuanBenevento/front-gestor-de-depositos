@@ -8,6 +8,7 @@ import {
   FormsModule,
   FormArray,
   AbstractControl,
+  FormControl,
 } from "@angular/forms";
 import { OrdenDespachoService } from "../../../core/services/orden-despacho.service";
 import { DetalleDespachoService } from "../../../core/services/detalle-despacho.service";
@@ -19,21 +20,23 @@ import { Router, ActivatedRoute, RouterModule } from "@angular/router";
 import { EstadoDeOrden } from "../../../core/enums/estados-de-orden.model";
 import { DetalleDespacho } from "../../../core/models/orden-despacho/detalle-despacho.model";
 import { Producto } from "../../../core/models/Producto/producto.model";
+import { Cliente } from "../../../core/models/cliente/cliente.model";
 import OrdenDespacho from "../../../core/models/orden-despacho/orden-despacho.model";
-import {
-  debounceTime,
-  switchMap,
-  filter,
-  catchError,
-  tap,
-} from "rxjs/operators";
+import { catchError } from "rxjs/operators";
 import { of } from "rxjs";
 import { ModalService } from "../../../shared/services/modal.service";
+import { TypeaheadSelectComponent } from "../../../shared/components/typeahead-select/typeahead-select.component";
 
 @Component({
   selector: "app-ordenes-despacho-form",
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TypeaheadSelectComponent,
+  ],
   templateUrl: `./gestion-ordenes-despacho-form.component.html`,
 })
 export class OrdenesDespachoForm implements OnInit {
@@ -41,6 +44,12 @@ export class OrdenesDespachoForm implements OnInit {
   form!: FormGroup;
   editMode = false;
   idOrden = 0;
+  clientes: Cliente[] = [];
+  clientesLoading = false;
+  clientesError = "";
+  productos: Producto[] = [];
+  productosLoading = false;
+  productosError = "";
 
   constructor(
     private fb: FormBuilder,
@@ -60,46 +69,12 @@ export class OrdenesDespachoForm implements OnInit {
       idOrdenDespacho: [0],
       fechaDespacho: ["", Validators.required],
       estado: [EstadoDeOrden.PENDIENTE, Validators.required],
-      cliente: this.fb.group({
-        idCliente: [null, Validators.required],
-        nombre: [""],
-      }),
+      cliente: this.fb.control<Cliente | null>(null, Validators.required),
       detalles: this.fb.array([]),
     });
 
-    this.form
-      .get("cliente.idCliente")
-      ?.valueChanges.pipe(
-        debounceTime(400),
-        switchMap((id) => {
-          const numericId = Number(id);
-
-          if (!numericId || isNaN(numericId)) {
-            return of(null);
-          }
-
-          return this.clienteService.buscarPorId(numericId).pipe(
-            catchError((err) => {
-              console.warn("ERROR capturado al buscar cliente:", err);
-              return of(null);
-            })
-          );
-        }),
-        tap((cliente) => {
-          if (cliente) {
-            this.form.patchValue(
-              { cliente: { nombre: cliente.nombre } },
-              { emitEvent: false }
-            );
-          } else {
-            this.form.patchValue(
-              { cliente: { nombre: "" } },
-              { emitEvent: false }
-            );
-          }
-        })
-      )
-      .subscribe();
+    this.cargarClientes();
+  this.cargarProductos();
 
     const id = this.route.snapshot.paramMap.get("id");
     if (id) {
@@ -125,63 +100,110 @@ export class OrdenesDespachoForm implements OnInit {
     }
   }
 
+  private cargarClientes(): void {
+    this.clientesLoading = true;
+    this.clientesError = "";
+    let huboError = false;
+    this.clienteService
+      .listar()
+      .pipe(
+        catchError((err) => {
+          console.error("Error al obtener clientes:", err);
+          this.clientesError = "No se pudieron cargar los clientes.";
+          huboError = true;
+          return of([] as Cliente[]);
+        })
+      )
+      .subscribe((clientes) => {
+        this.clientes = clientes;
+        if (!huboError) {
+          this.clientesError = "";
+        }
+        this.clientesLoading = false;
+      });
+  }
+
   get detalles(): FormArray {
     return this.form.get("detalles") as FormArray;
+  }
+
+  get clienteControl(): FormControl<Cliente | null> {
+    return this.form.get("cliente") as FormControl<Cliente | null>;
+  }
+
+  get clienteErrorMessage(): string {
+    if (this.clientesError) {
+      return this.clientesError;
+    }
+
+    const control = this.clienteControl;
+    if (control?.invalid && (control.touched || control.dirty)) {
+      return "Seleccioná un cliente";
+    }
+
+    return "";
   }
 
   agregarDetalle(detalle?: DetalleDespacho) {
     const grupo = this.fb.group({
       idDetalleDespacho: [detalle?.idDetalleDespacho || null],
-      inputProducto: [detalle?.producto?.nombre || "", Validators.required],
-      productoSeleccionado: [detalle?.producto || null],
-      cantidad: [detalle?.cantidad || 1, [Validators.required, Validators.min(1)]],
-      filteredProducts: [[] as Producto[]],
+      producto: this.fb.control<Producto | null>(
+        detalle?.producto || null,
+        Validators.required
+      ),
+      cantidad: [
+        detalle?.cantidad || 1,
+        [Validators.required, Validators.min(1)],
+      ],
       stockDisponible: [0],
     });
 
-    grupo
-      .get("inputProducto")
-      ?.valueChanges.pipe(
-        debounceTime(400),
-        filter((valor): valor is string => !!valor && valor.trim() !== ""),
-        switchMap((valor: string) =>
-          this.productoService.buscarPorNombreOCodigo(valor).pipe(
-            switchMap((productos: Producto[]) => {
-              grupo.patchValue(
-                { filteredProducts: productos },
-                { emitEvent: false }
-              );
-
-              const exact = productos.find(
-                (p) =>
-                  valor.toLowerCase() === p.nombre.toLowerCase() ||
-                  valor.toLowerCase() === p.codigoSku.toLowerCase()
-              );
-              if (exact)
-                this.seleccionarProducto(this.detalles.length - 1, exact);
-
-              return of(productos);
-            })
-          )
-        )
-      )
-      .subscribe();
-
     this.detalles.push(grupo);
+
+    if (detalle?.producto) {
+      this.actualizarStockDisponible(grupo, detalle.producto);
+    }
   }
 
-  seleccionarProducto(index: number, producto: Producto | null) {
-    if (!producto) return;
-    const detalle = this.detalles.at(index);
-    detalle.patchValue({
-      productoSeleccionado: producto,
-      inputProducto: `${producto.nombre} (${producto.codigoSku})`,
-    });
+  onProductoSelected(index: number, producto: Producto | null): void {
+    const detalle = this.detalles.at(index) as FormGroup;
+    if (!producto) {
+      detalle.patchValue({ stockDisponible: 0 });
+      return;
+    }
+
+    this.actualizarStockDisponible(detalle, producto);
+  }
+
+  private actualizarStockDisponible(detalle: FormGroup, producto: Producto): void {
+    if (!producto?.idProducto) {
+      detalle.patchValue({ stockDisponible: 0 });
+      return;
+    }
 
     this.inventarioService
-      .obtenerStockPorProductoPorId(producto.idProducto!)
+      .obtenerStockPorProductoPorId(producto.idProducto)
       .subscribe((stock) => {
         detalle.patchValue({ stockDisponible: stock });
+      });
+  }
+
+  private cargarProductos(): void {
+    this.productosLoading = true;
+    this.productosError = "";
+
+    this.productoService
+      .listar()
+      .pipe(
+        catchError((err) => {
+          console.error("Error al obtener productos:", err);
+          this.productosError = "No se pudieron cargar los productos.";
+          return of([] as Producto[]);
+        })
+      )
+      .subscribe((productos) => {
+        this.productos = productos;
+        this.productosLoading = false;
       });
   }
 
@@ -197,6 +219,26 @@ export class OrdenesDespachoForm implements OnInit {
       })
     );
   }
+
+  productoErrorMessage(index: number): string {
+    if (this.productosError) {
+      return this.productosError;
+    }
+
+    const control = (this.detalles.at(index) as FormGroup).get(
+      "producto"
+    );
+    if (control?.invalid && (control.touched || control.dirty)) {
+      return "Seleccioná un producto";
+    }
+
+    return "";
+  }
+
+  productoDisplayFn = (producto: Producto | null): string => {
+    if (!producto) return "";
+    return `${producto.nombre} (${producto.codigoSku})`;
+  };
 
   guardar(): void {
     if (this.form.invalid) {
@@ -216,14 +258,14 @@ export class OrdenesDespachoForm implements OnInit {
     const detalles: DetalleDespacho[] = formValue.detalles.map((d: any) => ({
       idDetalleDespacho: d.idDetalleDespacho,
       cantidad: d.cantidad,
-      producto: d.productoSeleccionado,
+      producto: d.producto,
     }));
 
     const orden: OrdenDespacho = {
       idOrdenDespacho: formValue.idOrdenDespacho,
       fechaDespacho: formValue.fechaDespacho,
       estado: formValue.estado,
-      cliente: formValue.cliente,
+      cliente: formValue.cliente!,
       detalle_despacho: detalles,
     };
 

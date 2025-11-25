@@ -1,0 +1,61 @@
+<div class="typeahead-field" [class.disabled]="disabled">
+  <label *ngIf="label" class="field-label">{{ label }}</label>
+
+  <div
+    class="input-wrapper"
+    [class.open]="dropdownVisible"
+    [class.has-selection]="hasSelection"
+  >
+    <input
+      type="text"
+      class="typeahead-input"
+      [placeholder]="(hasSelection || (searchTerm.length >= minChars && !filteredOptions.length)) ? '' : placeholder"
+      [value]="searchTerm"
+      [disabled]="disabled"
+      (input)="onInput($any($event.target).value)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      (keydown)="onKeydown($event)"
+    />
+
+    <button
+      *ngIf="searchTerm && !disabled"
+      type="button"
+      class="clear-btn"
+      (click)="clearSelection($event)"
+      aria-label="Limpiar selección"
+    >
+      ×
+    </button>
+
+    <span class="chevron" [class.open]="dropdownVisible"></span>
+  </div>
+
+  <div class="dropdown-panel" *ngIf="dropdownVisible">
+    <div class="dropdown-status" *ngIf="loading">Cargando...</div>
+
+    <div class="dropdown-status" *ngIf="!loading && requiresMoreChars">
+      {{ minCharsMessage }}
+    </div>
+
+    <ng-container *ngIf="!loading && !requiresMoreChars">
+      <ul class="option-list" *ngIf="filteredOptions.length; else noResults">
+        <li
+          class="option"
+          *ngFor="let option of filteredOptions; trackBy: trackByValue; let idx = index"
+          [class.active]="idx === activeIndex"
+          [class.selected]="isOptionSelected(option)"
+          (click)="selectOption(option)"
+        >
+          {{ getOptionLabel(option) }}
+        </li>
+      </ul>
+      <ng-template #noResults>
+        <div class="dropdown-status no-results">{{ noResultsText }}</div>
+      </ng-template>
+    </ng-container>
+  </div>
+
+  <small *ngIf="errorText" class="field-hint error">{{ errorText }}</small>
+  <small *ngIf="!errorText && helperText" class="field-hint">{{ helperText }}</small>
+</div>

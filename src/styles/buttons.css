@@ -1,0 +1,140 @@
+button,
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+    background-color 0.2s ease;
+}
+
+button:disabled,
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+button:not(:disabled):hover,
+.btn:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-xs);
+}
+
+.btn--primary,
+.new-btn,
+.btn-create-info,
+.edit-btn {
+  background-color: var(--color-primary);
+}
+
+.btn--primary:hover,
+.new-btn:hover,
+.btn-create-info:hover,
+.edit-btn:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.btn--success,
+.register-btn {
+  background-color: var(--color-success);
+}
+
+.btn--success:hover,
+.register-btn:hover {
+  background-color: var(--color-success-dark);
+}
+
+.btn--secondary,
+.secondary-btn {
+  background-color: var(--color-secondary);
+}
+
+.btn--secondary:hover,
+.secondary-btn:hover {
+  background-color: var(--color-secondary-dark);
+}
+
+.btn--danger,
+.delete-btn,
+.btn-delete,
+.logout-btn {
+  background-color: var(--color-danger);
+}
+
+.btn--danger:hover,
+.delete-btn:hover,
+.btn-delete:hover,
+.logout-btn:hover {
+  background-color: var(--color-danger-dark);
+}
+
+.btn--outline {
+  background: transparent;
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+.btn--outline:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+
+.btn--ghost:hover {
+  color: var(--color-primary);
+}
+
+.small-btn,
+.btn--sm {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.full-width-btn,
+button.full-width,
+.register-btn {
+  width: 100%;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.list-container .new-btn,
+.user-management-container > .new-btn,
+.list-container > .new-btn,
+.user-management-container > button.new-btn {
+  margin-bottom: 1rem;
+}
+
+.user-management-container .secondary-btn.small-btn,
+.list-container .secondary-btn.small-btn {
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .button-group {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .button-group .btn,
+  .button-group button {
+    width: auto;
+  }
+}

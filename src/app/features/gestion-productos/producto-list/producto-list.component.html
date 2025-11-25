@@ -52,7 +52,8 @@
   }
 
   @if (productosFiltrados.length) {
-    <table class="user-table">
+    <div class="table-wrapper">
+      <table class="user-table">
       <thead>
         <tr>
           <th>ID</th>
@@ -87,7 +88,8 @@
           </tr>
         }
       </tbody>
-    </table>
+      </table>
+    </div>
   }
 
   @if (!productosFiltrados.length && !loading) {
