@@ -16,16 +16,17 @@
       </select>
     </div>
 
-    <div formGroupName="cliente">
-      <div class="form-group">
-        <label>ID Cliente</label>
-        <input type="number" formControlName="idCliente" placeholder="ID del cliente">
-      </div>
-      <div class="form-group">
-        <label>Nombre Cliente</label>
-        <input type="text" formControlName="nombre" placeholder="Nombre del cliente" readonly>
-      </div>
-    </div>
+    <app-typeahead-select
+      formControlName="cliente"
+      label="Cliente"
+      placeholder="Buscá por nombre o ID"
+      [options]="clientes"
+      optionLabelKey="nombre"
+      optionValueKey="idCliente"
+      [loading]="clientesLoading"
+      [helperText]="clientes.length ? 'Escribí para filtrar' : ''"
+      [errorText]="clienteErrorMessage"
+    ></app-typeahead-select>
 
     <div class="detalles">
       <h3>Detalles de despacho</h3>
@@ -33,20 +34,20 @@
       @for (item of detallesArray; track $index) {
         <div [formGroup]="item.control" class="detalle">
 
-          <label>Producto</label>
-          <input 
-            type="text" 
-            formControlName="inputProducto"
-            placeholder="Buscar por codigo SKU"
-            [attr.list]="'product-options-' + $index">
-          <datalist id="product-options-{{ $index }}">
-            @for (prod of item.control.value.filteredProducts; track prod.idProducto) {
-              <option 
-                [value]="prod.nombre + ' (' + prod.codigoSku + ')'"
-                (click)="seleccionarProducto(item.index, prod)">
-              </option>
-            }
-          </datalist>
+          <app-typeahead-select
+            formControlName="producto"
+            label="Producto"
+            placeholder="Buscar por nombre o SKU"
+            [options]="productos"
+            optionLabelKey="nombre"
+            optionValueKey="idProducto"
+            [displayWith]="productoDisplayFn"
+            [loading]="productosLoading"
+            [helperText]="productos.length ? 'Escribí para filtrar' : ''"
+            [errorText]="productoErrorMessage(item.index)"
+            (optionSelected)="onProductoSelected(item.index, $event)"
+            noResultsText="No se encontraron productos"
+          ></app-typeahead-select>
 
           <div class="stock">Stock disponible: {{ item.control.value.stockDisponible }}</div>
 

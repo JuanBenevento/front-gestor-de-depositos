@@ -23,7 +23,9 @@ import { ModalService } from '../../../shared/services/modal.service';
 @Component({
   selector: 'app-orden-recepcion-form',
   imports: [CommonModule, ReactiveFormsModule, ModalComponent],
-  templateUrl: './orden-recepcion-form.component.html'
+  templateUrl: './orden-recepcion-form.component.html',
+  styleUrls: ['./orden-recepcion-form.component.css'],
+  standalone: true,
 })
 export class OrdenRecepcionFormComponent implements OnInit {
   public EstadoDeOrden = EstadoDeOrden;

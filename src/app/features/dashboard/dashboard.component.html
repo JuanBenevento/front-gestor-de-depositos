@@ -1,7 +1,25 @@
-<div class="dashboard-container">
+<div class="dashboard-container" [class.menu-open]="menuOpen">
 
-  <nav class="sidebar">
-    <div class="brand">Gestor de Depositos</div>
+  <header class="mobile-header">
+    <div class="brand mobile-brand">Gestor de Depositos</div>
+    <button
+      type="button"
+      class="burger-btn"
+      (click)="toggleMenu()"
+      [class.open]="menuOpen"
+      aria-label="Alternar menú"
+      aria-expanded="{{ menuOpen }}"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <div class="menu-overlay" *ngIf="menuOpen" (click)="toggleMenu()"></div>
+
+  <nav class="sidebar" [class.open]="menuOpen">
+    <div class="brand desktop-brand">Gestor de Depositos</div>
 
     <ul class="nav-links">
       <li><button class="nav-btn" (click)="navigate('/dashboard')">Inicio</button></li>
