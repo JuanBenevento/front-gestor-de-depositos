@@ -8,8 +8,7 @@ import { AuthService } from '../../core/services/auth.service';
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, RouterModule, RouterOutlet, FormsModule],
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent {
   role = '';
