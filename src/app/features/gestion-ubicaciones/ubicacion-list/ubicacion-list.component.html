@@ -44,72 +44,83 @@
   }
 
   @if (ubicaciones.length && !mostrandoReporte) {
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>Codigo</th>
-          <th>Zona</th>
-          <th>Capacidad</th>
-          <th>Ocupado</th>
-          <th>Disponible</th> <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (u of ubicaciones; track u.idUbicacion) {
-          <tr>
-            <td><strong>{{ u.codigo }}</strong></td>
-            
-            <td>{{ u.zona?.nombre || '-' }}</td>
-            
-            <td>{{ u.capacidadMaxima }}</td>
-            
-            <td>
-              {{ u.ocupadoActual }}
-            </td>
-            
-            <td>{{ u.capacidadMaxima - u.ocupadoActual }}</td>
+    <div class="table-container">
+      <div class="table-wrapper">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>Codigo</th>
+              <th>Zona</th>
+              <th>Capacidad</th>
+              <th>Ocupado</th>
+              <th>Disponible</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (u of ubicaciones; track u.idUbicacion) {
+              <tr>
+                <td><strong>{{ u.codigo }}</strong></td>
+                
+                <td>{{ u.zona?.nombre || '-' }}</td>
+                
+                <td>{{ u.capacidadMaxima }}</td>
+                
+                <td>
+                  {{ u.ocupadoActual }}
+                </td>
+                
+                <td>{{ u.capacidadMaxima - u.ocupadoActual }}</td>
 
-            <td class="actions">
-              <button [routerLink]="['/dashboard/ubicaciones/editar', u.idUbicacion]" class="btn edit-btn">
-                Editar
-              </button>
-              <button (click)="eliminar(u.idUbicacion)" class="btn delete-btn">
-                Eliminar
-              </button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+                <td class="actions">
+                  <div class="actions">
+                    <button [routerLink]="['/dashboard/ubicaciones/editar', u.idUbicacion]" class="btn edit-btn">
+                      Editar
+                    </button>
+                    <button (click)="eliminar(u.idUbicacion)" class="btn delete-btn">
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
   }
 
   @if (mostrandoReporte) {
     <div class="report-container">
       <h3>📊 Reporte de Disponibilidad</h3>
-      <table class="user-table">
-        <thead>
-          <tr>
-            <th>Codigo</th>
-            <th>Zona</th>
-            <th>Capacidad Total</th>
-            <th>Ocupado</th>
-            <th>Espacio Libre</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (r of reporte; track r.idUbicacion) {
-            <tr>
-              <td>{{ r.codigo }}</td>
-              <td>{{ r.zonaNombre }}</td>
-              <td>{{ r.capacidadMaxima }}</td>
-              <td>{{ r.ocupadoActual }}</td>
-              <td [class.text-success]="r.espacioDisponible > 0" [class.text-danger]="r.espacioDisponible === 0">
-                {{ r.espacioDisponible }}
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      <div class="table-container">
+        <div class="table-wrapper">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>Codigo</th>
+                <th>Zona</th>
+                <th>Capacidad Total</th>
+                <th>Ocupado</th>
+                <th>Espacio Libre</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of reporte; track r.idUbicacion) {
+                <tr>
+                  <td>{{ r.codigo }}</td>
+                  <td>{{ r.zonaNombre }}</td>
+                  <td>{{ r.capacidadMaxima }}</td>
+                  <td>{{ r.ocupadoActual }}</td>
+                  <td [class.text-success]="r.espacioDisponible > 0" [class.text-danger]="r.espacioDisponible === 0">
+                    {{ r.espacioDisponible }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       <div style="margin-top: 15px">
         <button class="btn secondary-btn" (click)="volverLista()">← Volver al listado</button>

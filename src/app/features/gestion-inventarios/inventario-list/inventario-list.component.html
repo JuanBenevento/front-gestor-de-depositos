@@ -50,35 +50,39 @@
   }
 
   @if (inventariosFiltrados.length > 0) {
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>SKU</th>
-          <th>Ubicacion</th>
-          <th>Cantidad</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (inv of inventariosFiltrados; track inv.id_inventario) {
-          <tr>
-            <td>{{ inv.producto.nombre }}</td>
-            <td>{{ inv.producto.codigoSku }}</td>
-            <td>{{ inv.ubicacion.codigo }}</td>
-            <td>{{ inv.cantidad }}</td>
-            <td>
-              <div class="actions">
-                <button [routerLink]="['/dashboard/inventarios/editar', inv.id_inventario]" class="btn edit-btn">Editar</button>
-                <button class="delete-btn" (click)="eliminar(inv.id_inventario!)">
-                  Eliminar
-                </button>
-              </div>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+    <div class="table-container">
+      <div class="table-wrapper">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>SKU</th>
+              <th>Ubicacion</th>
+              <th>Cantidad</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (inv of inventariosFiltrados; track inv.id_inventario) {
+              <tr>
+                <td>{{ inv.producto.nombre }}</td>
+                <td>{{ inv.producto.codigoSku }}</td>
+                <td>{{ inv.ubicacion.codigo }}</td>
+                <td>{{ inv.cantidad }}</td>
+                <td>
+                  <div class="actions">
+                    <button [routerLink]="['/dashboard/inventarios/editar', inv.id_inventario]" class="btn edit-btn">Editar</button>
+                    <button class="delete-btn" (click)="eliminar(inv.id_inventario!)">
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
   }
 
   @if (!loading && inventariosFiltrados.length === 0) {

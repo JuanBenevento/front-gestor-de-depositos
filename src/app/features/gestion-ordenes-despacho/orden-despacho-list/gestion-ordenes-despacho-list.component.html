@@ -51,41 +51,47 @@
   }
 
   @if (ordenesFiltradas.length) {
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Estado</th>
-          <th>Cliente</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (o of ordenesFiltradas; track o.idOrdenDespacho) {
-          <tr>
-            <td>{{ o.fechaDespacho | date: 'dd/MM/yyyy' }}</td>
-            <td>
-              <span class="badge" 
-                    [class.badge-success]="o.estado === EstadoDeOrden.COMPLETADA"
-                    [class.badge-warning]="o.estado === EstadoDeOrden.PENDIENTE">
-                {{ o.estado }}
-              </span>
-            </td>
-            
-            <td>{{ o.cliente?.nombre }}</td>
+    <div class="table-container">
+      <div class="table-wrapper">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Cliente</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (o of ordenesFiltradas; track o.idOrdenDespacho) {
+              <tr>
+                <td>{{ o.fechaDespacho | date: 'dd/MM/yyyy' }}</td>
+                <td>
+                  <span class="badge" 
+                        [class.badge-success]="o.estado === EstadoDeOrden.COMPLETADA"
+                        [class.badge-warning]="o.estado === EstadoDeOrden.PENDIENTE">
+                    {{ o.estado }}
+                  </span>
+                </td>
+                
+                <td>{{ o.cliente?.nombre }}</td>
 
-            <td class="actions">
-              <button [routerLink]="['/dashboard/ordenesDespacho/editar', o.idOrdenDespacho]" class="btn edit-btn">
-                Editar
-              </button>
-              <button (click)="eliminar(o.idOrdenDespacho!)" class="btn delete-btn">
-                Eliminar
-              </button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+                <td class="actions">
+                  <div class="actions">
+                    <button [routerLink]="['/dashboard/ordenesDespacho/editar', o.idOrdenDespacho]" class="btn edit-btn">
+                      Editar
+                    </button>
+                    <button (click)="eliminar(o.idOrdenDespacho!)" class="btn delete-btn">
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
   }
 
   @if (!ordenesFiltradas.length && !loading) {

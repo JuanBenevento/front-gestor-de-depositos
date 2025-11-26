@@ -52,41 +52,47 @@
   }
 
   @if (ordenesFiltradas.length) {
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Estado</th>
-          <th>Proveedor</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (o of ordenesFiltradas; track o.id_orden_recepcion) {
-          <tr>
-            <td>{{ o.fecha | date: 'dd/MM/yyyy' }}</td>
-            <td>
-              <span class="badge" 
-                    [class.badge-success]="o.estado === EstadoDeOrden.COMPLETADA"
-                    [class.badge-warning]="o.estado === EstadoDeOrden.PENDIENTE">
-                {{ o.estado }}
-              </span>
-            </td>
-            
-            <td>{{ o.proveedor?.nombre || '-' }}</td>
-            
-            <td class="actions">
-              <button (click)="verDetalles(o.id_orden_recepcion!)" class="btn edit-btn">
-                Editar
-              </button>
-              <button (click)="eliminar(o.id_orden_recepcion!)" class="btn delete-btn">
-                Eliminar
-              </button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+    <div class="table-container">
+      <div class="table-wrapper">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Proveedor</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (o of ordenesFiltradas; track o.id_orden_recepcion) {
+              <tr>
+                <td>{{ o.fecha | date: 'dd/MM/yyyy' }}</td>
+                <td>
+                  <span class="badge" 
+                        [class.badge-success]="o.estado === EstadoDeOrden.COMPLETADA"
+                        [class.badge-warning]="o.estado === EstadoDeOrden.PENDIENTE">
+                    {{ o.estado }}
+                  </span>
+                </td>
+                
+                <td>{{ o.proveedor?.nombre || '-' }}</td>
+                
+                <td class="actions">
+                  <div class="actions">
+                    <button (click)="verDetalles(o.id_orden_recepcion!)" class="btn edit-btn">
+                      Editar
+                    </button>
+                    <button (click)="eliminar(o.id_orden_recepcion!)" class="btn delete-btn">
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
   }
 
   @if (!ordenesFiltradas.length && !loading) {

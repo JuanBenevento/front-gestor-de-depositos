@@ -26,38 +26,44 @@
   </div>
 
   @if (usuarios.length) {
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Apellido</th>
-          <th>Email</th>
-          <th>Rol</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (u of usuarios; track u.idUsuario) {
-          <tr>
-            <td>{{ u.nombre }}</td>
-            <td>{{ u.apellido }}</td>
-            <td>{{ u.email }}</td>
-            <td>{{ getRoleName(u.idRol) }}</td> 
-            
-            <td class="actions">
-              <button
-                [routerLink]="['/dashboard/usuarios/editar', u.idUsuario]"
-                class="btn edit-btn"
-              >
-                Editar
-              </button>
-              <button (click)="eliminar(u.idUsuario!)" class="btn delete-btn">
-                Eliminar
-              </button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+    <div class="table-container">
+      <div class="table-wrapper">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (u of usuarios; track u.idUsuario) {
+              <tr>
+                <td>{{ u.nombre }}</td>
+                <td>{{ u.apellido }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ getRoleName(u.idRol) }}</td> 
+                
+                <td class="actions">
+                  <div class="actions">
+                    <button
+                      [routerLink]="['/dashboard/usuarios/editar', u.idUsuario]"
+                      class="btn edit-btn"
+                    >
+                      Editar
+                    </button>
+                    <button (click)="eliminar(u.idUsuario!)" class="btn delete-btn">
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
   }
   </div>

@@ -79,7 +79,7 @@
   transform: rotate(90deg);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .sidebar {
     position: fixed;
     top: 0;

@@ -25,36 +25,42 @@
   }
 
   @if (zonas.length) {
-    <table class="user-table">
-      <thead>
-  <tr>
-    <th>Nombre</th>
-    <th>Descripción</th>
-    <th>Categorías</th> <th>Acciones</th>
-  </tr>
-</thead>
-<tbody>
-  @for (z of zonas; track z.idZona) {
-    <tr>
-      <td>{{ z.nombre }}</td>
-      <td>{{ z.descripcion }}</td>
-      
-      <td>
-        <div class="tags-container">
-          @for (cat of z.categoriasAdmitidas; track cat) {
-            <span class="badge-small">{{ cat }}</span>
-          }
-        </div>
-      </td>
+    <div class="table-container">
+      <div class="table-wrapper">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Categorías</th> <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (z of zonas; track z.idZona) {
+              <tr>
+                <td>{{ z.nombre }}</td>
+                <td>{{ z.descripcion }}</td>
+                
+                <td>
+                  <div class="tags-container">
+                    @for (cat of z.categoriasAdmitidas; track cat) {
+                      <span class="badge-small">{{ cat }}</span>
+                    }
+                  </div>
+                </td>
 
-      <td class="actions">
-        <button [routerLink]="['/dashboard/zonas/editar', z.idZona]" class="btn edit-btn">Editar</button>
-        <button (click)="eliminar(z.idZona!)" class="btn delete-btn">Eliminar</button>
-      </td>
-    </tr>
-  }
-</tbody>
-    </table>
+                <td class="actions">
+                  <div class="actions">
+                    <button [routerLink]="['/dashboard/zonas/editar', z.idZona]" class="btn edit-btn">Editar</button>
+                    <button (click)="eliminar(z.idZona!)" class="btn delete-btn">Eliminar</button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
   }
 
   @if (!zonas.length && !loading) {

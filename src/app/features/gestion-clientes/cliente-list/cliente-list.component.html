@@ -24,36 +24,42 @@
   }
 
   @if (clientes.length) {
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Telefono</th>
-          <th>Email</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (c of clientes; track c.idCliente) {
-          <tr>
-            <td>{{ c.nombre }}</td>
-            <td>{{ c.telefono }}</td>
-            <td>{{ c.email }}</td>
-            <td class="actions">
-              <button
-                [routerLink]="['/dashboard/clientes/editar', c.idCliente]"
-                class="btn edit-btn"
-              >
-                Editar
-              </button>
-              <button (click)="eliminar(c.idCliente!)" class="btn delete-btn">
-                Eliminar
-              </button>
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+    <div class="table-container">
+      <div class="table-wrapper">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Telefono</th>
+              <th>Email</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of clientes; track c.idCliente) {
+              <tr>
+                <td>{{ c.nombre }}</td>
+                <td>{{ c.telefono }}</td>
+                <td>{{ c.email }}</td>
+                <td class="actions">
+                  <div class="actions">
+                    <button
+                      [routerLink]="['/dashboard/clientes/editar', c.idCliente]"
+                      class="btn edit-btn"
+                    >
+                      Editar
+                    </button>
+                    <button (click)="eliminar(c.idCliente!)" class="btn delete-btn">
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
   }
 
   @if (!clientes.length && !loading) {
