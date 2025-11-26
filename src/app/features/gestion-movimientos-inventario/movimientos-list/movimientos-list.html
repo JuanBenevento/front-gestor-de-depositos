@@ -52,6 +52,7 @@
   }
 
   @if (movimientos.length) {
+    <div class="table-responsive">
       <table class="user-table">
       <thead>
         <tr>
@@ -73,19 +74,23 @@
             <td>{{ m.cantidad }}</td>
             <td>{{ m.ubicacionOrigen?.codigo }}</td>
             <td>{{ m.ubicacionDestino?.codigo }}</td>
-
-            @if (m.estado === 'REUBICACION') {
-              <td class="actions">
-                <button (click)="eliminar(m.idMovimientoInventario!)" class="btn delete-btn">Eliminar</button>
+            <td>
+              <div class="actions">
+                @if (m.estado === 'REUBICACION') {
+                  <button (click)="eliminar(m.idMovimientoInventario!)" class="btn delete-btn">
+                    Eliminar
+                  </button>
+                } @else {
+                  <span>Acciones no permitidas.</span>
+                }
+              </div>
             </td>
-            }@else {
-              <p>Acciones no permitidas.</p>
-            }
             
           </tr>
         }
       </tbody>
       </table>
+    </div>
   }
 
   @if (!movimientos.length && !loading) {

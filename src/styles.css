@@ -83,7 +83,7 @@ html, body {
 /* Contenedores */
 .form-container, .user-management-container {
   background-color: var(--bg-panel);
-  padding: 30px; 
+  padding: 32px 28px; 
   border-radius: var(--radius);
   border: 1px solid var(--border-light);
   box-shadow: 0 10px 25px rgba(0,0,0,0.5);
@@ -144,11 +144,11 @@ input, select, textarea {
   border: 1px solid var(--border-light);
   color: var(--text-main);
   padding: 12px 15px; 
-  border-radius: 6px;
+  border-radius: var(--radius);
   font-size: 0.95rem;
   outline: none;
   width: 100%;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 input:focus, select:focus, textarea:focus {
@@ -187,12 +187,12 @@ input.invalid, select.invalid {
 ============================================================ */
 button, .btn {
   padding: 12px 24px; 
-  border-radius: 6px;
+  border-radius: var(--radius);
   border: none;
   font-weight: 600;
   cursor: pointer;
   font-size: 0.95rem;
-  transition: transform 0.1s, background-color 0.2s;
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -258,13 +258,42 @@ button[type="submit"]:hover, .btn-save:hover { background-color: var(--primary-h
 }
 
 .user-table td {
-  padding: 15px 12px;
+  padding: 10px 10px;
   border-bottom: 1px solid var(--border-light);
   color: var(--text-main);
 }
 
+/* Líneas divisorias verticales entre columnas */
+.user-table th:not(:last-child),
+.user-table td:not(:last-child) {
+  border-right: 1px solid var(--border-light);
+}
+
 .user-table tr:hover {
   background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* Columna de acciones en listados */
+.user-table th:last-child,
+.user-table td:last-child {
+  text-align: center;
+  width: 1%;           /* hace que la col de acciones se encoja al mínimo necesario */
+}
+
+.actions {
+  white-space: nowrap;  /* evita saltos de línea entre botones */
+}
+
+.actions .btn,
+.actions button {
+  padding: 6px 14px;  /* Más pequeños */
+  font-size: 0.8rem;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .badge {
@@ -282,7 +311,7 @@ button[type="submit"]:hover, .btn-save:hover { background-color: var(--primary-h
     flex-wrap: wrap;
     gap: 15px;
     margin-bottom: 20px;
-    align-items: flex-end;
+    align-items: flex-start;
 }
 
 .search-group {
@@ -338,7 +367,7 @@ button[type="submit"]:hover, .btn-save:hover { background-color: var(--primary-h
 ============================================================ */
 @media (max-width: 768px) {
   .form-container, .user-management-container {
-    padding: 20px;
+    padding: 24px 18px;
     margin: 10px;
     max-width: 100%; 
   }
@@ -349,10 +378,11 @@ button[type="submit"]:hover, .btn-save:hover { background-color: var(--primary-h
     gap: 15px;
   }
 
-  .user-table td.actions {
+  .user-table td:last-child .actions {
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
   }
   
   .search-row {

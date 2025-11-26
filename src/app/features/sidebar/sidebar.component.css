@@ -1,17 +1,18 @@
 
 .sidebar {
-  width: 250px;
+  width: 260px; /* Ancho fijo en desktop */
   height: 100%;
-  padding: 10px 25px;
+  padding: 16px 24px;
   background-color: #0d1a2f;
   border-right: 1px solid rgba(255,255,255,0.08);
   display: flex;
   flex-direction: column;
   box-shadow: 2px 0 10px rgba(0,0,0,0.3);
-  transition: transform 0.3s ease-out;
-  flex-shrink: 0;
+  transition: all 0.2s ease;
+  flex: 0 0 260px; /* Evita que se encoja */
   position: relative;
   overflow-y: auto; 
+  z-index: 5001; /* Por encima de la mayoría de capas por defecto */
 }
 
 .close-btn {
@@ -29,23 +30,25 @@
 .nav-btn {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
   width: 100%;
-  padding: 10px 15px;
+  padding: 10px 14px;
   border: none;
   text-align: left;
   background-color: transparent;
   color: #e7f3ff;
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.2s, color 0.2s;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
 }
 .nav-btn:hover {
   background-color: #1a3250;
   color: #ffffff;
 }
 .nav-btn .icon {
-  margin-right: 10px;
+  flex-shrink: 0;
   font-size: 1.2rem;
 }
 
@@ -60,7 +63,7 @@
   overflow: hidden;
   transition: max-height 0.3s ease-in-out;
   background-color: #0a1322;
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 var(--radius) var(--radius);
 }
 .dropdown-menu.open {
   max-height: 150px;
@@ -81,10 +84,10 @@
   .sidebar {
     position: fixed;
     top: 0;
-    left: -100%;
-    width: 100%;
+    left: -280px;
+    width: 280px;           /* Drawer con ancho fijo, no 100% */
     height: 100vh;
-    z-index: 4000;
+    z-index: 6000;          /* Por encima del overlay definido en main-layout */
     transition: left 0.3s ease;
   }
 

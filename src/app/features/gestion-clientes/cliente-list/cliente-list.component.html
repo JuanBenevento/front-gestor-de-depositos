@@ -24,6 +24,7 @@
   }
 
   @if (clientes.length) {
+    <div class="table-responsive">
     <table class="user-table">
       <thead>
         <tr>
@@ -39,21 +40,24 @@
             <td>{{ c.nombre }}</td>
             <td>{{ c.telefono }}</td>
             <td>{{ c.email }}</td>
-            <td class="actions">
-              <button
-                [routerLink]="['/dashboard/clientes/editar', c.idCliente]"
-                class="btn edit-btn"
-              >
-                Editar
-              </button>
-              <button (click)="eliminar(c.idCliente!)" class="btn delete-btn">
-                Eliminar
-              </button>
+            <td>
+              <div class="actions">
+                <button
+                  [routerLink]="['/dashboard/clientes/editar', c.idCliente]"
+                  class="btn edit-btn"
+                >
+                  Editar
+                </button>
+                <button (click)="eliminar(c.idCliente!)" class="btn delete-btn">
+                  Eliminar
+                </button>
+              </div>
             </td>
           </tr>
         }
       </tbody>
     </table>
+    </div>
   }
 
   @if (!clientes.length && !loading) {

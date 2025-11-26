@@ -26,6 +26,7 @@
   </div>
 
   @if (usuarios.length) {
+    <div class="table-responsive">
     <table class="user-table">
       <thead>
         <tr>
@@ -43,21 +44,23 @@
             <td>{{ u.apellido }}</td>
             <td>{{ u.email }}</td>
             <td>{{ getRoleName(u.idRol) }}</td> 
-            
-            <td class="actions">
-              <button
-                [routerLink]="['/dashboard/usuarios/editar', u.idUsuario]"
-                class="btn edit-btn"
-              >
-                Editar
-              </button>
-              <button (click)="eliminar(u.idUsuario!)" class="btn delete-btn">
-                Eliminar
-              </button>
+            <td>
+              <div class="actions">
+                <button
+                  [routerLink]="['/dashboard/usuarios/editar', u.idUsuario]"
+                  class="btn edit-btn"
+                >
+                  Editar
+                </button>
+                <button (click)="eliminar(u.idUsuario!)" class="btn delete-btn">
+                  Eliminar
+                </button>
+              </div>
             </td>
           </tr>
         }
-      </tbody>
-    </table>
+            </tbody>
+          </table>
+        </div>
   }
   </div>

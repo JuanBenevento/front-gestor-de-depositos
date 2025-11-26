@@ -15,8 +15,6 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class MainLayoutComponent implements OnInit {
 
-  role = '';
-  userName = 'Usuario WMS'; 
   currentDate = '';
   currentTime = '';
   isSidebarOpen: boolean = false; 
@@ -27,7 +25,6 @@ export class MainLayoutComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.role = this.authService.getRole() || '';
    
     const today = new Date();
     this.currentDate = today.toLocaleDateString('es-AR', {
@@ -38,7 +35,15 @@ export class MainLayoutComponent implements OnInit {
 
     setInterval(() => {
       const now = new Date();
-      this.currentTime = now.toLocaleTimeString('es-AR');
+      let hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      if (hours === 0) {
+        hours = 12;
+      }
+      this.currentTime = `${hours.toString().padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
     }, 1000);
   }
 

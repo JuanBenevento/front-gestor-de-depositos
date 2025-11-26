@@ -51,6 +51,7 @@
   }
 
   @if (ordenesFiltradas.length) {
+    <div class="table-responsive">
     <table class="user-table">
       <thead>
         <tr>
@@ -74,18 +75,24 @@
             
             <td>{{ o.cliente?.nombre }}</td>
 
-            <td class="actions">
-              <button [routerLink]="['/dashboard/ordenesDespacho/editar', o.idOrdenDespacho]" class="btn edit-btn">
-                Editar
-              </button>
-              <button (click)="eliminar(o.idOrdenDespacho!)" class="btn delete-btn">
-                Eliminar
-              </button>
+            <td>
+              <div class="actions">
+                <button
+                  [routerLink]="['/dashboard/ordenesDespacho/editar', o.idOrdenDespacho]"
+                  class="btn edit-btn"
+                >
+                  Editar
+                </button>
+                <button (click)="eliminar(o.idOrdenDespacho!)" class="btn delete-btn">
+                  Eliminar
+                </button>
+              </div>
             </td>
           </tr>
         }
       </tbody>
     </table>
+    </div>
   }
 
   @if (!ordenesFiltradas.length && !loading) {

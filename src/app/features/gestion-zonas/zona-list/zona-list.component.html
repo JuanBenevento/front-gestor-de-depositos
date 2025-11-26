@@ -25,6 +25,7 @@
   }
 
   @if (zonas.length) {
+    <div class="table-responsive">
     <table class="user-table">
       <thead>
   <tr>
@@ -47,14 +48,24 @@
         </div>
       </td>
 
-      <td class="actions">
-        <button [routerLink]="['/dashboard/zonas/editar', z.idZona]" class="btn edit-btn">Editar</button>
-        <button (click)="eliminar(z.idZona!)" class="btn delete-btn">Eliminar</button>
+      <td>
+        <div class="actions">
+          <button
+            [routerLink]="['/dashboard/zonas/editar', z.idZona]"
+            class="btn edit-btn"
+          >
+            Editar
+          </button>
+          <button (click)="eliminar(z.idZona!)" class="btn delete-btn">
+            Eliminar
+          </button>
+        </div>
       </td>
     </tr>
   }
-</tbody>
+      </tbody>
     </table>
+    </div>
   }
 
   @if (!zonas.length && !loading) {

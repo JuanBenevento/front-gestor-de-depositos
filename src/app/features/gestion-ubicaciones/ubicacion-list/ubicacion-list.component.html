@@ -40,6 +40,7 @@
   }
 
   @if (ubicaciones.length && !mostrandoReporte) {
+    <div class="table-responsive">
     <table class="user-table">
       <thead>
         <tr>
@@ -65,23 +66,30 @@
             
             <td>{{ u.capacidadMaxima - u.ocupadoActual }}</td>
 
-            <td class="actions">
-              <button [routerLink]="['/dashboard/ubicaciones/editar', u.idUbicacion]" class="btn edit-btn">
-                Editar
-              </button>
-              <button (click)="eliminar(u.idUbicacion)" class="btn delete-btn">
-                Eliminar
-              </button>
+            <td>
+              <div class="actions">
+                <button
+                  [routerLink]="['/dashboard/ubicaciones/editar', u.idUbicacion]"
+                  class="btn edit-btn"
+                >
+                  Editar
+                </button>
+                <button (click)="eliminar(u.idUbicacion)" class="btn delete-btn">
+                  Eliminar
+                </button>
+              </div>
             </td>
           </tr>
         }
       </tbody>
     </table>
+    </div>
   }
 
   @if (mostrandoReporte) {
     <div class="report-container">
       <h3>📊 Reporte de Disponibilidad</h3>
+      <div class="table-responsive">
       <table class="user-table">
         <thead>
           <tr>
@@ -106,6 +114,7 @@
           }
         </tbody>
       </table>
+      </div>
 
       <div style="margin-top: 15px">
         <button class="btn secondary-btn" (click)="volverLista()">← Volver al listado</button>

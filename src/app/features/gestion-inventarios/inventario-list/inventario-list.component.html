@@ -50,6 +50,7 @@
   }
 
   @if (inventariosFiltrados.length > 0) {
+    <div class="table-responsive">
     <table class="user-table">
       <thead>
         <tr>
@@ -79,6 +80,7 @@
         }
       </tbody>
     </table>
+    </div>
   }
 
   @if (!loading && inventariosFiltrados.length === 0) {

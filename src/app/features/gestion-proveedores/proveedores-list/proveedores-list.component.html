@@ -30,6 +30,7 @@
   }
 
   @if (proveedores.length) {
+    <div class="table-responsive">
     <table class="user-table">
       <thead>
         <tr>
@@ -45,14 +46,24 @@
             <td>{{ proveedor.nombre }}</td>
             <td>{{ proveedor.telefono }}</td>
             <td>{{ proveedor.email }}</td>
-            <td class="actions">
-              <button [routerLink]="['/dashboard/proveedores/editar', proveedor.id_proveedor]" class="btn edit-btn">Editar</button>
-              <button (click)="eliminar(proveedor.id_proveedor!)" class="btn delete-btn">Eliminar</button>
+            <td>
+              <div class="actions">
+                <button
+                  [routerLink]="['/dashboard/proveedores/editar', proveedor.id_proveedor]"
+                  class="btn edit-btn"
+                >
+                  Editar
+                </button>
+                <button (click)="eliminar(proveedor.id_proveedor!)" class="btn delete-btn">
+                  Eliminar
+                </button>
+              </div>
             </td>
           </tr>
         }
       </tbody>
     </table>
+    </div>
   }
 
   @if (!proveedores.length && !loading) {

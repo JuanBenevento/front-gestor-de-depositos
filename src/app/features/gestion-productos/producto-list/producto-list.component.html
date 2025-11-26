@@ -7,12 +7,21 @@
 
   <div class="search-row">
     <div class="search-group">
-      <input type="text" placeholder="Buscar por codigo SKU" [(ngModel)]="skuBuscar" (input)="aplicarFiltros()" />
+      <input
+        type="text"
+        placeholder="Buscar por codigo SKU"
+        [(ngModel)]="skuBuscar"
+        (input)="aplicarFiltros()"
+      />
     </div>
 
     <div class="search-group">
-      <input type="text" placeholder="Buscar por nombre" [(ngModel)]="nombreBuscar" (input)="aplicarFiltros()" />
-    </div>
+      <input
+        type="text"
+        placeholder="Buscar por nombre"
+        [(ngModel)]="nombreBuscar"
+        (input)="aplicarFiltros()"
+      />
   </div>
 
     <div class="search-group">
@@ -22,12 +31,14 @@
           <option [value]="cat">{{ cat }}</option>
         }
       </select>
+    </div>
   </div>
 
   @if (loading) { <div class="loading">Cargando...</div> }
   @if (error) { <div class="error">{{ error }}</div> }
 
   @if (productosFiltrados.length) {
+    <div class="table-responsive">
     <table class="user-table">
       <thead>
         <tr>
@@ -50,14 +61,27 @@
             <td>{{ p.codigoSku }}</td>
             <td>{{ p.unidad_medida }}</td>
             <td>{{ p.fecha_creacion | date: 'dd/MM/yyyy' }}</td>
-            <td class="actions">
-              <button [routerLink]="['/dashboard/productos/editar', p.idProducto]" class="btn edit-btn">Editar</button>
-              <button (click)="eliminar(p.idProducto!)" class="btn delete-btn">Eliminar</button>
+            <td>
+              <div class="actions">
+                <button
+                  [routerLink]="['/dashboard/productos/editar', p.idProducto]"
+                  class="btn edit-btn"
+                >
+                  Editar
+                </button>
+                <button
+                  (click)="eliminar(p.idProducto!)"
+                  class="btn delete-btn"
+                >
+                  Eliminar
+                </button>
+              </div>
             </td>
           </tr>
         }
       </tbody>
     </table>
+    </div>
   }
 
   @if (!productosFiltrados.length && !loading) {
