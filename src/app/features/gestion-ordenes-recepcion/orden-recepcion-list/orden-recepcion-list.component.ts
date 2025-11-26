@@ -9,8 +9,7 @@ import { ModalService } from '../../../shared/services/modal.service';
 @Component({
   selector: 'app-orden-recepcion-list',
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './orden-recepcion-list.component.html',
-  styleUrl: './orden-recepcion-list.component.css'
+  templateUrl: './orden-recepcion-list.component.html'
 })
 export class OrdenRecepcionListComponent {
 

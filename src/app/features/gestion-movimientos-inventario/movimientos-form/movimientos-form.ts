@@ -19,6 +19,10 @@ import { InfoCardComponent } from '../../../shared/components/info-card/info-car
   imports: [CommonModule, ReactiveFormsModule, RouterModule, FormTextInputComponent, InfoCardComponent],
   templateUrl: './movimientos-form.html',
   styleUrl: './movimientos-form.css'
+=======
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormTextInputComponent, InfoCardComponent],
+  templateUrl: './movimientos-form.html'
+>>>>>>> Stashed changes
 })
 export class MovimientosForm implements OnInit, OnDestroy {
   private readonly fb: FormBuilder = inject(FormBuilder);
